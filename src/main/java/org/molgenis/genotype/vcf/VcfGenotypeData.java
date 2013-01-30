@@ -13,12 +13,12 @@ import org.molgenis.genotype.AbstractGenotypeData;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.GenotypeQuery;
+import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixSequence;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.VariantHandler;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfContig;
 import org.molgenis.io.vcf.VcfInfo;
@@ -91,13 +91,26 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		return variant;
 	}
 
-	public void seqVariants(String seqName, VariantHandler handler)
+	public List<Sample> getSamples()
 	{
-		Sequence sequence = getSequenceByName(seqName);
-		if (sequence != null)
+		List<String> sampleNames;
+		try
 		{
-			sequence.variants(handler);
+			sampleNames = reader.getSampleNames();
 		}
+		catch (IOException e)
+		{
+			throw new GenotypeDataException("IOException getting samplenames from VcfReader", e);
+		}
+
+		List<Sample> samples = new ArrayList<Sample>(sampleNames.size());
+		for (String sampleName : sampleNames)
+		{
+			Sample sample = new Sample(sampleName);
+			samples.add(sample);
+		}
+
+		return samples;
 	}
 
 	private VariantLineMapper getVariantLineMapper()

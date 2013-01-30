@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.VariantHandler;
 
 public abstract class AbstractGenotypeData implements GenotypeData
 {
@@ -32,6 +34,26 @@ public abstract class AbstractGenotypeData implements GenotypeData
 		}
 
 		return null;
+	}
+
+	public void seqVariants(String seqName, VariantHandler handler)
+	{
+		Sequence sequence = getSequenceByName(seqName);
+		if (sequence != null)
+		{
+			sequence.variants(handler);
+		}
+	}
+
+	public Map<String, List<String>> getSampleGeneticVariants(String seqName, int startPos)
+	{
+		GeneticVariant variant = getVariant(seqName, startPos);
+		if (variant == null)
+		{
+			return Collections.emptyMap();
+		}
+
+		return variant.getSampleVariants();
 	}
 
 	/**

@@ -144,6 +144,23 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(handler.count, 0);
 	}
 
+	@Test
+	public void testGetSampleGeneticVariants()
+	{
+		Map<String, List<String>> variantMap = genotypeData.getSampleGeneticVariants("1", 3172273);
+		assertNotNull(variantMap);
+		assertEquals(variantMap.size(), 1);
+
+		List<String> variants = variantMap.values().iterator().next();
+		assertEquals(variants.size(), 2);
+		assertEquals(variants.get(0), "C");
+		assertEquals(variants.get(1), "C");
+
+		variantMap = genotypeData.getSampleGeneticVariants("1", 1);
+		assertNotNull(variantMap);
+		assertTrue(variantMap.isEmpty());
+	}
+
 	private static class CountingVariantHandler implements VariantHandler
 	{
 		private int count = 0;
