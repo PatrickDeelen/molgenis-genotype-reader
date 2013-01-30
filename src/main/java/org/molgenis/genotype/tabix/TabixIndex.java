@@ -237,6 +237,11 @@ public class TabixIndex implements GenotypeDataIndex
 		long min_off;
 		int tid = chr2tid(sequence);
 
+		if (tid == -1)
+		{
+			return null;
+		}
+
 		TIndex idx = mIndex[tid];
 		int[] bins = new int[MAX_BIN];
 		int i, l, n_off, n_bins = reg2bins(beg, end, bins);

@@ -2,6 +2,7 @@ package org.molgenis.genotype.tabix;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -84,4 +85,18 @@ public class TabixQueryTest extends ResourceTest
 		assertEquals(i, 1);
 	}
 
+	@Test
+	public void querySingleVariant()
+	{
+		String variant = query.executeQuery("1", 3172273);
+		assertNotNull(variant);
+		assertTrue(variant.indexOf("rs2455100") > -1);
+
+		variant = query.executeQuery("2", 7569187);
+		assertNotNull(variant);
+		assertTrue(variant.indexOf("rs4908464") > -1);
+
+		assertNull(query.executeQuery("x", 3172273));
+		assertNull(query.executeQuery("1", 31722730));
+	}
 }

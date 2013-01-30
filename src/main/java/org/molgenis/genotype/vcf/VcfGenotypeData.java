@@ -8,13 +8,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.AbstractGenotypeData;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
+import org.molgenis.genotype.GenotypeQuery;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixSequence;
+import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.VariantHandler;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfContig;
 import org.molgenis.io.vcf.VcfInfo;
@@ -24,6 +28,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 {
 	private GenotypeDataIndex index;
 	private VcfReader reader;
+	private VariantLineMapper variantLineMapper;
 
 	public VcfGenotypeData(GenotypeDataIndex index, VcfReader reader)
 	{
@@ -58,7 +63,47 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		List<Sequence> sequences = new ArrayList<Sequence>(seqNames.size());
 		for (String seqName : seqNames)
 		{
-			VariantLineMapper variantLineMapper;
+
+			sequences.add(new TabixSequence(seqName, seqLengths.get(seqName), index, getVariantLineMapper()));
+		}
+
+		return sequences;
+	}
+
+	public GeneticVariant getVariant(String seqName, int startPos)
+	{
+		GeneticVariant variant = null;
+
+		GenotypeQuery q = index.createQuery();
+		try
+		{
+			String line = q.executeQuery(seqName, startPos);
+			if (line != null)
+			{
+				variant = getVariantLineMapper().mapLine(line);
+			}
+		}
+		finally
+		{
+			IOUtils.closeQuietly(q);
+		}
+
+		return variant;
+	}
+
+	public void seqVariants(String seqName, VariantHandler handler)
+	{
+		Sequence sequence = getSequenceByName(seqName);
+		if (sequence != null)
+		{
+			sequence.variants(handler);
+		}
+	}
+
+	private VariantLineMapper getVariantLineMapper()
+	{
+		if (variantLineMapper == null)
+		{
 			try
 			{
 				variantLineMapper = new VcfVariantLineMapper(getVcfColNames(), reader.getSampleNames());
@@ -67,11 +112,9 @@ public class VcfGenotypeData extends AbstractGenotypeData
 			{
 				throw new GenotypeDataException("IOException VcfReader.getSampleNames()", e);
 			}
-
-			sequences.add(new TabixSequence(seqName, seqLengths.get(seqName), index, variantLineMapper));
 		}
 
-		return sequences;
+		return variantLineMapper;
 	}
 
 	private List<String> getVcfColNames()

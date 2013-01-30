@@ -20,6 +20,7 @@ import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ListVariantHandler;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
+import org.molgenis.genotype.variant.VariantHandler;
 import org.molgenis.io.vcf.VcfReader;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -115,5 +116,41 @@ public class VcfGenotypeDataTest extends ResourceTest
 	public void testGetSequenceByNameNotExisting()
 	{
 		assertNull(genotypeData.getSequenceByName("Bogus"));
+	}
+
+	@Test
+	public void testGetVariant()
+	{
+		GeneticVariant variant = genotypeData.getVariant("1", 565286);
+		assertNotNull(variant);
+		assertEquals(variant.getCompoundId(), "rs1578391");
+
+		assertNull(genotypeData.getVariant("bogus", 8));
+	}
+
+	@Test
+	public void testSeqVariants()
+	{
+		CountingVariantHandler handler = new CountingVariantHandler();
+		genotypeData.seqVariants("1", handler);
+		assertEquals(handler.count, 6);
+
+		handler = new CountingVariantHandler();
+		genotypeData.seqVariants("2", handler);
+		assertEquals(handler.count, 1);
+
+		handler = new CountingVariantHandler();
+		genotypeData.seqVariants("x", handler);
+		assertEquals(handler.count, 0);
+	}
+
+	private static class CountingVariantHandler implements VariantHandler
+	{
+		private int count = 0;
+
+		public void handle(GeneticVariant variant)
+		{
+			count++;
+		}
 	}
 }

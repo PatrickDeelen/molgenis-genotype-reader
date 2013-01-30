@@ -29,4 +29,13 @@ public interface GenotypeQuery extends Closeable
 	 * @throws IOException
 	 */
 	public Iterator<String> executeQuery(String sequence);
+
+	/**
+	 * Find a variant at the specified position
+	 * 
+	 * @param sequence
+	 * @param startPos
+	 * @return The variant or null is not found
+	 */
+	public String executeQuery(String sequence, int startPos);
 }

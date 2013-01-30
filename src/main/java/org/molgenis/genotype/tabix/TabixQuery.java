@@ -80,6 +80,17 @@ public class TabixQuery implements GenotypeQuery
 		return executeQuery(sequence, 0, Integer.MAX_VALUE);
 	}
 
+	public String executeQuery(String sequence, int startPos)
+	{
+		Iterator<String> lines = executeQuery(sequence, startPos - 1, startPos);
+		if (lines.hasNext())
+		{
+			return lines.next();
+		}
+
+		return null;
+	}
+
 	public void close() throws IOException
 	{
 		inputStream.close();

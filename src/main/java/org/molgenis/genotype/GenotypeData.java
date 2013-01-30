@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.VariantHandler;
 
 /**
  * Interface that represents genomic data, can be backed by different data types
@@ -51,4 +53,22 @@ public interface GenotypeData extends Closeable
 	 * @throws IOException
 	 */
 	Annotation getVariantAnnotation(String annotationId);
+
+	/**
+	 * Get the variant at the specified position
+	 * 
+	 * @param seqName
+	 * @param startPos
+	 * @return the variant or null if not found
+	 */
+	GeneticVariant getVariant(String seqName, int startPos);
+
+	/**
+	 * Get all variants of a sequence For every variant
+	 * VariantHandler.handle(variant) is called.
+	 * 
+	 * @param seqName
+	 * @param handler
+	 */
+	void seqVariants(String seqName, VariantHandler handler);
 }
