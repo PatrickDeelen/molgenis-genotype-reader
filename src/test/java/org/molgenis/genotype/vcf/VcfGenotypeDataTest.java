@@ -99,6 +99,16 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(alleles.size(), 2);
 		assertEquals(alleles.get(0), "G");
 		assertEquals(alleles.get(1), "C");
+
+		Map<String, List<String>> sampleVariantsBySampleId = variant.getSampleVariants();
+		assertNotNull(sampleVariantsBySampleId);
+		assertEquals(sampleVariantsBySampleId.size(), 1);
+		List<String> sampleVariantList = sampleVariantsBySampleId
+				.get("test_S0_L001_R1_001_converted_Unique_Output.pjt");
+		assertNotNull(sampleVariantList);
+		assertEquals(sampleVariantList.size(), 2);
+		assertEquals(sampleVariantList.get(0), "C");
+		assertEquals(sampleVariantList.get(0), "C");
 	}
 
 	@Test

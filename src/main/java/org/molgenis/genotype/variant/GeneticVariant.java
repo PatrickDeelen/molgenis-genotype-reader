@@ -50,7 +50,8 @@ public interface GeneticVariant
 	String getRefAllele();
 
 	/**
-	 * Returns a Map of sample variants by sampleId.
+	 * Returns a Map of sample variants by sampleId. The list of variants can
+	 * contain null !!!! if unknown
 	 */
 	Map<String, List<String>> getSampleVariants();
 }
