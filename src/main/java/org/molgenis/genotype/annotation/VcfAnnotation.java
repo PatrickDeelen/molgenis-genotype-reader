@@ -2,13 +2,13 @@ package org.molgenis.genotype.annotation;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.molgenis.io.vcf.VcfInfo;
-import org.molgenis.io.vcf.VcfInfo.InfoType;
 
 public class VcfAnnotation extends Annotation
 {
 	public static final int NUMBER_UNKNOWN = -1;
 
-	private int number;
+	private Integer number;
+	boolean unbounded;
 	private boolean perAltAllele;
 	private boolean perGenotype;
 
@@ -16,7 +16,8 @@ public class VcfAnnotation extends Annotation
 	{
 		Annotation.Type type = VcfAnnotation.toAnnotationType(info.getType());
 
-		int number = -1;
+		Integer number = null;
+		boolean unbounded = false;
 		boolean perAltAllele = false;
 		boolean perGenotype = false;
 
@@ -34,35 +35,31 @@ public class VcfAnnotation extends Annotation
 			{
 				perGenotype = true;
 			}
+			else if (info.getNumber().equals("."))
+			{
+				unbounded = true;
+			}
 			else if (NumberUtils.isDigits(info.getNumber()))
 			{
 				number = Integer.parseInt(info.getNumber());
 			}
 		}
 
-		return new VcfAnnotation(info.getId(), info.getDescription(), type, number, perAltAllele, perGenotype);
+		return new VcfAnnotation(info.getId(), info.getDescription(), type, number, unbounded, perAltAllele,
+				perGenotype);
 	}
 
-	private static Annotation.Type toAnnotationType(VcfInfo.InfoType infoType)
-	{
-		if (infoType == InfoType.CHARACTER) return Type.CHAR;
-		if (infoType == InfoType.STRING) return Type.STRING;
-		if (infoType == InfoType.FLAG) return Type.BOOLEAN;
-		if (infoType == InfoType.FLOAT) return Type.FLOAT;
-		if (infoType == InfoType.INTEGER) return Type.INTEGER;
-		return Type.UNKOWN;
-	}
-
-	public VcfAnnotation(String id, String description, Annotation.Type type, int number, boolean perAltAllele,
-			boolean perGenotype)
+	public VcfAnnotation(String id, String description, Annotation.Type type, Integer number, boolean unbounded,
+			boolean perAltAllele, boolean perGenotype)
 	{
 		super(id, id, description, type);
 		this.number = number;
 		this.perAltAllele = perAltAllele;
 		this.perGenotype = perGenotype;
+		this.unbounded = unbounded;
 	}
 
-	public int getNumber()
+	public Integer getNumber()
 	{
 		return number;
 	}
@@ -75,5 +72,25 @@ public class VcfAnnotation extends Annotation
 	public boolean isPerGenotype()
 	{
 		return perGenotype;
+	}
+
+	public boolean isUnbounded()
+	{
+		return unbounded;
+	}
+
+	public boolean isList()
+	{
+		return (number != null) && (number > 1) || perAltAllele || perGenotype || unbounded;
+	}
+
+	private static Annotation.Type toAnnotationType(VcfInfo.Type infoType)
+	{
+		if (infoType == VcfInfo.Type.CHARACTER) return Type.CHAR;
+		if (infoType == VcfInfo.Type.STRING) return Type.STRING;
+		if (infoType == VcfInfo.Type.FLAG) return Type.BOOLEAN;
+		if (infoType == VcfInfo.Type.FLOAT) return Type.FLOAT;
+		if (infoType == VcfInfo.Type.INTEGER) return Type.INTEGER;
+		return Type.UNKOWN;
 	}
 }

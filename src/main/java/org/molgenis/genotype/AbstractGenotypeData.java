@@ -1,6 +1,5 @@
 package org.molgenis.genotype;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,16 +9,29 @@ import org.molgenis.genotype.annotation.Annotation;
 
 public abstract class AbstractGenotypeData implements GenotypeData
 {
-	public abstract List<String> getSeqNames() throws IOException;
+	public abstract List<String> getSeqNames();
 
-	public List<Annotation> getVariantAnnotations() throws IOException
+	public List<Annotation> getVariantAnnotations()
 	{
 		return Collections.unmodifiableList(new ArrayList<Annotation>(getVariantAnnotationsMap().values()));
 	}
 
-	public Annotation getVariantAnnotation(String annotaionId) throws IOException
+	public Annotation getVariantAnnotation(String annotaionId)
 	{
 		return getVariantAnnotationsMap().get(annotaionId);
+	}
+
+	public Sequence getSequenceByName(String name)
+	{
+		for (Sequence sequence : getSequences())
+		{
+			if (sequence.getName().equals(name))
+			{
+				return sequence;
+			}
+		}
+
+		return null;
 	}
 
 	/**

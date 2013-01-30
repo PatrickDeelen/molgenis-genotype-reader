@@ -5,4 +5,6 @@ import java.util.List;
 public interface GenotypeDataIndex
 {
 	List<String> getSeqNames();
+
+	GenotypeQuery createQuery();
 }

@@ -1,16 +1,21 @@
 package org.molgenis.genotype.vcf;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.molgenis.genotype.AbstractGenotypeData;
+import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
+import org.molgenis.genotype.tabix.TabixSequence;
+import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfContig;
 import org.molgenis.io.vcf.VcfInfo;
 import org.molgenis.io.vcf.VcfReader;
@@ -48,24 +53,54 @@ public class VcfGenotypeData extends AbstractGenotypeData
 	public List<Sequence> getSequences()
 	{
 		List<String> seqNames = getSeqNames();
-		Map<String, Long> seqLengths = getSequenceLengths();
+		Map<String, Integer> seqLengths = getSequenceLengths();
 
 		List<Sequence> sequences = new ArrayList<Sequence>(seqNames.size());
 		for (String seqName : seqNames)
 		{
-			sequences.add(new Sequence(seqName, seqLengths.get(seqName)));
+			VariantLineMapper variantLineMapper;
+			try
+			{
+				variantLineMapper = new VcfVariantLineMapper(getVcfColNames(), reader.getSampleNames());
+			}
+			catch (IOException e)
+			{
+				throw new GenotypeDataException("IOException VcfReader.getSampleNames()", e);
+			}
+
+			sequences.add(new TabixSequence(seqName, seqLengths.get(seqName), index, variantLineMapper));
 		}
 
 		return sequences;
 	}
 
+	private List<String> getVcfColNames()
+	{
+		List<String> colNames = new ArrayList<String>();
+
+		try
+		{
+			Iterator<String> it = reader.colNamesIterator();
+			while (it.hasNext())
+			{
+				colNames.add(it.next());
+			}
+		}
+		catch (IOException e)
+		{
+			throw new GenotypeDataException(e);
+		}
+
+		return colNames;
+	}
+
 	/**
 	 * Get sequence length by sequence name
 	 */
-	private Map<String, Long> getSequenceLengths()
+	private Map<String, Integer> getSequenceLengths()
 	{
 		List<VcfContig> contigs = reader.getContigs();
-		Map<String, Long> sequenceLengthById = new HashMap<String, Long>(contigs.size());
+		Map<String, Integer> sequenceLengthById = new HashMap<String, Integer>(contigs.size());
 
 		for (VcfContig contig : contigs)
 		{
@@ -73,6 +108,11 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		}
 
 		return sequenceLengthById;
+	}
+
+	public void close() throws IOException
+	{
+		reader.close();
 	}
 
 }

@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Generic Annotation class. Describes samples, sequences etc.
  */
-public class Annotation
+public abstract class Annotation
 {
 	public enum Type
 	{
@@ -45,6 +45,8 @@ public class Annotation
 	{
 		return type;
 	}
+
+	public abstract boolean isList();
 
 	@Override
 	public String toString()

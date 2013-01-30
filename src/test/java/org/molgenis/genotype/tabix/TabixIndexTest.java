@@ -17,7 +17,7 @@ public class TabixIndexTest extends ResourceTest
 	@BeforeClass
 	private void setUp() throws IOException
 	{
-		index = new TabixIndex(getTestVcfGzTbi());
+		index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz());
 	}
 
 	@Test
