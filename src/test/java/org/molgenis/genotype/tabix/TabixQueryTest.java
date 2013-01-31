@@ -5,12 +5,14 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
-import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.ResourceTest;
+import org.molgenis.genotype.VariantQuery;
+import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.genotype.vcf.VcfVariantLineMapper;
@@ -33,7 +35,7 @@ public class TabixQueryTest extends ResourceTest
 		try
 		{
 			VariantLineMapper variantLineMapper = new VcfVariantLineMapper(reader.getColNames(),
-					reader.getSampleNames());
+					reader.getSampleNames(), Collections.<Annotation> emptyList());
 			index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz(), variantLineMapper);
 		}
 		finally

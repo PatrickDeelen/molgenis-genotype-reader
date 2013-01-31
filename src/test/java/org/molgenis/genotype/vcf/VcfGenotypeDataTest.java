@@ -154,6 +154,36 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertTrue(variantMap.isEmpty());
 	}
 
+	@Test
+	public void testGeneticVariantAnnotations()
+	{
+		// NS=1;DP=4;AF=1.000;ANNOT=INT;GI=PRDM16;TI=NM_022114.3;PI=NP_071397.3
+		GeneticVariant variant = genotypeData.getVariant("1", 3171929);
+		assertNotNull(variant);
+		assertNotNull(variant.getAnnotationValues());
+		assertEquals(variant.getAnnotationValues().size(), 7);
+
+		Object annotationValue = variant.getAnnotationValues().get("NS");
+		assertNotNull(annotationValue);
+		assertEquals(annotationValue, Integer.valueOf(1));
+
+		annotationValue = variant.getAnnotationValues().get("AF");
+		assertNotNull(annotationValue);
+		assertTrue(annotationValue instanceof List);
+		@SuppressWarnings("unchecked")
+		List<Float> floats = (List<Float>) annotationValue;
+		assertEquals(floats.size(), 1);
+		assertEquals(floats.get(0).floatValue(), 1.0, 0.001);
+
+		annotationValue = variant.getAnnotationValues().get("ANNOT");
+		assertNotNull(annotationValue);
+		assertTrue(annotationValue instanceof List);
+		@SuppressWarnings("unchecked")
+		List<String> strings = (List<String>) annotationValue;
+		assertEquals(strings.size(), 1);
+		assertEquals(strings.get(0), "INT");
+	}
+
 	private static class CountingVariantHandler implements VariantHandler
 	{
 		private int count = 0;

@@ -31,7 +31,7 @@ public class AbstractGeneticVariantTest
 	{
 		public TestGeneticVariant(List<String> ids)
 		{
-			super(ids, "1", 0, new HashMap<String, List<String>>());
+			super(ids, "1", 0, new HashMap<String, List<String>>(), new HashMap<String, Object>());
 		}
 
 		@Override

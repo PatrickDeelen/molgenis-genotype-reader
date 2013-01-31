@@ -6,22 +6,25 @@ import java.util.Map;
 
 public abstract class AbstractGeneticVariant implements GeneticVariant
 {
-	private List<String> ids;
-	private int startPos;
-	private String sequenceName;
-	private Map<String, List<String>> sampleVariants;
+	private final List<String> ids;
+	private final int startPos;
+	private final String sequenceName;
+	private final Map<String, List<String>> sampleVariants;
+	private final Map<String, ?> annotationValues;
 
 	public AbstractGeneticVariant(List<String> ids, String sequenceName, int startPos,
-			Map<String, List<String>> sampleVariants)
+			Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues)
 	{
 		if (ids == null) throw new IllegalArgumentException("Id list is null");
 		if (sequenceName == null) throw new IllegalArgumentException("SequenceName is null");
 		if (sampleVariants == null) throw new IllegalArgumentException("SampleVariants map is null");
+		if (annotationValues == null) throw new IllegalArgumentException("AnnotationValues is null");
 
 		this.ids = ids;
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
 		this.sampleVariants = sampleVariants;
+		this.annotationValues = annotationValues;
 	}
 
 	public abstract List<String> getAlleles();
@@ -68,5 +71,10 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 	public Map<String, List<String>> getSampleVariants()
 	{
 		return Collections.unmodifiableMap(sampleVariants);
+	}
+
+	public Map<String, ?> getAnnotationValues()
+	{
+		return annotationValues;
 	}
 }

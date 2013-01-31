@@ -54,4 +54,13 @@ public interface GeneticVariant
 	 * contain null !!!! if unknown
 	 */
 	Map<String, List<String>> getSampleVariants();
+
+	/**
+	 * Get the annotations for this variant. The key is the annotationId, the
+	 * value is of the type defined by the Annotation (see
+	 * GenotypeData.getVariantAnnotations()
+	 * 
+	 * @return
+	 */
+	Map<String, ?> getAnnotationValues();
 }

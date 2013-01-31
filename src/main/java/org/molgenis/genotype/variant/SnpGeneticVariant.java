@@ -7,17 +7,18 @@ import java.util.Map;
 
 public class SnpGeneticVariant extends AbstractGeneticVariant
 {
-	private char refAllele;
-	private char[] snpAlleles;
+	private final char refAllele;
+	private final char[] snpAlleles;
 
 	public SnpGeneticVariant(List<String> ids, String sequenceName, int startPos, char[] snpAlleles, char refAllele,
-			Map<String, List<String>> sampleVariants)
+			Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues)
 	{
-		super(ids, sequenceName, startPos, sampleVariants);
+		super(ids, sequenceName, startPos, sampleVariants, annotationValues);
 		this.refAllele = refAllele;
 		this.snpAlleles = snpAlleles.clone();
 	}
 
+	@Override
 	public List<String> getAlleles()
 	{
 		List<String> alleles = new ArrayList<String>(snpAlleles.length);
@@ -30,6 +31,7 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 		return Collections.unmodifiableList(alleles);
 	}
 
+	@Override
 	public String getRefAllele()
 	{
 		return Character.toString(refAllele);

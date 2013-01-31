@@ -32,6 +32,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 {
 	private final GenotypeDataIndex index;
 	private final VcfReader reader;
+	private Map<String, Annotation> sampleAnnotationsMap;
 
 	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile)
 	{
@@ -40,7 +41,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 			reader = new VcfReader(new BlockCompressedInputStream(bzipVcfFile));
 
 			VariantLineMapper variantLineMapper = new VcfVariantLineMapper(reader.getColNames(),
-					reader.getSampleNames());
+					reader.getSampleNames(), getVariantAnnotations());
 			index = new TabixIndex(tabixIndexFile, bzipVcfFile, variantLineMapper);
 		}
 		catch (IOException e)
@@ -58,15 +59,18 @@ public class VcfGenotypeData extends AbstractGenotypeData
 	@Override
 	protected Map<String, Annotation> getVariantAnnotationsMap()
 	{
-		List<VcfInfo> infos = reader.getInfos();
-		Map<String, Annotation> annotationMap = new LinkedHashMap<String, Annotation>(infos.size());
-
-		for (VcfInfo info : infos)
+		if (sampleAnnotationsMap == null)
 		{
-			annotationMap.put(info.getId(), VcfAnnotation.fromVcfInfo(info));
+			List<VcfInfo> infos = reader.getInfos();
+			sampleAnnotationsMap = new LinkedHashMap<String, Annotation>(infos.size());
+
+			for (VcfInfo info : infos)
+			{
+				sampleAnnotationsMap.put(info.getId(), VcfAnnotation.fromVcfInfo(info));
+			}
 		}
 
-		return annotationMap;
+		return sampleAnnotationsMap;
 	}
 
 	public List<Sequence> getSequences()
@@ -77,7 +81,6 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		List<Sequence> sequences = new ArrayList<Sequence>(seqNames.size());
 		for (String seqName : seqNames)
 		{
-
 			sequences.add(new TabixSequence(seqName, seqLengths.get(seqName), index));
 		}
 
