@@ -64,15 +64,17 @@ public class Main
 			return count;
 		}
 
-		public void handle(GeneticVariant variant)
+		public boolean handle(GeneticVariant variant)
 		{
-			System.out.printf("Name: %s, start: %s, alleles: %s\n", variant.getCompoundId(), variant.getStartPos(),
-					variant.getAlleles());
+			// System.out.printf("Name: %s, start: %s, alleles: %s\n",
+			// variant.getCompoundId(), variant.getStartPos(),
+			// variant.getAlleles());
 			if (count % 1000 == 0)
 			{
 				System.out.println(count);
 			}
 			count++;
+			return count < 10000;
 		}
 	}
 }

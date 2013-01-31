@@ -7,10 +7,10 @@ public class VcfAnnotation extends Annotation
 {
 	public static final int NUMBER_UNKNOWN = -1;
 
-	private Integer number;
+	private final Integer number;
 	boolean unbounded;
-	private boolean perAltAllele;
-	private boolean perGenotype;
+	private final boolean perAltAllele;
+	private final boolean perGenotype;
 
 	public static VcfAnnotation fromVcfInfo(VcfInfo info)
 	{
@@ -79,6 +79,7 @@ public class VcfAnnotation extends Annotation
 		return unbounded;
 	}
 
+	@Override
 	public boolean isList()
 	{
 		return (number != null) && (number > 1) || perAltAllele || perGenotype || unbounded;

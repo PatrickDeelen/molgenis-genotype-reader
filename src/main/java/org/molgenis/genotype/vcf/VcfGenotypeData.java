@@ -3,6 +3,7 @@ package org.molgenis.genotype.vcf;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,9 +15,9 @@ import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.AbstractGenotypeData;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
-import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
@@ -111,11 +112,21 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		List<Sample> samples = new ArrayList<Sample>(sampleNames.size());
 		for (String sampleName : sampleNames)
 		{
-			Sample sample = new Sample(sampleName);
+			Sample sample = new Sample(sampleName, null, Collections.<String, Object> emptyMap());
 			samples.add(sample);
 		}
 
 		return samples;
+	}
+
+	public List<Annotation> getSampleAnnotations()
+	{
+		return Collections.emptyList();
+	}
+
+	public Annotation getSampleAnnotation(String annotationId)
+	{
+		return null;
 	}
 
 	/**

@@ -12,16 +12,17 @@ import java.util.List;
  */
 public class ListVariantHandler implements VariantHandler
 {
-	private List<GeneticVariant> variants = new ArrayList<GeneticVariant>();
+	private final List<GeneticVariant> variants = new ArrayList<GeneticVariant>();
 
 	public List<GeneticVariant> getVariants()
 	{
 		return variants;
 	}
 
-	public void handle(GeneticVariant variant)
+	public boolean handle(GeneticVariant variant)
 	{
 		variants.add(variant);
+		return true;
 	}
 
 }

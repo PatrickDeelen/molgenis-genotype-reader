@@ -87,4 +87,8 @@ public interface GenotypeData extends Closeable
 	 * @return
 	 */
 	List<Sample> getSamples();
+
+	List<Annotation> getSampleAnnotations();
+
+	Annotation getSampleAnnotation(String annotationId);
 }

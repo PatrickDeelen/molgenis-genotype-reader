@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.GenotypeDataIndex;
-import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.SnpVariantHandler;
@@ -17,9 +17,9 @@ public class TabixSequence implements Sequence
 {
 	private static final List<String> CHROMOSOMES = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 			"11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "x", "y");
-	private String name;
-	private Integer length;
-	private GenotypeDataIndex index;
+	private final String name;
+	private final Integer length;
+	private final GenotypeDataIndex index;
 
 	public TabixSequence(String name, Integer length, GenotypeDataIndex index)
 	{
@@ -51,11 +51,12 @@ public class TabixSequence implements Sequence
 		VariantQuery q = index.createQuery();
 		try
 		{
+			boolean proceed = true;
 			Iterator<GeneticVariant> it = q.executeQuery(name);
-			while (it.hasNext())
+			while (it.hasNext() && proceed)
 			{
 				GeneticVariant variant = it.next();
-				handler.handle(variant);
+				proceed = handler.handle(variant);
 			}
 		}
 		finally
@@ -69,12 +70,14 @@ public class TabixSequence implements Sequence
 	{
 		variants(new VariantHandler()
 		{
-			public void handle(GeneticVariant variant)
+			public boolean handle(GeneticVariant variant)
 			{
 				if (variant instanceof SnpGeneticVariant)
 				{
-					handler.handle((SnpGeneticVariant) variant);
+					return handler.handle((SnpGeneticVariant) variant);
 				}
+
+				return true;
 			}
 		});
 	}

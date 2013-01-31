@@ -158,9 +158,10 @@ public class VcfGenotypeDataTest extends ResourceTest
 	{
 		private int count = 0;
 
-		public void handle(GeneticVariant variant)
+		public boolean handle(GeneticVariant variant)
 		{
 			count++;
+			return true;
 		}
 	}
 }
