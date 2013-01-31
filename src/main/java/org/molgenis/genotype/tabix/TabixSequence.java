@@ -6,13 +6,12 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.GenotypeDataIndex;
-import org.molgenis.genotype.GenotypeQuery;
+import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.SnpVariantHandler;
 import org.molgenis.genotype.variant.VariantHandler;
-import org.molgenis.genotype.variant.VariantLineMapper;
 
 public class TabixSequence implements Sequence
 {
@@ -21,18 +20,15 @@ public class TabixSequence implements Sequence
 	private String name;
 	private Integer length;
 	private GenotypeDataIndex index;
-	private VariantLineMapper variantLineMapper;
 
-	public TabixSequence(String name, Integer length, GenotypeDataIndex index, VariantLineMapper variantLineMapper)
+	public TabixSequence(String name, Integer length, GenotypeDataIndex index)
 	{
 		if (name == null) throw new IllegalArgumentException("Name is null");
 		if (index == null) throw new IllegalArgumentException("Index is null");
-		if (variantLineMapper == null) throw new IllegalArgumentException("VariantLineMapper is null");
 
 		this.name = name;
 		this.length = length;
 		this.index = index;
-		this.variantLineMapper = variantLineMapper;
 	}
 
 	public String getName()
@@ -52,14 +48,13 @@ public class TabixSequence implements Sequence
 
 	public void variants(VariantHandler handler)
 	{
-		GenotypeQuery q = index.createQuery();
+		VariantQuery q = index.createQuery();
 		try
 		{
-			Iterator<String> it = q.executeQuery(name);
+			Iterator<GeneticVariant> it = q.executeQuery(name);
 			while (it.hasNext())
 			{
-				String line = it.next();
-				GeneticVariant variant = variantLineMapper.mapLine(line);
+				GeneticVariant variant = it.next();
 				handler.handle(variant);
 			}
 		}

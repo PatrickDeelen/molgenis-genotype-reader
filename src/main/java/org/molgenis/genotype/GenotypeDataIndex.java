@@ -6,5 +6,5 @@ public interface GenotypeDataIndex
 {
 	List<String> getSeqNames();
 
-	GenotypeQuery createQuery();
+	VariantQuery createQuery();
 }

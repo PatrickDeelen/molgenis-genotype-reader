@@ -1,22 +1,25 @@
 package org.molgenis.genotype.vcf;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.AbstractGenotypeData;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
-import org.molgenis.genotype.GenotypeQuery;
+import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
+import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
@@ -26,16 +29,26 @@ import org.molgenis.io.vcf.VcfReader;
 
 public class VcfGenotypeData extends AbstractGenotypeData
 {
-	private GenotypeDataIndex index;
-	private VcfReader reader;
-	private VariantLineMapper variantLineMapper;
+	private final GenotypeDataIndex index;
+	private final VcfReader reader;
 
-	public VcfGenotypeData(GenotypeDataIndex index, VcfReader reader)
+	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile)
 	{
-		this.index = index;
-		this.reader = reader;
+		try
+		{
+			reader = new VcfReader(new BlockCompressedInputStream(bzipVcfFile));
+
+			VariantLineMapper variantLineMapper = new VcfVariantLineMapper(reader.getColNames(),
+					reader.getSampleNames());
+			index = new TabixIndex(tabixIndexFile, bzipVcfFile, variantLineMapper);
+		}
+		catch (IOException e)
+		{
+			throw new GenotypeDataException(e);
+		}
 	}
 
+	@Override
 	public List<String> getSeqNames()
 	{
 		return index.getSeqNames();
@@ -64,7 +77,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		for (String seqName : seqNames)
 		{
 
-			sequences.add(new TabixSequence(seqName, seqLengths.get(seqName), index, getVariantLineMapper()));
+			sequences.add(new TabixSequence(seqName, seqLengths.get(seqName), index));
 		}
 
 		return sequences;
@@ -72,23 +85,15 @@ public class VcfGenotypeData extends AbstractGenotypeData
 
 	public GeneticVariant getVariant(String seqName, int startPos)
 	{
-		GeneticVariant variant = null;
-
-		GenotypeQuery q = index.createQuery();
+		VariantQuery q = index.createQuery();
 		try
 		{
-			String line = q.executeQuery(seqName, startPos);
-			if (line != null)
-			{
-				variant = getVariantLineMapper().mapLine(line);
-			}
+			return q.executeQuery(seqName, startPos);
 		}
 		finally
 		{
 			IOUtils.closeQuietly(q);
 		}
-
-		return variant;
 	}
 
 	public List<Sample> getSamples()
@@ -111,43 +116,6 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		}
 
 		return samples;
-	}
-
-	private VariantLineMapper getVariantLineMapper()
-	{
-		if (variantLineMapper == null)
-		{
-			try
-			{
-				variantLineMapper = new VcfVariantLineMapper(getVcfColNames(), reader.getSampleNames());
-			}
-			catch (IOException e)
-			{
-				throw new GenotypeDataException("IOException VcfReader.getSampleNames()", e);
-			}
-		}
-
-		return variantLineMapper;
-	}
-
-	private List<String> getVcfColNames()
-	{
-		List<String> colNames = new ArrayList<String>();
-
-		try
-		{
-			Iterator<String> it = reader.colNamesIterator();
-			while (it.hasNext())
-			{
-				colNames.add(it.next());
-			}
-		}
-		catch (IOException e)
-		{
-			throw new GenotypeDataException(e);
-		}
-
-		return colNames;
 	}
 
 	/**

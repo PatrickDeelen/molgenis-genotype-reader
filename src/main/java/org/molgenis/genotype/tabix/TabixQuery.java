@@ -7,8 +7,10 @@ import java.util.Iterator;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.molgenis.genotype.GenotypeDataException;
-import org.molgenis.genotype.GenotypeQuery;
+import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.tabix.TabixIndex.TabixIterator;
+import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.VariantLineMapper;
 
 /**
  * Execute a query on the tabix iondex to get a subset of the data
@@ -16,17 +18,17 @@ import org.molgenis.genotype.tabix.TabixIndex.TabixIterator;
  * @author erwin
  * 
  */
-public class TabixQuery implements GenotypeQuery
+public class TabixQuery implements VariantQuery
 {
-
 	private BlockCompressedInputStream inputStream;;
 	private TabixIndex index;
+	private VariantLineMapper variantLineMapper;
 
-	public TabixQuery(File bzipFile, TabixIndex index)
+	public TabixQuery(File bzipFile, TabixIndex index, VariantLineMapper variantLineMapper)
 	{
 		if (bzipFile == null) throw new IllegalArgumentException("BzipFile is null");
 		if (index == null) throw new IllegalArgumentException("Index is null");
-
+		if (variantLineMapper == null) throw new IllegalArgumentException("VariantLineMapper is null");
 		try
 		{
 			inputStream = new BlockCompressedInputStream(bzipFile);
@@ -37,6 +39,7 @@ public class TabixQuery implements GenotypeQuery
 					e);
 		}
 		this.index = index;
+		this.variantLineMapper = variantLineMapper;
 	}
 
 	/**
@@ -52,7 +55,7 @@ public class TabixQuery implements GenotypeQuery
 	 * 
 	 * @throws IOException
 	 */
-	public Iterator<String> executeQuery(String sequence, int startPos, int stopPos)
+	public Iterator<GeneticVariant> executeQuery(String sequence, int startPos, int stopPos)
 	{
 		if (startPos < 0) throw new IllegalArgumentException("StartPos must be bigger then 0");
 		if (stopPos <= startPos) throw new IllegalArgumentException("StopPos must be bigger then startPos ");
@@ -60,7 +63,7 @@ public class TabixQuery implements GenotypeQuery
 		try
 		{
 			TabixIterator tabixIterator = index.queryTabixIndex(sequence, startPos, stopPos, inputStream);
-			return new TabixQueryIterator(tabixIterator);
+			return new TabixQueryIterator(tabixIterator, variantLineMapper);
 		}
 		catch (IOException e)
 		{
@@ -75,14 +78,14 @@ public class TabixQuery implements GenotypeQuery
 	 * @return
 	 * @throws IOException
 	 */
-	public Iterator<String> executeQuery(String sequence)
+	public Iterator<GeneticVariant> executeQuery(String sequence)
 	{
 		return executeQuery(sequence, 0, Integer.MAX_VALUE);
 	}
 
-	public String executeQuery(String sequence, int startPos)
+	public GeneticVariant executeQuery(String sequence, int startPos)
 	{
-		Iterator<String> lines = executeQuery(sequence, startPos - 1, startPos);
+		Iterator<GeneticVariant> lines = executeQuery(sequence, startPos - 1, startPos);
 		if (lines.hasNext())
 		{
 			return lines.next();
@@ -96,14 +99,16 @@ public class TabixQuery implements GenotypeQuery
 		inputStream.close();
 	}
 
-	private static class TabixQueryIterator implements Iterator<String>
+	private static class TabixQueryIterator implements Iterator<GeneticVariant>
 	{
 		private TabixIterator tabixIterator;
+		private VariantLineMapper variantLineMapper;
 		private String line;
 
-		public TabixQueryIterator(TabixIterator tabixIterator) throws IOException
+		public TabixQueryIterator(TabixIterator tabixIterator, VariantLineMapper variantLineMapper) throws IOException
 		{
 			this.tabixIterator = tabixIterator;
+			this.variantLineMapper = variantLineMapper;
 			line = tabixIterator == null ? null : tabixIterator.next();
 		}
 
@@ -112,9 +117,9 @@ public class TabixQuery implements GenotypeQuery
 			return line != null;
 		}
 
-		public String next()
+		public GeneticVariant next()
 		{
-			String result = line;
+			GeneticVariant variant = variantLineMapper.mapLine(line);
 
 			try
 			{
@@ -125,7 +130,7 @@ public class TabixQuery implements GenotypeQuery
 				throw new RuntimeException("Exception calling next on TabixIndex.TabixIterator", e);
 			}
 
-			return result;
+			return variant;
 		}
 
 		public void remove()

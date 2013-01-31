@@ -9,19 +9,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
-
-import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
-import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ListVariantHandler;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantHandler;
-import org.molgenis.io.vcf.VcfReader;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -33,9 +28,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 	@BeforeClass
 	public void beforeClass() throws IOException
 	{
-		GenotypeDataIndex index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz());
-		VcfReader reader = new VcfReader(new BlockCompressedInputStream(getTestVcfGz()));
-		genotypeData = new VcfGenotypeData(index, reader);
+		genotypeData = new VcfGenotypeData(getTestVcfGz(), getTestVcfGzTbi());
 	}
 
 	@AfterClass

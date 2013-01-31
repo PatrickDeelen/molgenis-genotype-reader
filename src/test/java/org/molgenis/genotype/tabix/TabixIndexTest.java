@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.molgenis.genotype.ResourceTest;
+import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.VariantLineMapper;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -17,7 +19,13 @@ public class TabixIndexTest extends ResourceTest
 	@BeforeClass
 	private void setUp() throws IOException
 	{
-		index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz());
+		index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz(), new VariantLineMapper()
+		{
+			public GeneticVariant mapLine(String line)
+			{
+				return null;
+			}
+		});
 	}
 
 	@Test

@@ -4,7 +4,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
 
-public interface GenotypeQuery extends Closeable
+import org.molgenis.genotype.variant.GeneticVariant;
+
+public interface VariantQuery extends Closeable
 {
 	/**
 	 * Get a subset of the data in the index
@@ -19,7 +21,7 @@ public interface GenotypeQuery extends Closeable
 	 * 
 	 * @throws IOException
 	 */
-	public Iterator<String> executeQuery(String sequence, int startPos, int stopPos);
+	public Iterator<GeneticVariant> executeQuery(String sequence, int startPos, int stopPos);
 
 	/**
 	 * Gets all variants of a sequence
@@ -28,7 +30,7 @@ public interface GenotypeQuery extends Closeable
 	 * @return
 	 * @throws IOException
 	 */
-	public Iterator<String> executeQuery(String sequence);
+	public Iterator<GeneticVariant> executeQuery(String sequence);
 
 	/**
 	 * Find a variant at the specified position
@@ -37,5 +39,5 @@ public interface GenotypeQuery extends Closeable
 	 * @param startPos
 	 * @return The variant or null is not found
 	 */
-	public String executeQuery(String sequence, int startPos);
+	public GeneticVariant executeQuery(String sequence, int startPos);
 }

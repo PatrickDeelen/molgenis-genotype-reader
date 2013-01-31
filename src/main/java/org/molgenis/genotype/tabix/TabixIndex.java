@@ -16,7 +16,8 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.molgenis.genotype.GenotypeDataIndex;
-import org.molgenis.genotype.GenotypeQuery;
+import org.molgenis.genotype.VariantQuery;
+import org.molgenis.genotype.variant.VariantLineMapper;
 
 /**
  * Tabix implementation of the GenotypeDataIndex The constructor takes a gz.tbi
@@ -48,10 +49,13 @@ public class TabixIndex implements GenotypeDataIndex
 	private HashMap<String, Integer> mChr2tid;
 
 	private File bzipFile;
+	private VariantLineMapper variantLineMapper;
 
-	public TabixIndex(File tabixIndexFile, File bzipFile) throws IOException
+	public TabixIndex(File tabixIndexFile, File bzipFile, VariantLineMapper variantLineMapper) throws IOException
 	{
 		this.bzipFile = bzipFile;
+		this.variantLineMapper = variantLineMapper;
+
 		readIndexFile(tabixIndexFile);
 	}
 
@@ -65,9 +69,9 @@ public class TabixIndex implements GenotypeDataIndex
 		return mIndex.clone();
 	}
 
-	public GenotypeQuery createQuery()
+	public VariantQuery createQuery()
 	{
-		return new TabixQuery(bzipFile, this);
+		return new TabixQuery(bzipFile, this, variantLineMapper);
 	};
 
 	private int chr2tid(final String chr)
