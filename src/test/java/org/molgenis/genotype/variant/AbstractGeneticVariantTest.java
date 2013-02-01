@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,7 +32,8 @@ public class AbstractGeneticVariantTest
 	{
 		public TestGeneticVariant(List<String> ids)
 		{
-			super(ids, "1", 0, new HashMap<String, List<String>>(), new HashMap<String, Object>());
+			super(ids, "1", 0, new HashMap<String, List<String>>(), new HashMap<String, Object>(), null, Collections
+					.<String> emptyList(), Collections.<String> emptyList());
 		}
 
 		@Override

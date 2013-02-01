@@ -27,7 +27,7 @@ public class VcfVariantLineMapperTest
 		String line = "1	565286	rs1578391	C	T	.	flt	NS=1;DP=5;AF=1.000;ANNOT=INT;GI=LOC100131754	GT:DP:EC:CONFS	1/1:5:5:5.300,5.300,1.000,1.000,1.000,1.000,1.000";
 
 		VariantLineMapper mapper = new VcfVariantLineMapper(COL_NAMES, SAMPLE_NAMES,
-				Collections.<Annotation> emptyList());
+				Collections.<Annotation> emptyList(), Collections.<String, String> emptyMap());
 		GeneticVariant var = mapper.mapLine(line);
 		assertNotNull(var);
 		assertTrue(var instanceof SnpGeneticVariant);
@@ -64,7 +64,7 @@ public class VcfVariantLineMapperTest
 		String line = "1	565286	.	C	CTA,CA	.	flt	NS=1;DP=5;AF=1.000;ANNOT=INT;GI=LOC100131754	GT:DP:EC:CONFS	1/1:5:5:5.300,5.300,1.000,1.000,1.000,1.000,1.000";
 
 		VariantLineMapper mapper = new VcfVariantLineMapper(COL_NAMES, SAMPLE_NAMES,
-				Collections.<Annotation> emptyList());
+				Collections.<Annotation> emptyList(), Collections.<String, String> emptyMap());
 		GeneticVariant variant = mapper.mapLine(line);
 		assertNotNull(variant);
 

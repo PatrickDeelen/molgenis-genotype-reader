@@ -33,8 +33,9 @@ public class TabixIndexTest extends ResourceTest
 	{
 		List<String> seqNames = index.getSeqNames();
 		assertNotNull(seqNames);
-		assertEquals(seqNames.size(), 2);
+		assertEquals(seqNames.size(), 3);
 		assertEquals(seqNames.get(0), "1");
 		assertEquals(seqNames.get(1), "2");
+		assertEquals(seqNames.get(2), "3");
 	}
 }

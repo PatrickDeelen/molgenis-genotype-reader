@@ -35,7 +35,8 @@ public class TabixQueryTest extends ResourceTest
 		try
 		{
 			VariantLineMapper variantLineMapper = new VcfVariantLineMapper(reader.getColNames(),
-					reader.getSampleNames(), Collections.<Annotation> emptyList());
+					reader.getSampleNames(), Collections.<Annotation> emptyList(),
+					Collections.<String, String> emptyMap());
 			index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz(), variantLineMapper);
 		}
 		finally

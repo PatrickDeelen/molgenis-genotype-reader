@@ -28,6 +28,13 @@ public interface GeneticVariant
 	int getStartPos();
 
 	/**
+	 * Get the rnd position of the variant, returns null if unknown
+	 * 
+	 * @return
+	 */
+	Integer getStopPos();
+
+	/**
 	 * Get the Sequence this variant is lying on
 	 * 
 	 * @return the Sequence
@@ -63,4 +70,8 @@ public interface GeneticVariant
 	 * @return
 	 */
 	Map<String, ?> getAnnotationValues();
+
+	List<String> getAltDescriptions();
+
+	List<String> getAltTypes();
 }

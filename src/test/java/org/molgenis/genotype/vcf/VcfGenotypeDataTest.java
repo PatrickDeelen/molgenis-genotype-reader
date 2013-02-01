@@ -42,9 +42,10 @@ public class VcfGenotypeDataTest extends ResourceTest
 	{
 		List<String> seqNames = genotypeData.getSeqNames();
 		assertNotNull(seqNames);
-		assertEquals(seqNames.size(), 2);
+		assertEquals(seqNames.size(), 3);
 		assertEquals(seqNames.get(0), "1");
 		assertEquals(seqNames.get(1), "2");
+		assertEquals(seqNames.get(2), "3");
 	}
 
 	@Test
@@ -52,7 +53,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 	{
 		Map<String, Annotation> annotations = genotypeData.getVariantAnnotationsMap();
 		assertNotNull(annotations);
-		assertEquals(annotations.size(), 20);
+		assertEquals(annotations.size(), 21);
 
 		Annotation annotation = annotations.get("NS");
 		assertNotNull(annotation);
@@ -65,7 +66,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 	{
 		List<Sequence> sequences = genotypeData.getSequences();
 		assertNotNull(sequences);
-		assertEquals(sequences.size(), 2);
+		assertEquals(sequences.size(), 3);
 	}
 
 	@Test
@@ -182,6 +183,33 @@ public class VcfGenotypeDataTest extends ResourceTest
 		List<String> strings = (List<String>) annotationValue;
 		assertEquals(strings.size(), 1);
 		assertEquals(strings.get(0), "INT");
+	}
+
+	@Test
+	public void testStopPos()
+	{
+		GeneticVariant variant = genotypeData.getVariant("1", 565286);
+		assertNotNull(variant);
+		assertNull(variant.getStopPos());
+
+		variant = genotypeData.getVariant("3", 7569);
+		assertNotNull(variant);
+		assertEquals(variant.getStopPos(), Integer.valueOf(321887));
+	}
+
+	@Test
+	public void testAlt()
+	{
+		GeneticVariant variant = genotypeData.getVariant("3", 7569);
+		assertNotNull(variant);
+
+		assertNotNull(variant.getAltTypes());
+		assertEquals(variant.getAltTypes().size(), 1);
+		assertEquals(variant.getAltTypes().get(0), "DEL");
+
+		assertNotNull(variant.getAltDescriptions());
+		assertEquals(variant.getAltDescriptions().size(), 1);
+		assertEquals(variant.getAltDescriptions().get(0), "Deletion");
 	}
 
 	private static class CountingVariantHandler implements VariantHandler

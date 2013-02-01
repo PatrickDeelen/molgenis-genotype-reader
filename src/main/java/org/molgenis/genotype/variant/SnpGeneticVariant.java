@@ -11,9 +11,10 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 	private final char[] snpAlleles;
 
 	public SnpGeneticVariant(List<String> ids, String sequenceName, int startPos, char[] snpAlleles, char refAllele,
-			Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues)
+			Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
+			List<String> altDescriptions, List<String> altTypes)
 	{
-		super(ids, sequenceName, startPos, sampleVariants, annotationValues);
+		super(ids, sequenceName, startPos, sampleVariants, annotationValues, stopPos, altDescriptions, altTypes);
 		this.refAllele = refAllele;
 		this.snpAlleles = snpAlleles.clone();
 	}
@@ -45,6 +46,12 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 	public char[] getSnpAlleles()
 	{
 		return snpAlleles.clone();
+	}
+
+	@Override
+	public Integer getStopPos()
+	{
+		return null;
 	}
 
 }

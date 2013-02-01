@@ -23,6 +23,7 @@
 ##INFO=<ID=MTASTERC,Number=A,Type=Character,Description="dbNSFP MutationTaster Classification">
 ##INFO=<ID=MTASTERS,Number=A,Type=Float,Description="dbNSFP MutationTaster Score">
 ##INFO=<ID=HGENOMES,Number=A,Type=Float,Description="1000 Genomes Frequency">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position of the variant described in this record">
 ##FILTER=<ID=flt,Description="Failing one of the filters">
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
 ##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
@@ -30,6 +31,7 @@
 ##FORMAT=<ID=CONFS,Number=7,Type=Float,Description="NextGENe Confidence Scores: Overall, Coverage, Read Balance, Allele Balance, Homopolymer, Mismatch, Wrong Allele">
 ##FORMAT=<ID=CONFIRM,Number=1,Type=Integer,Description="Confirmed Allele">
 ##FORMAT=<ID=DELETE,Number=1,Type=Integer,Description="Deleted Allele">
+##ALT=<ID=DEL,Description="Deletion">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	test_S0_L001_R1_001_converted_Unique_Output.pjt
 1	565286	rs1578391	C	T	.	flt	NS=1;DP=5;AF=1.000;ANNOT=INT;GI=LOC100131754	GT:DP:EC:CONFS	1/1:5:5:5.300,5.300,1.000,1.000,1.000,1.000,1.000
 1	2243618	rs35434908	A	GTTTCA	.	flt	NS=1;DP=6;AF=1.000;ANNOT=ING	GT:DP:EC:CONFS	1/1:6:6:6.500,6.560,1.000,1.000,1.000,1.000,1.000
@@ -38,3 +40,4 @@
 1	3172273	rs2455100	T	C	.	flt	NS=1;DP=7;AF=1.000;ANNOT=INT;GI=PRDM16;TI=NM_022114.3;PI=NP_071397.3	GT:DP:EC:CONFS	1/1:7:7:3.400,7.310,0.470,1.000,1.000,1.000,1.000
 1	6097450	rs1295089	G	A	.	flt	NS=1;DP=5;AF=1.000;ANNOT=INT;GI=KCNAB2;TI=NM_003636.2;PI=NP_003627.1	GT:DP:EC:CONFS	1/1:5:5:5.000,5.070,1.000,1.000,1.000,1.000,1.000
 2	7569187	rs4908464	G	C	.	flt	NS=1;DP=4;AF=1.000;ANNOT=INT;GI=CAMTA1;TI=NM_015215.1;PI=NP_056030.1	GT:DP:EC:CONFS	1/1:4:4:1.600,4.900,0.330,1.000,1.000,1.000,1.000
+3	7569	.	G	<DEL>	.	flt	IMPRECISE;SVTYPE=DEL;END=321887;SVLEN=-105;CIPOS=-56,20;CIEND=-10,62	GT	0/1

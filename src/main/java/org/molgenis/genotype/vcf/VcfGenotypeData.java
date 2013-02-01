@@ -24,6 +24,7 @@ import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
+import org.molgenis.io.vcf.VcfAlt;
 import org.molgenis.io.vcf.VcfContig;
 import org.molgenis.io.vcf.VcfInfo;
 import org.molgenis.io.vcf.VcfReader;
@@ -33,6 +34,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 	private final GenotypeDataIndex index;
 	private final VcfReader reader;
 	private Map<String, Annotation> sampleAnnotationsMap;
+	private Map<String, String> altDescriptions;
 
 	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile)
 	{
@@ -41,7 +43,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 			reader = new VcfReader(new BlockCompressedInputStream(bzipVcfFile));
 
 			VariantLineMapper variantLineMapper = new VcfVariantLineMapper(reader.getColNames(),
-					reader.getSampleNames(), getVariantAnnotations());
+					reader.getSampleNames(), getVariantAnnotations(), getAltDescriptions());
 			index = new TabixIndex(tabixIndexFile, bzipVcfFile, variantLineMapper);
 		}
 		catch (IOException e)
@@ -146,6 +148,22 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		}
 
 		return sequenceLengthById;
+	}
+
+	private Map<String, String> getAltDescriptions()
+	{
+		if (altDescriptions == null)
+		{
+			List<VcfAlt> alts = reader.getAlts();
+			altDescriptions = new HashMap<String, String>(alts.size());
+
+			for (VcfAlt alt : alts)
+			{
+				altDescriptions.put(alt.getId(), alt.getDescription());
+			}
+		}
+
+		return altDescriptions;
 	}
 
 	public void close() throws IOException

@@ -18,15 +18,19 @@ import org.molgenis.io.vcf.VcfSampleGenotype;
 
 public class VcfVariantLineMapper implements VariantLineMapper
 {
+	private static final String END_INFO_ID = "END";
 	private final List<String> colNames;
 	private final List<String> sampleNames;
-	private final List<Annotation> variantAnnotations;
+	private final List<Annotation> infoAnnotations;
+	private final Map<String, String> altDescriptions;
 
-	public VcfVariantLineMapper(List<String> colNames, List<String> sampleNames, List<Annotation> variantAnnotations)
+	public VcfVariantLineMapper(List<String> colNames, List<String> sampleNames, List<Annotation> infoAnnotations,
+			Map<String, String> altDescriptions)
 	{
 		this.colNames = colNames;
 		this.sampleNames = sampleNames;
-		this.variantAnnotations = variantAnnotations;
+		this.infoAnnotations = infoAnnotations;
+		this.altDescriptions = altDescriptions;
 	}
 
 	public GeneticVariant mapLine(String line)
@@ -50,9 +54,53 @@ public class VcfVariantLineMapper implements VariantLineMapper
 			sampleVariantsBySampleId.put(sampleName, Collections.unmodifiableList(sampleVariants));
 		}
 
-		// Get the annotation values
+		Map<String, Object> annotationValues = getAnnotationValues(record, infoAnnotations);
+		Integer stopPos = (Integer) annotationValues.get(END_INFO_ID);
+
+		// Check if the alt alleles contain references to alt annotaions
+		List<String> altTypes = new ArrayList<String>();
+		List<String> altDescriptions = new ArrayList<String>();
+
+		if (alleles.size() > 0)
+		{
+			// First allele is ref
+			for (int i = 1; i < alleles.size(); i++)
+			{
+				String alt = alleles.get(i);
+				if ((alt != null) && alt.startsWith("<") && alt.endsWith(">"))
+				{
+					String altType = alt.substring(1, alt.length() - 1);
+					altTypes.add(altType);
+					String altDescription = this.altDescriptions.get(altType);
+					if (altDescription != null)
+					{
+						altDescriptions.add(altDescription);
+					}
+				}
+			}
+		}
+
+		GeneticVariant variant;
+		if (isSnp(alleles))
+		{
+			variant = new SnpGeneticVariant(ids, sequenceName, startPos, toCharArray(alleles), refAllele.charAt(0),
+					sampleVariantsBySampleId, annotationValues, stopPos, altDescriptions, altTypes);
+		}
+		else
+		{
+
+			variant = new GenericGeneticVariant(ids, sequenceName, startPos, alleles, refAllele,
+					sampleVariantsBySampleId, annotationValues, stopPos, altDescriptions, altTypes);
+		}
+
+		return variant;
+	}
+
+	private Map<String, Object> getAnnotationValues(VcfRecord record, List<Annotation> annotations)
+	{
 		Map<String, Object> annotationValues = new HashMap<String, Object>();
-		for (Annotation annotation : variantAnnotations)
+
+		for (Annotation annotation : annotations)
 		{
 			String annoId = annotation.getId();
 			Object annoValue = null;
@@ -140,19 +188,7 @@ public class VcfVariantLineMapper implements VariantLineMapper
 			}
 		}
 
-		GeneticVariant variant;
-		if (isSnp(alleles))
-		{
-			variant = new SnpGeneticVariant(ids, sequenceName, startPos, toCharArray(alleles), refAllele.charAt(0),
-					sampleVariantsBySampleId, annotationValues);
-		}
-		else
-		{
-			variant = new GenericGeneticVariant(ids, sequenceName, startPos, alleles, refAllele,
-					sampleVariantsBySampleId, annotationValues);
-		}
-
-		return variant;
+		return annotationValues;
 	}
 
 	// Variant is a SNP if all alleles are one nucleotide long
