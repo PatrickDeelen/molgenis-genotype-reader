@@ -24,9 +24,4 @@ public class GenotypeDataException extends RuntimeException
 		super(message, cause);
 	}
 
-	public GenotypeDataException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
-	{
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
 }
