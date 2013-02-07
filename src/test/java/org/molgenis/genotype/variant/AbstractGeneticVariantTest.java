@@ -48,5 +48,15 @@ public class AbstractGeneticVariantTest
 			return null;
 		}
 
+		@Override
+		public float getMinorAlleleFrequency() {
+			return 0;
+		}
+
+		@Override
+		public String getMinorAllele() {
+			return null;
+		}
+
 	}
 }
