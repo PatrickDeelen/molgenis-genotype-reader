@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantHandler;
 
 /**
@@ -62,6 +63,15 @@ public interface GenotypeData extends Closeable
 	 * @return all variants found at startPos, can be empty if none found
 	 */
 	List<GeneticVariant> getVariantsByPos(String seqName, int startPos);
+
+	/**
+	 * Get the snp variants at the specified position
+	 * 
+	 * @param seqName
+	 * @param startPos
+	 * @return all snp variants found at startPos, can be empty if none found
+	 */
+	List<SnpGeneticVariant> getSnpVariantsByPos(String seqName, int startPos);
 
 	/**
 	 * Get all variants of a sequence For every variant
