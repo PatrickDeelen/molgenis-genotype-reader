@@ -83,7 +83,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertNotNull(variants);
 		assertEquals(variants.size(), 1);
 		GeneticVariant variant = variants.get(0);
-		assertEquals(variant.getCompoundId(), "rs4908464");
+		assertEquals(variant.getPrimaryVariantId(), "rs4908464");
 		assertEquals(variant.getStartPos(), 7569187);
 		assertEquals(variant.getRefAllele(), "G");
 		assertEquals(variant.getSequenceName(), "2");
@@ -95,15 +95,12 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(alleles.get(0), "G");
 		assertEquals(alleles.get(1), "C");
 
-		Map<String, List<String>> sampleVariantsBySampleId = variant.getSampleVariants();
-		assertNotNull(sampleVariantsBySampleId);
-		assertEquals(sampleVariantsBySampleId.size(), 1);
-		List<String> sampleVariantList = sampleVariantsBySampleId
-				.get("test_S0_L001_R1_001_converted_Unique_Output.pjt");
-		assertNotNull(sampleVariantList);
-		assertEquals(sampleVariantList.size(), 2);
-		assertEquals(sampleVariantList.get(0), "C");
-		assertEquals(sampleVariantList.get(0), "C");
+		List<List<String>> sampleVariants = variant.getSampleVariants();
+		assertNotNull(sampleVariants);
+		assertEquals(sampleVariants.size(), 1);
+		assertEquals(sampleVariants.get(0).size(), 2);
+		assertEquals(sampleVariants.get(0).get(0), "C");
+		assertEquals(sampleVariants.get(0).get(0), "C");
 	}
 
 	@Test
@@ -115,11 +112,13 @@ public class VcfGenotypeDataTest extends ResourceTest
 	@Test
 	public void testGetVariant()
 	{
-		GeneticVariant variant = genotypeData.getVariant("1", 565286);
-		assertNotNull(variant);
-		assertEquals(variant.getCompoundId(), "rs1578391");
+		List<GeneticVariant> variants = genotypeData.getVariantsByPos("1", 565286);
+		assertNotNull(variants);
+		assertEquals(variants.size(), 1);
+		assertEquals(variants.get(0).getPrimaryVariantId(), "rs1578391");
 
-		assertNull(genotypeData.getVariant("bogus", 8));
+		assertNotNull(genotypeData.getVariantsByPos("bogus", 8));
+		assertTrue(genotypeData.getVariantsByPos("bogus", 8).isEmpty());
 	}
 
 	@Test
@@ -139,28 +138,45 @@ public class VcfGenotypeDataTest extends ResourceTest
 	}
 
 	@Test
+	public void testGetSampleSnpVariants()
+	{
+		List<GeneticVariant> geneticVariants = genotypeData.getVariantsByPos("1", 3172273);
+		assertNotNull(geneticVariants);
+		assertEquals(geneticVariants.size(), 1);
+
+		assertTrue(geneticVariants.get(0) instanceof SnpGeneticVariant);
+		SnpGeneticVariant snpGeneticVariant = (SnpGeneticVariant) geneticVariants.get(0);
+		List<List<Character>> sampleSnpVariants = snpGeneticVariant.getSampleSnpVariants();
+		assertNotNull(sampleSnpVariants);
+		assertEquals(sampleSnpVariants.size(), 1);
+		assertEquals(sampleSnpVariants.get(0).get(0), Character.valueOf('C'));
+		assertEquals(sampleSnpVariants.get(0).get(1), Character.valueOf('C'));
+	}
+
+	@Test
 	public void testGetSampleGeneticVariants()
 	{
-		Map<String, List<String>> variantMap = genotypeData.getSampleGeneticVariants("1", 3172273);
-		assertNotNull(variantMap);
-		assertEquals(variantMap.size(), 1);
+		List<List<String>> variants = genotypeData.getSampleGeneticVariants("1", 3172273);
+		assertNotNull(variants);
+		assertEquals(variants.size(), 1);
+		assertEquals(variants.get(0).size(), 2);
+		assertEquals(variants.get(0).get(0), "C");
+		assertEquals(variants.get(0).get(1), "C");
 
-		List<String> variants = variantMap.values().iterator().next();
-		assertEquals(variants.size(), 2);
-		assertEquals(variants.get(0), "C");
-		assertEquals(variants.get(1), "C");
-
-		variantMap = genotypeData.getSampleGeneticVariants("1", 1);
-		assertNotNull(variantMap);
-		assertTrue(variantMap.isEmpty());
+		variants = genotypeData.getSampleGeneticVariants("1", 1);
+		assertNotNull(variants);
+		assertTrue(variants.isEmpty());
 	}
 
 	@Test
 	public void testGeneticVariantAnnotations()
 	{
 		// NS=1;DP=4;AF=1.000;ANNOT=INT;GI=PRDM16;TI=NM_022114.3;PI=NP_071397.3
-		GeneticVariant variant = genotypeData.getVariant("1", 3171929);
-		assertNotNull(variant);
+		List<GeneticVariant> variants = genotypeData.getVariantsByPos("1", 3171929);
+		assertNotNull(variants);
+		assertEquals(variants.size(), 1);
+
+		GeneticVariant variant = variants.get(0);
 		assertNotNull(variant.getAnnotationValues());
 		assertEquals(variant.getAnnotationValues().size(), 7);
 
@@ -188,20 +204,25 @@ public class VcfGenotypeDataTest extends ResourceTest
 	@Test
 	public void testStopPos()
 	{
-		GeneticVariant variant = genotypeData.getVariant("1", 565286);
-		assertNotNull(variant);
-		assertNull(variant.getStopPos());
+		List<GeneticVariant> variants = genotypeData.getVariantsByPos("1", 565286);
+		assertNotNull(variants);
+		assertEquals(variants.size(), 1);
+		assertNull(variants.get(0).getStopPos());
 
-		variant = genotypeData.getVariant("3", 7569);
-		assertNotNull(variant);
-		assertEquals(variant.getStopPos(), Integer.valueOf(321887));
+		variants = genotypeData.getVariantsByPos("3", 7569);
+		assertNotNull(variants);
+		assertEquals(variants.size(), 1);
+		assertEquals(variants.get(0).getStopPos(), Integer.valueOf(321887));
 	}
 
 	@Test
 	public void testAlt()
 	{
-		GeneticVariant variant = genotypeData.getVariant("3", 7569);
-		assertNotNull(variant);
+		List<GeneticVariant> variants = genotypeData.getVariantsByPos("3", 7569);
+		assertNotNull(variants);
+		assertEquals(variants.size(), 1);
+
+		GeneticVariant variant = variants.get(0);
 
 		assertNotNull(variant.getAltTypes());
 		assertEquals(variant.getAltTypes().size(), 1);
@@ -216,6 +237,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 	{
 		private int count = 0;
 
+		@Override
 		public boolean handle(GeneticVariant variant)
 		{
 			count++;

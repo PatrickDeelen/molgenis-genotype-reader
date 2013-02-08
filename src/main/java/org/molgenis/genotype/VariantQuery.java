@@ -21,7 +21,7 @@ public interface VariantQuery extends Closeable
 	 * 
 	 * @throws IOException
 	 */
-	public Iterator<GeneticVariant> executeQuery(String sequence, int startPos, int stopPos);
+	Iterator<GeneticVariant> executeQuery(String sequence, int startPos, int stopPos);
 
 	/**
 	 * Gets all variants of a sequence
@@ -30,14 +30,14 @@ public interface VariantQuery extends Closeable
 	 * @return
 	 * @throws IOException
 	 */
-	public Iterator<GeneticVariant> executeQuery(String sequence);
+	Iterator<GeneticVariant> executeQuery(String sequence);
 
 	/**
-	 * Find a variant at the specified position
+	 * Find variants at the specified position
 	 * 
 	 * @param sequence
 	 * @param startPos
-	 * @return The variant or null is not found
+	 * @return
 	 */
-	public GeneticVariant executeQuery(String sequence, int startPos);
+	Iterator<GeneticVariant> executeQuery(String sequence, int startPos);
 }

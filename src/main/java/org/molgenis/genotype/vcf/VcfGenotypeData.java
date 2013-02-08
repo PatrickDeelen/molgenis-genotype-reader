@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		return sampleAnnotationsMap;
 	}
 
+	@Override
 	public List<Sequence> getSequences()
 	{
 		List<String> seqNames = getSeqNames();
@@ -89,12 +91,20 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		return sequences;
 	}
 
-	public GeneticVariant getVariant(String seqName, int startPos)
+	@Override
+	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
 		VariantQuery q = index.createQuery();
 		try
 		{
-			return q.executeQuery(seqName, startPos);
+			List<GeneticVariant> variants = new ArrayList<GeneticVariant>();
+			Iterator<GeneticVariant> it = q.executeQuery(seqName, startPos);
+			while (it.hasNext())
+			{
+				variants.add(it.next());
+			}
+
+			return variants;
 		}
 		finally
 		{
@@ -102,6 +112,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		}
 	}
 
+	@Override
 	public List<Sample> getSamples()
 	{
 		List<String> sampleNames;
@@ -124,11 +135,13 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		return samples;
 	}
 
+	@Override
 	public List<Annotation> getSampleAnnotations()
 	{
 		return Collections.emptyList();
 	}
 
+	@Override
 	public Annotation getSampleAnnotation(String annotationId)
 	{
 		return null;
@@ -166,6 +179,7 @@ public class VcfGenotypeData extends AbstractGenotypeData
 		return altDescriptions;
 	}
 
+	@Override
 	public void close() throws IOException
 	{
 		reader.close();

@@ -21,8 +21,8 @@ import org.molgenis.genotype.variant.VariantLineMapper;
 public class TabixQuery implements VariantQuery
 {
 	private BlockCompressedInputStream inputStream;;
-	private TabixIndex index;
-	private VariantLineMapper variantLineMapper;
+	private final TabixIndex index;
+	private final VariantLineMapper variantLineMapper;
 
 	public TabixQuery(File bzipFile, TabixIndex index, VariantLineMapper variantLineMapper)
 	{
@@ -55,6 +55,7 @@ public class TabixQuery implements VariantQuery
 	 * 
 	 * @throws IOException
 	 */
+	@Override
 	public Iterator<GeneticVariant> executeQuery(String sequence, int startPos, int stopPos)
 	{
 		if (startPos < 0) throw new IllegalArgumentException("StartPos must be bigger then 0");
@@ -78,22 +79,19 @@ public class TabixQuery implements VariantQuery
 	 * @return
 	 * @throws IOException
 	 */
+	@Override
 	public Iterator<GeneticVariant> executeQuery(String sequence)
 	{
 		return executeQuery(sequence, 0, Integer.MAX_VALUE);
 	}
 
-	public GeneticVariant executeQuery(String sequence, int startPos)
+	@Override
+	public Iterator<GeneticVariant> executeQuery(String sequence, int startPos)
 	{
-		Iterator<GeneticVariant> lines = executeQuery(sequence, startPos - 1, startPos);
-		if (lines.hasNext())
-		{
-			return lines.next();
-		}
-
-		return null;
+		return executeQuery(sequence, startPos - 1, startPos);
 	}
 
+	@Override
 	public void close() throws IOException
 	{
 		inputStream.close();
@@ -101,8 +99,8 @@ public class TabixQuery implements VariantQuery
 
 	private static class TabixQueryIterator implements Iterator<GeneticVariant>
 	{
-		private TabixIterator tabixIterator;
-		private VariantLineMapper variantLineMapper;
+		private final TabixIterator tabixIterator;
+		private final VariantLineMapper variantLineMapper;
 		private String line;
 
 		public TabixQueryIterator(TabixIterator tabixIterator, VariantLineMapper variantLineMapper) throws IOException
@@ -112,11 +110,13 @@ public class TabixQuery implements VariantQuery
 			line = tabixIterator == null ? null : tabixIterator.next();
 		}
 
+		@Override
 		public boolean hasNext()
 		{
 			return line != null;
 		}
 
+		@Override
 		public GeneticVariant next()
 		{
 			GeneticVariant variant = variantLineMapper.mapLine(line);
@@ -133,6 +133,7 @@ public class TabixQuery implements VariantQuery
 			return variant;
 		}
 
+		@Override
 		public void remove()
 		{
 			throw new UnsupportedOperationException();

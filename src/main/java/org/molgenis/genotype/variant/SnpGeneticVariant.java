@@ -11,14 +11,16 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 	private final char[] snpAlleles;
 	private char minorAllele = '\0';
 	private float minorAlleleFreq = 0;
+	private final List<List<Character>> sampleSnpVariants;
 
 	public SnpGeneticVariant(List<String> ids, String sequenceName, int startPos, char[] snpAlleles, char refAllele,
-			Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
+			List<List<Character>> sampleSnpVariants, Map<String, ?> annotationValues, Integer stopPos,
 			List<String> altDescriptions, List<String> altTypes)
 	{
-		super(ids, sequenceName, startPos, sampleVariants, annotationValues, stopPos, altDescriptions, altTypes);
+		super(ids, sequenceName, startPos, annotationValues, stopPos, altDescriptions, altTypes);
 		this.refAllele = refAllele;
 		this.snpAlleles = snpAlleles.clone();
+		this.sampleSnpVariants = sampleSnpVariants;
 	}
 
 	@Override
@@ -55,35 +57,66 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 	{
 		return null;
 	}
-	
-	public char getMinorSnpAllele(){
-		if(minorAllele == '\0'){
+
+	public char getMinorSnpAllele()
+	{
+		if (minorAllele == '\0')
+		{
 			deterimeSnpMinorAllele();
 		}
 		return minorAllele;
 	}
-	
+
 	@Override
-	public String getMinorAllele() {
-		if(minorAllele == '\0'){
+	public String getMinorAllele()
+	{
+		if (minorAllele == '\0')
+		{
 			deterimeSnpMinorAllele();
 		}
 		return Character.toString(minorAllele);
 	}
-	
+
 	@Override
-	public float getMinorAlleleFrequency() {
-		if(minorAllele == '\0'){
+	public float getMinorAlleleFrequency()
+	{
+		if (minorAllele == '\0')
+		{
 			deterimeSnpMinorAllele();
 		}
 		return minorAlleleFreq;
 	}
-	
+
 	/**
 	 * Determine the minor allele and its frequency and fill in these values
 	 */
-	private void deterimeSnpMinorAllele(){
+	private void deterimeSnpMinorAllele()
+	{
 		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	@Override
+	public List<List<String>> getSampleVariants()
+	{
+		List<List<String>> sampleVariants = new ArrayList<List<String>>();
+
+		for (List<Character> snpVariants : getSampleSnpVariants())
+		{
+			List<String> variants = new ArrayList<String>(snpVariants.size());
+			for (Character snpVariant : snpVariants)
+			{
+				variants.add(snpVariant.toString());
+			}
+
+			sampleVariants.add(variants);
+		}
+
+		return sampleVariants;
+	}
+
+	public List<List<Character>> getSampleSnpVariants()
+	{
+		return sampleSnpVariants;
 	}
 
 }

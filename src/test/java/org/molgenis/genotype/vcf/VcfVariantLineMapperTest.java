@@ -35,7 +35,7 @@ public class VcfVariantLineMapperTest
 
 		assertEquals(variant.getSequenceName(), "1");
 		assertEquals(variant.getStartPos(), 565286);
-		assertEquals(variant.getCompoundId(), "rs1578391");
+		assertEquals(variant.getPrimaryVariantId(), "rs1578391");
 
 		List<String> ids = variant.getIds();
 		assertNotNull(ids);
@@ -70,9 +70,9 @@ public class VcfVariantLineMapperTest
 
 		assertEquals(variant.getSequenceName(), "1");
 		assertEquals(variant.getStartPos(), 565286);
-		assertNull(variant.getCompoundId());
+		assertNull(variant.getPrimaryVariantId());
 
-		List<String> ids = variant.getIds();
+		List<String> ids = variant.getAlternativeVariantIds();
 		assertNotNull(ids);
 		assertTrue(ids.isEmpty());
 
