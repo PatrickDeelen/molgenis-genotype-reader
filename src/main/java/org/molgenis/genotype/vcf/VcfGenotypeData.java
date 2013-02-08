@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +17,12 @@ import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
-import org.molgenis.genotype.VariantQuery;
+import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
+import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfAlt;
@@ -94,21 +94,14 @@ public class VcfGenotypeData extends AbstractGenotypeData
 	@Override
 	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
-		VariantQuery q = index.createQuery();
+		VariantQueryResult result = index.createQuery().executeQuery(seqName, startPos);
 		try
 		{
-			List<GeneticVariant> variants = new ArrayList<GeneticVariant>();
-			Iterator<GeneticVariant> it = q.executeQuery(seqName, startPos);
-			while (it.hasNext())
-			{
-				variants.add(it.next());
-			}
-
-			return variants;
+			return Utils.iteratorToList(result.getGeneticVariants());
 		}
 		finally
 		{
-			IOUtils.closeQuietly(q);
+			IOUtils.closeQuietly(result);
 		}
 	}
 

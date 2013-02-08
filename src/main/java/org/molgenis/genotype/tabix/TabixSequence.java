@@ -1,17 +1,11 @@
 package org.molgenis.genotype.tabix;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.Sequence;
-import org.molgenis.genotype.VariantQuery;
-import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
-import org.molgenis.genotype.variant.SnpVariantHandler;
-import org.molgenis.genotype.variant.VariantHandler;
+import org.molgenis.genotype.VariantQueryResult;
 
 public class TabixSequence implements Sequence
 {
@@ -31,55 +25,28 @@ public class TabixSequence implements Sequence
 		this.index = index;
 	}
 
+	@Override
 	public String getName()
 	{
 		return name;
 	}
 
+	@Override
 	public Integer getLength()
 	{
 		return length;
 	}
 
+	@Override
 	public boolean isChromosome()
 	{
 		return CHROMOSOMES.contains(name.toLowerCase());
 	}
 
-	public void variants(VariantHandler handler)
+	@Override
+	public VariantQueryResult getVariants()
 	{
-		VariantQuery q = index.createQuery();
-		try
-		{
-			boolean proceed = true;
-			Iterator<GeneticVariant> it = q.executeQuery(name);
-			while (it.hasNext() && proceed)
-			{
-				GeneticVariant variant = it.next();
-				proceed = handler.handle(variant);
-			}
-		}
-		finally
-		{
-			IOUtils.closeQuietly(q);
-		}
-
-	}
-
-	public void snpVariants(final SnpVariantHandler handler)
-	{
-		variants(new VariantHandler()
-		{
-			public boolean handle(GeneticVariant variant)
-			{
-				if (variant instanceof SnpGeneticVariant)
-				{
-					return handler.handle((SnpGeneticVariant) variant);
-				}
-
-				return true;
-			}
-		});
+		return index.createQuery().executeQuery(name);
 	}
 
 }

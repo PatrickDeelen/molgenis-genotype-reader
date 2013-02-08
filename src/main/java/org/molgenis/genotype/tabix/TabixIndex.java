@@ -59,6 +59,7 @@ public class TabixIndex implements GenotypeDataIndex
 		readIndexFile(tabixIndexFile);
 	}
 
+	@Override
 	public List<String> getSeqNames()
 	{
 		return Collections.unmodifiableList(Arrays.asList(seqNames));
@@ -69,10 +70,11 @@ public class TabixIndex implements GenotypeDataIndex
 		return mIndex.clone();
 	}
 
+	@Override
 	public VariantQuery createQuery()
 	{
 		return new TabixQuery(bzipFile, this, variantLineMapper);
-	};
+	}
 
 	private int chr2tid(final String chr)
 	{
@@ -177,6 +179,7 @@ public class TabixIndex implements GenotypeDataIndex
 			v = p.v;
 		}
 
+		@Override
 		public int compareTo(final TPair64 p)
 		{
 			return u == p.u ? 0 : ((u < p.u) ^ (u < 0) ^ (p.u < 0)) ? -1 : 1; // unsigned

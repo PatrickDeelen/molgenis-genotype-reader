@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.VariantHandler;
+import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 /**
  * Interface that represents genomic data, can be backed by different data types
@@ -64,13 +64,22 @@ public interface GenotypeData extends Closeable
 	List<GeneticVariant> getVariantsByPos(String seqName, int startPos);
 
 	/**
-	 * Get all variants of a sequence For every variant
-	 * VariantHandler.handle(variant) is called.
+	 * Get the snp variants at the specified position
 	 * 
 	 * @param seqName
-	 * @param handler
+	 * @param startPos
+	 * @return all snp variants found at startPos, can be empty if none found
 	 */
-	void seqVariants(String seqName, VariantHandler handler);
+	List<SnpGeneticVariant> getSnpVariantsByPos(String seqName, int startPos);
+
+	/**
+	 * Get all variants of a sequence Close the VariantQueryResult after use
+	 * 
+	 * @param seqName
+	 * @throws GenotypeDataException
+	 *             if the seqName does not exist
+	 */
+	VariantQueryResult getSeqVariants(String seqName);
 
 	/**
 	 * Get all sample variant values of the variants at the specified position

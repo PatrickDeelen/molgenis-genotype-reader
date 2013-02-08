@@ -1,12 +1,8 @@
 package org.molgenis.genotype;
 
-import java.io.Closeable;
 import java.io.IOException;
-import java.util.Iterator;
 
-import org.molgenis.genotype.variant.GeneticVariant;
-
-public interface VariantQuery extends Closeable
+public interface VariantQuery
 {
 	/**
 	 * Get a subset of the data in the index
@@ -17,11 +13,11 @@ public interface VariantQuery extends Closeable
 	 * @param stopPos
 	 *            , inclusive
 	 * 
-	 * @return Iterator over the requested data
+	 * @return VariantQueryResult
 	 * 
 	 * @throws IOException
 	 */
-	Iterator<GeneticVariant> executeQuery(String sequence, int startPos, int stopPos);
+	VariantQueryResult executeQuery(String sequence, int startPos, int stopPos);
 
 	/**
 	 * Gets all variants of a sequence
@@ -30,7 +26,7 @@ public interface VariantQuery extends Closeable
 	 * @return
 	 * @throws IOException
 	 */
-	Iterator<GeneticVariant> executeQuery(String sequence);
+	VariantQueryResult executeQuery(String sequence);
 
 	/**
 	 * Find variants at the specified position
@@ -39,5 +35,5 @@ public interface VariantQuery extends Closeable
 	 * @param startPos
 	 * @return
 	 */
-	Iterator<GeneticVariant> executeQuery(String sequence, int startPos);
+	VariantQueryResult executeQuery(String sequence, int startPos);
 }

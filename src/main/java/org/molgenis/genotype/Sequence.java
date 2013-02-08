@@ -1,8 +1,5 @@
 package org.molgenis.genotype;
 
-import org.molgenis.genotype.variant.SnpVariantHandler;
-import org.molgenis.genotype.variant.VariantHandler;
-
 /**
  * Represents a genetic sequence for example a chromosome
  * 
@@ -11,28 +8,17 @@ import org.molgenis.genotype.variant.VariantHandler;
  */
 public interface Sequence
 {
-	public String getName();
+	String getName();
 
-	public Integer getLength();
+	Integer getLength();
 
 	/**
 	 * Returns if this sequence represents a chromosome or not
 	 */
-	public boolean isChromosome();
+	boolean isChromosome();
 
 	/**
-	 * Get all variants in this sequence. For every variant in this sequence
-	 * VariantHandler.handle(variant) is called.
-	 * 
-	 * @param handler
+	 * Get all variants in this sequence. Result should be closed
 	 */
-	public void variants(VariantHandler handler);
-
-	/**
-	 * Get all snp variants in this sequence. For every snp variant in this
-	 * sequence SnpVariantHandler.handle(variant) is called.
-	 * 
-	 * @param handler
-	 */
-	public void snpVariants(SnpVariantHandler handler);
+	VariantQueryResult getVariants();
 }
