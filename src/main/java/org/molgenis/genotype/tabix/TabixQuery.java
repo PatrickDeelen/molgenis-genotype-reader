@@ -8,6 +8,7 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.VariantQuery;
+import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.tabix.TabixIndex.TabixIterator;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
@@ -51,12 +52,11 @@ public class TabixQuery implements VariantQuery
 	 *            , exclusive
 	 * @param stopPos
 	 *            , inclusive
-	 * @return Iterator over the requested data
 	 * 
 	 * @throws IOException
 	 */
 	@Override
-	public Iterator<GeneticVariant> executeQuery(String sequence, int startPos, int stopPos)
+	public VariantQueryResult executeQuery(String sequence, int startPos, int stopPos)
 	{
 		if (startPos < 0) throw new IllegalArgumentException("StartPos must be bigger then 0");
 		if (stopPos <= startPos) throw new IllegalArgumentException("StopPos must be bigger then startPos ");
@@ -64,7 +64,7 @@ public class TabixQuery implements VariantQuery
 		try
 		{
 			TabixIterator tabixIterator = index.queryTabixIndex(sequence, startPos, stopPos, inputStream);
-			return new TabixQueryIterator(tabixIterator, variantLineMapper);
+			return new TabixQueryResult(inputStream, new TabixQueryIterator(tabixIterator, variantLineMapper));
 		}
 		catch (IOException e)
 		{
@@ -80,21 +80,15 @@ public class TabixQuery implements VariantQuery
 	 * @throws IOException
 	 */
 	@Override
-	public Iterator<GeneticVariant> executeQuery(String sequence)
+	public VariantQueryResult executeQuery(String sequence)
 	{
 		return executeQuery(sequence, 0, Integer.MAX_VALUE);
 	}
 
 	@Override
-	public Iterator<GeneticVariant> executeQuery(String sequence, int startPos)
+	public VariantQueryResult executeQuery(String sequence, int startPos)
 	{
 		return executeQuery(sequence, startPos - 1, startPos);
-	}
-
-	@Override
-	public void close() throws IOException
-	{
-		inputStream.close();
 	}
 
 	private static class TabixQueryIterator implements Iterator<GeneticVariant>

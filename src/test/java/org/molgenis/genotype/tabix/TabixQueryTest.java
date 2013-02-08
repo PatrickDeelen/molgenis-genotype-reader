@@ -13,6 +13,7 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.VariantQuery;
+import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
@@ -27,6 +28,7 @@ public class TabixQueryTest extends ResourceTest
 {
 	private VariantQuery query;
 	private TabixIndex index;
+	private VariantQueryResult result;
 
 	@BeforeClass
 	public void beforeClass() throws IOException
@@ -56,13 +58,18 @@ public class TabixQueryTest extends ResourceTest
 	@AfterMethod
 	public void afterMethod() throws IOException
 	{
-		query.close();
+		if (result != null)
+		{
+			result.close();
+		}
 	}
 
 	@Test
 	public void queryPos() throws IOException
 	{
-		Iterator<GeneticVariant> it = query.executeQuery("1", 565286, 6097450);
+		result = query.executeQuery("1", 565286, 6097450);
+		Iterator<GeneticVariant> it = result.getGeneticVariants();
+
 		int i = 0;
 		while (it.hasNext())
 		{
@@ -79,7 +86,9 @@ public class TabixQueryTest extends ResourceTest
 	@Test
 	public void querySeq1() throws IOException
 	{
-		Iterator<GeneticVariant> it = query.executeQuery("1");
+		result = query.executeQuery("1");
+		Iterator<GeneticVariant> it = result.getGeneticVariants();
+
 		int i = 0;
 		while (it.hasNext())
 		{
@@ -94,7 +103,9 @@ public class TabixQueryTest extends ResourceTest
 	@Test
 	public void querySeq2() throws IOException
 	{
-		Iterator<GeneticVariant> it = query.executeQuery("2");
+		result = query.executeQuery("2");
+		Iterator<GeneticVariant> it = result.getGeneticVariants();
+
 		int i = 0;
 		while (it.hasNext())
 		{
@@ -109,15 +120,17 @@ public class TabixQueryTest extends ResourceTest
 	@Test
 	public void queryStartPos()
 	{
-		Iterator<GeneticVariant> variants = query.executeQuery("1", 3172273);
+		result = query.executeQuery("1", 3172273);
+		Iterator<GeneticVariant> variants = result.getGeneticVariants();
+
 		assertNotNull(variants);
 		assertTrue(variants.hasNext());
 		assertEquals(variants.next().getPrimaryVariantId(), "rs2455100");
 		assertFalse(variants.hasNext());
 
 		assertNotNull(query.executeQuery("x", 3172273));
-		assertFalse(query.executeQuery("x", 3172273).hasNext());
+		assertFalse(query.executeQuery("x", 3172273).getGeneticVariants().hasNext());
 		assertNotNull(query.executeQuery("1", 31722730));
-		assertFalse(query.executeQuery("1", 31722730).hasNext());
+		assertFalse(query.executeQuery("1", 31722730).getGeneticVariants().hasNext());
 	}
 }

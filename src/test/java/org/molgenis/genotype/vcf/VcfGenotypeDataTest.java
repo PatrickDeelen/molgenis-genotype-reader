@@ -9,14 +9,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
+import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.ListVariantHandler;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
-import org.molgenis.genotype.variant.VariantHandler;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -70,16 +71,23 @@ public class VcfGenotypeDataTest extends ResourceTest
 	}
 
 	@Test
-	public void testGetSequenceByName()
+	public void testGetSequenceByName() throws IOException
 	{
 		Sequence sequence = genotypeData.getSequenceByName("2");
 		assertNotNull(sequence);
 		assertEquals(sequence.getName(), "2");
 
-		ListVariantHandler handler = new ListVariantHandler();
-		sequence.variants(handler);
+		VariantQueryResult queryResult = sequence.getVariants();
+		List<GeneticVariant> variants;
+		try
+		{
+			variants = Utils.iteratorToList(queryResult.getGeneticVariants());
+		}
+		finally
+		{
+			queryResult.close();
+		}
 
-		List<GeneticVariant> variants = handler.getVariants();
 		assertNotNull(variants);
 		assertEquals(variants.size(), 1);
 		GeneticVariant variant = variants.get(0);
@@ -122,19 +130,36 @@ public class VcfGenotypeDataTest extends ResourceTest
 	}
 
 	@Test
-	public void testSeqVariants()
+	public void testSeqVariants() throws IOException
 	{
-		CountingVariantHandler handler = new CountingVariantHandler();
-		genotypeData.seqVariants("1", handler);
-		assertEquals(handler.count, 6);
 
-		handler = new CountingVariantHandler();
-		genotypeData.seqVariants("2", handler);
-		assertEquals(handler.count, 1);
+		VariantQueryResult queryResult = genotypeData.getSeqVariants("1");
+		try
+		{
+			List<GeneticVariant> variants = Utils.iteratorToList(queryResult.getGeneticVariants());
+			assertEquals(variants.size(), 6);
+		}
+		finally
+		{
+			queryResult.close();
+		}
 
-		handler = new CountingVariantHandler();
-		genotypeData.seqVariants("x", handler);
-		assertEquals(handler.count, 0);
+		queryResult = genotypeData.getSeqVariants("2");
+		try
+		{
+			List<GeneticVariant> variants = Utils.iteratorToList(queryResult.getGeneticVariants());
+			assertEquals(variants.size(), 1);
+		}
+		finally
+		{
+			queryResult.close();
+		}
+	}
+
+	@Test(expectedExceptions = GenotypeDataException.class)
+	public void testGetSeqVariantUnknown()
+	{
+		genotypeData.getSeqVariants("x");
 	}
 
 	@Test
@@ -231,17 +256,5 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertNotNull(variant.getAltDescriptions());
 		assertEquals(variant.getAltDescriptions().size(), 1);
 		assertEquals(variant.getAltDescriptions().get(0), "Deletion");
-	}
-
-	private static class CountingVariantHandler implements VariantHandler
-	{
-		private int count = 0;
-
-		@Override
-		public boolean handle(GeneticVariant variant)
-		{
-			count++;
-			return true;
-		}
 	}
 }

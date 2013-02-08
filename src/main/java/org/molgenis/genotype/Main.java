@@ -1,10 +1,10 @@
 package org.molgenis.genotype;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.VariantHandler;
 import org.molgenis.genotype.vcf.VcfGenotypeData;
 
 public class Main
@@ -39,9 +39,20 @@ public class Main
 			// System.out.println("Sample count:" + sampleVariants.size());
 
 			Sequence seq = data.getSequenceByName("17");
-			CountingVariantHandler handler = new CountingVariantHandler();
-			seq.variants(handler);
-			System.out.println("Count: " + handler.getCount());
+			VariantQueryResult r = seq.getVariants();
+			try
+			{
+				Iterator<GeneticVariant> it = r.getGeneticVariants();
+				while (it.hasNext())
+				{
+					GeneticVariant v = it.next();
+					System.out.println(v.getSequenceName() + ":" + v.getPrimaryVariantId() + ":" + v.getStartPos());
+				}
+			}
+			finally
+			{
+				r.close();
+			}
 
 		}
 		catch (Exception e)
@@ -55,26 +66,4 @@ public class Main
 
 	}
 
-	private static class CountingVariantHandler implements VariantHandler
-	{
-		private int count = 0;
-
-		public int getCount()
-		{
-			return count;
-		}
-
-		public boolean handle(GeneticVariant variant)
-		{
-			// System.out.printf("Name: %s, start: %s, alleles: %s\n",
-			// variant.getCompoundId(), variant.getStartPos(),
-			// variant.getAlleles());
-			if (count % 1000 == 0)
-			{
-				System.out.println(count);
-			}
-			count++;
-			return count < 10000;
-		}
-	}
 }

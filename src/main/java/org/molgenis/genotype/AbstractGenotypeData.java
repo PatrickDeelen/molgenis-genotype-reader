@@ -8,7 +8,6 @@ import java.util.Map;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
-import org.molgenis.genotype.variant.VariantHandler;
 
 public abstract class AbstractGenotypeData implements GenotypeData
 {
@@ -42,13 +41,15 @@ public abstract class AbstractGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public void seqVariants(String seqName, VariantHandler handler)
+	public VariantQueryResult getSeqVariants(String seqName)
 	{
 		Sequence sequence = getSequenceByName(seqName);
-		if (sequence != null)
+		if (sequence == null)
 		{
-			sequence.variants(handler);
+			throw new GenotypeDataException("Unknown sequence [" + seqName + "]");
 		}
+
+		return sequence.getVariants();
 	}
 
 	@Override
