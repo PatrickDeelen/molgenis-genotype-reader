@@ -43,7 +43,7 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		String refAllele = record.getRef();
 
 		// Get the GT format values (example: 0/0/1)
-		List<List<String>> sampleVariants = new ArrayList<List<String>>();
+		List<List<String>> sampleVariants = new ArrayList<List<String>>(sampleNames.size());
 		for (String sampleName : sampleNames)
 		{
 			VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
