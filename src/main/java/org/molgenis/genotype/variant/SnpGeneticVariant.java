@@ -92,7 +92,38 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 	 */
 	private void deterimeSnpMinorAllele()
 	{
-		throw new UnsupportedOperationException("Not yet implemented");
+		
+		char maxAlleleValue = '\0';
+		
+		for(char a : snpAlleles){
+			if(a > maxAlleleValue){
+				maxAlleleValue = a;
+			}
+		}
+		
+		int[] alleleCounts = new int[ maxAlleleValue + 1 ];
+		
+		for(List<Character> sampleAlleles : this.getSampleSnpVariants()){
+			for(Character sampleAllele : sampleAlleles){
+				alleleCounts[sampleAllele]++;
+			}
+		}
+		
+		char provisionalMinorAllele = '\0';
+		int provisionalMinorAlleleCount = Integer.MAX_VALUE;
+		int totalAlleleCount = 0;
+		
+		for(char a : snpAlleles){
+			if(alleleCounts[a] < provisionalMinorAlleleCount){
+				provisionalMinorAlleleCount = alleleCounts[a];
+				provisionalMinorAllele = a;
+				totalAlleleCount += alleleCounts[a];
+			}
+		}
+		
+		this.minorAllele = provisionalMinorAllele;
+		this.minorAlleleFreq = provisionalMinorAlleleCount / (float) totalAlleleCount;
+		
 	}
 
 	@Override
