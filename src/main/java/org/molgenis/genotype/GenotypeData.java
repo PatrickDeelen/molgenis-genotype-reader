@@ -3,7 +3,6 @@ package org.molgenis.genotype;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
@@ -56,13 +55,13 @@ public interface GenotypeData extends Closeable
 	Annotation getVariantAnnotation(String annotationId);
 
 	/**
-	 * Get the variant at the specified position
+	 * Get the variants at the specified position
 	 * 
 	 * @param seqName
 	 * @param startPos
-	 * @return the variant or null if not found
+	 * @return all variants found at startPos, can be empty if none found
 	 */
-	GeneticVariant getVariant(String seqName, int startPos);
+	List<GeneticVariant> getVariantsByPos(String seqName, int startPos);
 
 	/**
 	 * Get all variants of a sequence For every variant
@@ -74,12 +73,11 @@ public interface GenotypeData extends Closeable
 	void seqVariants(String seqName, VariantHandler handler);
 
 	/**
-	 * Get all sample variant values of a variant at the specified position
+	 * Get all sample variant values of the variants at the specified position
 	 * 
-	 * Returns a Map of sample variants by sampleId. The list of variants can
-	 * contain null !!!! if unknown
+	 * The list of variants can contain null !!!! if unknown
 	 */
-	Map<String, List<String>> getSampleGeneticVariants(String seqName, int startPos);
+	List<String> getSampleGeneticVariants(String seqName, int startPos);
 
 	/**
 	 * Get all samples

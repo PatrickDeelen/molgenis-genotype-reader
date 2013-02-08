@@ -10,8 +10,8 @@ public class GenericGeneticVariant extends AbstractGeneticVariant
 	private final String refAllele;
 
 	public GenericGeneticVariant(List<String> ids, String sequenceName, int startPos, List<String> alleles,
-			String refAllele, Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues,
-			Integer stopPos, List<String> altDescriptions, List<String> altTypes)
+			String refAllele, List<String> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
+			List<String> altDescriptions, List<String> altTypes)
 	{
 		super(ids, sequenceName, startPos, sampleVariants, annotationValues, stopPos, altDescriptions, altTypes);
 		this.alleles = alleles;

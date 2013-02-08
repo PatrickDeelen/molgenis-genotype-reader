@@ -1,9 +1,7 @@
 package org.molgenis.genotype.vcf;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +31,7 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		this.altDescriptions = altDescriptions;
 	}
 
+	@Override
 	public GeneticVariant mapLine(String line)
 	{
 		VcfRecord record = new VcfRecord(line, colNames);
@@ -44,14 +43,13 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		String refAllele = record.getRef();
 
 		// Get the GT format values (example: 0/0/1)
-		Map<String, List<String>> sampleVariantsBySampleId = new LinkedHashMap<String, List<String>>();
+		List<String> sampleVariants = new ArrayList<String>();
 		for (String sampleName : sampleNames)
 		{
 			VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
 			if (geno == null) throw new GenotypeDataException("Missing GT format value for sample [" + sampleName + "]");
 
-			List<String> sampleVariants = geno.getSamleVariants(alleles);
-			sampleVariantsBySampleId.put(sampleName, Collections.unmodifiableList(sampleVariants));
+			sampleVariants.addAll(geno.getSamleVariants(alleles));
 		}
 
 		Map<String, Object> annotationValues = getAnnotationValues(record, infoAnnotations);
@@ -84,13 +82,13 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		if (isSnp(alleles))
 		{
 			variant = new SnpGeneticVariant(ids, sequenceName, startPos, toCharArray(alleles), refAllele.charAt(0),
-					sampleVariantsBySampleId, annotationValues, stopPos, altDescriptions, altTypes);
+					sampleVariants, annotationValues, stopPos, altDescriptions, altTypes);
 		}
 		else
 		{
 
-			variant = new GenericGeneticVariant(ids, sequenceName, startPos, alleles, refAllele,
-					sampleVariantsBySampleId, annotationValues, stopPos, altDescriptions, altTypes);
+			variant = new GenericGeneticVariant(ids, sequenceName, startPos, alleles, refAllele, sampleVariants,
+					annotationValues, stopPos, altDescriptions, altTypes);
 		}
 
 		return variant;

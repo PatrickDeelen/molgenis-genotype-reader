@@ -1,8 +1,9 @@
 package org.molgenis.genotype.tabix;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -106,17 +107,17 @@ public class TabixQueryTest extends ResourceTest
 	}
 
 	@Test
-	public void querySingleVariant()
+	public void queryStartPos()
 	{
-		GeneticVariant variant = query.executeQuery("1", 3172273);
-		assertNotNull(variant);
-		assertEquals(variant.getCompoundId(), "rs2455100");
+		Iterator<GeneticVariant> variants = query.executeQuery("1", 3172273);
+		assertNotNull(variants);
+		assertTrue(variants.hasNext());
+		assertEquals(variants.next().getPrimaryVariantId(), "rs2455100");
+		assertFalse(variants.hasNext());
 
-		variant = query.executeQuery("2", 7569187);
-		assertNotNull(variant);
-		assertEquals(variant.getCompoundId(), "rs4908464");
-
-		assertNull(query.executeQuery("x", 3172273));
-		assertNull(query.executeQuery("1", 31722730));
+		assertNotNull(query.executeQuery("x", 3172273));
+		assertFalse(query.executeQuery("x", 3172273).hasNext());
+		assertNotNull(query.executeQuery("1", 31722730));
+		assertFalse(query.executeQuery("1", 31722730).hasNext());
 	}
 }

@@ -7,18 +7,20 @@ public interface GeneticVariant
 {
 	/**
 	 * A Variant can have multiple id's (it's known under different names). The
-	 * compoundId is a concatination of these ids with ';' as separator.
+	 * compoundId is a concatination of these ids with ';' as separator. This is
+	 * the first in the list
 	 * 
-	 * @return the concatinated String
+	 * @return String
 	 */
-	String getCompoundId();
+	String getPrimaryVariantId();
 
 	/**
-	 * Gets all the id's (names) by wich this variant is known.
+	 * Gets all the other id's (names) besides the primaryVariantId by wich this
+	 * variant is known.
 	 * 
 	 * @return List of String
 	 */
-	List<String> getIds();
+	List<String> getAlternativeVariantIds();
 
 	/**
 	 * Gets the starting position on the sequence
@@ -57,10 +59,10 @@ public interface GeneticVariant
 	String getRefAllele();
 
 	/**
-	 * Returns a Map of sample variants by sampleId. The list of variants can
-	 * contain null !!!! if unknown
+	 * Returns list sample variants. The list of variants can contain null !!!!
+	 * if unknown
 	 */
-	Map<String, List<String>> getSampleVariants();
+	List<String> getSampleVariants();
 
 	/**
 	 * Get the annotations for this variant. The key is the annotationId, the

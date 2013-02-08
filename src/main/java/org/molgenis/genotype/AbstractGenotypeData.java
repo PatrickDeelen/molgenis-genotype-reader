@@ -11,18 +11,22 @@ import org.molgenis.genotype.variant.VariantHandler;
 
 public abstract class AbstractGenotypeData implements GenotypeData
 {
+	@Override
 	public abstract List<String> getSeqNames();
 
+	@Override
 	public List<Annotation> getVariantAnnotations()
 	{
 		return Collections.unmodifiableList(new ArrayList<Annotation>(getVariantAnnotationsMap().values()));
 	}
 
+	@Override
 	public Annotation getVariantAnnotation(String annotaionId)
 	{
 		return getVariantAnnotationsMap().get(annotaionId);
 	}
 
+	@Override
 	public Sequence getSequenceByName(String name)
 	{
 		for (Sequence sequence : getSequences())
@@ -36,6 +40,7 @@ public abstract class AbstractGenotypeData implements GenotypeData
 		return null;
 	}
 
+	@Override
 	public void seqVariants(String seqName, VariantHandler handler)
 	{
 		Sequence sequence = getSequenceByName(seqName);
@@ -45,15 +50,18 @@ public abstract class AbstractGenotypeData implements GenotypeData
 		}
 	}
 
-	public Map<String, List<String>> getSampleGeneticVariants(String seqName, int startPos)
+	@Override
+	public List<String> getSampleGeneticVariants(String seqName, int startPos)
 	{
-		GeneticVariant variant = getVariant(seqName, startPos);
-		if (variant == null)
+		List<String> sampleVariants = new ArrayList<String>();
+
+		List<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
+		for (GeneticVariant variant : variants)
 		{
-			return Collections.emptyMap();
+			sampleVariants.addAll(variant.getSampleVariants());
 		}
 
-		return variant.getSampleVariants();
+		return sampleVariants;
 	}
 
 	/**

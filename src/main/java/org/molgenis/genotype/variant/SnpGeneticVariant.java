@@ -11,7 +11,7 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 	private final char[] snpAlleles;
 
 	public SnpGeneticVariant(List<String> ids, String sequenceName, int startPos, char[] snpAlleles, char refAllele,
-			Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
+			List<String> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
 			List<String> altDescriptions, List<String> altTypes)
 	{
 		super(ids, sequenceName, startPos, sampleVariants, annotationValues, stopPos, altDescriptions, altTypes);

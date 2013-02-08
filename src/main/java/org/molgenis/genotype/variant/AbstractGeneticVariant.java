@@ -1,5 +1,6 @@
 package org.molgenis.genotype.variant;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -9,15 +10,14 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 	private final List<String> ids;
 	private final int startPos;
 	private final String sequenceName;
-	private final Map<String, List<String>> sampleVariants;
+	private final List<String> sampleVariants;
 	private final Map<String, ?> annotationValues;
 	private final Integer stopPos;
 	private final List<String> altDescriptions;
 	private final List<String> altTypes;
 
-	public AbstractGeneticVariant(List<String> ids, String sequenceName, int startPos,
-			Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
-			List<String> altDescriptions, List<String> altTypes)
+	public AbstractGeneticVariant(List<String> ids, String sequenceName, int startPos, List<String> sampleVariants,
+			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes)
 	{
 		if (ids == null) throw new IllegalArgumentException("Id list is null");
 		if (sequenceName == null) throw new IllegalArgumentException("SequenceName is null");
@@ -36,30 +36,32 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 		this.altTypes = altTypes;
 	}
 
+	@Override
 	public abstract List<String> getAlleles();
 
+	@Override
 	public abstract String getRefAllele();
 
-	public String getCompoundId()
+	@Override
+	public String getPrimaryVariantId()
 	{
-		List<String> ids = getIds();
-		if (ids.isEmpty())
+		if (ids.isEmpty()) return null;
+		return ids.get(0);
+	}
+
+	@Override
+	public List<String> getAlternativeVariantIds()
+	{
+		List<String> alternativeIds = new ArrayList<String>();
+
+		String primary = getPrimaryVariantId();
+		if (primary != null)
 		{
-			return null;
+			alternativeIds.addAll(ids);
+			alternativeIds.remove(primary);
 		}
 
-		StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < ids.size(); i++)
-		{
-			if (i > 0)
-			{
-				sb.append(";");
-			}
-			sb.append(ids.get(i));
-		}
-
-		return sb.toString();
+		return Collections.unmodifiableList(alternativeIds);
 	}
 
 	public List<String> getIds()
@@ -67,36 +69,43 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 		return Collections.unmodifiableList(ids);
 	}
 
+	@Override
 	public int getStartPos()
 	{
 		return startPos;
 	}
 
+	@Override
 	public String getSequenceName()
 	{
 		return sequenceName;
 	}
 
-	public Map<String, List<String>> getSampleVariants()
+	@Override
+	public List<String> getSampleVariants()
 	{
-		return Collections.unmodifiableMap(sampleVariants);
+		return Collections.unmodifiableList(sampleVariants);
 	}
 
+	@Override
 	public Map<String, ?> getAnnotationValues()
 	{
 		return annotationValues;
 	}
 
+	@Override
 	public Integer getStopPos()
 	{
 		return stopPos;
 	}
 
+	@Override
 	public List<String> getAltDescriptions()
 	{
 		return Collections.unmodifiableList(altDescriptions);
 	}
 
+	@Override
 	public List<String> getAltTypes()
 	{
 		return Collections.unmodifiableList(altTypes);
