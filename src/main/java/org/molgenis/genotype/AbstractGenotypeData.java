@@ -51,9 +51,9 @@ public abstract class AbstractGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public List<String> getSampleGeneticVariants(String seqName, int startPos)
+	public List<List<String>> getSampleGeneticVariants(String seqName, int startPos)
 	{
-		List<String> sampleVariants = new ArrayList<String>();
+		List<List<String>> sampleVariants = new ArrayList<List<String>>();
 
 		List<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
 		for (GeneticVariant variant : variants)

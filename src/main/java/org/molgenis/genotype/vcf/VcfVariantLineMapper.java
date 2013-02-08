@@ -43,13 +43,13 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		String refAllele = record.getRef();
 
 		// Get the GT format values (example: 0/0/1)
-		List<String> sampleVariants = new ArrayList<String>();
+		List<List<String>> sampleVariants = new ArrayList<List<String>>();
 		for (String sampleName : sampleNames)
 		{
 			VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
 			if (geno == null) throw new GenotypeDataException("Missing GT format value for sample [" + sampleName + "]");
 
-			sampleVariants.addAll(geno.getSamleVariants(alleles));
+			sampleVariants.add(new ArrayList<String>(geno.getSamleVariants(alleles)));
 		}
 
 		Map<String, Object> annotationValues = getAnnotationValues(record, infoAnnotations);
@@ -81,8 +81,21 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		GeneticVariant variant;
 		if (isSnp(alleles))
 		{
+			List<List<Character>> snpSampleVariants = new ArrayList<List<Character>>(sampleVariants.size());
+
+			for (List<String> sampleVariant : sampleVariants)
+			{
+				List<Character> snpSampleVariant = new ArrayList<Character>(sampleVariant.size());
+				for (String var : sampleVariant)
+				{
+					snpSampleVariant.add(var.charAt(0));
+				}
+
+				snpSampleVariants.add(snpSampleVariant);
+			}
+
 			variant = new SnpGeneticVariant(ids, sequenceName, startPos, toCharArray(alleles), refAllele.charAt(0),
-					sampleVariants, annotationValues, stopPos, altDescriptions, altTypes);
+					snpSampleVariants, annotationValues, stopPos, altDescriptions, altTypes);
 		}
 		else
 		{

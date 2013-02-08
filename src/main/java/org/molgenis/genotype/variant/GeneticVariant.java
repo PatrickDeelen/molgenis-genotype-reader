@@ -62,7 +62,7 @@ public interface GeneticVariant
 	 * Returns list sample variants. The list of variants can contain null !!!!
 	 * if unknown
 	 */
-	List<String> getSampleVariants();
+	List<List<String>> getSampleVariants();
 
 	/**
 	 * Get the annotations for this variant. The key is the annotationId, the
@@ -76,20 +76,19 @@ public interface GeneticVariant
 	List<String> getAltDescriptions();
 
 	List<String> getAltTypes();
-	
+
 	/**
 	 * Get the frequency of the minor allele
 	 * 
 	 * @return the minor allele frequency
 	 */
 	float getMinorAlleleFrequency();
-	
+
 	/**
 	 * Get the minor allele
 	 * 
 	 * @return the minor allele
 	 */
 	String getMinorAllele();
-	
-	
+
 }

@@ -4,7 +4,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,8 +52,8 @@ public class AbstractGeneticVariantTest
 	{
 		public TestGeneticVariant(List<String> ids)
 		{
-			super(ids, "1", 0, new ArrayList<String>(), new HashMap<String, Object>(), null, Collections
-					.<String> emptyList(), Collections.<String> emptyList());
+			super(ids, "1", 0, new HashMap<String, Object>(), null, Collections.<String> emptyList(), Collections
+					.<String> emptyList());
 		}
 
 		@Override
@@ -70,12 +69,20 @@ public class AbstractGeneticVariantTest
 		}
 
 		@Override
-		public float getMinorAlleleFrequency() {
+		public float getMinorAlleleFrequency()
+		{
 			return 0;
 		}
 
 		@Override
-		public String getMinorAllele() {
+		public String getMinorAllele()
+		{
+			return null;
+		}
+
+		@Override
+		public List<List<String>> getSampleVariants()
+		{
 			return null;
 		}
 

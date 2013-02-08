@@ -10,18 +10,16 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 	private final List<String> ids;
 	private final int startPos;
 	private final String sequenceName;
-	private final List<String> sampleVariants;
 	private final Map<String, ?> annotationValues;
 	private final Integer stopPos;
 	private final List<String> altDescriptions;
 	private final List<String> altTypes;
 
-	public AbstractGeneticVariant(List<String> ids, String sequenceName, int startPos, List<String> sampleVariants,
-			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes)
+	public AbstractGeneticVariant(List<String> ids, String sequenceName, int startPos, Map<String, ?> annotationValues,
+			Integer stopPos, List<String> altDescriptions, List<String> altTypes)
 	{
 		if (ids == null) throw new IllegalArgumentException("Id list is null");
 		if (sequenceName == null) throw new IllegalArgumentException("SequenceName is null");
-		if (sampleVariants == null) throw new IllegalArgumentException("SampleVariants map is null");
 		if (annotationValues == null) throw new IllegalArgumentException("AnnotationValues is null");
 		if (altDescriptions == null) throw new IllegalArgumentException("AltDescriptions is null");
 		if (altTypes == null) throw new IllegalArgumentException("AltTypes is null");
@@ -29,7 +27,6 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 		this.ids = ids;
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
-		this.sampleVariants = sampleVariants;
 		this.annotationValues = annotationValues;
 		this.stopPos = stopPos;
 		this.altDescriptions = altDescriptions;
@@ -82,10 +79,7 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 	}
 
 	@Override
-	public List<String> getSampleVariants()
-	{
-		return Collections.unmodifiableList(sampleVariants);
-	}
+	public abstract List<List<String>> getSampleVariants();
 
 	@Override
 	public Map<String, ?> getAnnotationValues()

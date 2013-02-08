@@ -95,11 +95,12 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(alleles.get(0), "G");
 		assertEquals(alleles.get(1), "C");
 
-		List<String> sampleVariants = variant.getSampleVariants();
+		List<List<String>> sampleVariants = variant.getSampleVariants();
 		assertNotNull(sampleVariants);
-		assertEquals(sampleVariants.size(), 2);
-		assertEquals(sampleVariants.get(0), "C");
-		assertEquals(sampleVariants.get(0), "C");
+		assertEquals(sampleVariants.size(), 1);
+		assertEquals(sampleVariants.get(0).size(), 2);
+		assertEquals(sampleVariants.get(0).get(0), "C");
+		assertEquals(sampleVariants.get(0).get(0), "C");
 	}
 
 	@Test
@@ -137,13 +138,30 @@ public class VcfGenotypeDataTest extends ResourceTest
 	}
 
 	@Test
+	public void testGetSampleSnpVariants()
+	{
+		List<GeneticVariant> geneticVariants = genotypeData.getVariantsByPos("1", 3172273);
+		assertNotNull(geneticVariants);
+		assertEquals(geneticVariants.size(), 1);
+
+		assertTrue(geneticVariants.get(0) instanceof SnpGeneticVariant);
+		SnpGeneticVariant snpGeneticVariant = (SnpGeneticVariant) geneticVariants.get(0);
+		List<List<Character>> sampleSnpVariants = snpGeneticVariant.getSampleSnpVariants();
+		assertNotNull(sampleSnpVariants);
+		assertEquals(sampleSnpVariants.size(), 1);
+		assertEquals(sampleSnpVariants.get(0).get(0), Character.valueOf('C'));
+		assertEquals(sampleSnpVariants.get(0).get(1), Character.valueOf('C'));
+	}
+
+	@Test
 	public void testGetSampleGeneticVariants()
 	{
-		List<String> variants = genotypeData.getSampleGeneticVariants("1", 3172273);
+		List<List<String>> variants = genotypeData.getSampleGeneticVariants("1", 3172273);
 		assertNotNull(variants);
-		assertEquals(variants.size(), 2);
-		assertEquals(variants.get(0), "C");
-		assertEquals(variants.get(1), "C");
+		assertEquals(variants.size(), 1);
+		assertEquals(variants.get(0).size(), 2);
+		assertEquals(variants.get(0).get(0), "C");
+		assertEquals(variants.get(0).get(1), "C");
 
 		variants = genotypeData.getSampleGeneticVariants("1", 1);
 		assertNotNull(variants);

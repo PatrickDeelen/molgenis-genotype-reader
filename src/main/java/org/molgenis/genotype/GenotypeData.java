@@ -77,7 +77,7 @@ public interface GenotypeData extends Closeable
 	 * 
 	 * The list of variants can contain null !!!! if unknown
 	 */
-	List<String> getSampleGeneticVariants(String seqName, int startPos);
+	List<List<String>> getSampleGeneticVariants(String seqName, int startPos);
 
 	/**
 	 * Get all samples

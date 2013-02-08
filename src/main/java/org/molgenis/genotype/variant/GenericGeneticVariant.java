@@ -10,14 +10,18 @@ public class GenericGeneticVariant extends AbstractGeneticVariant
 	private final String refAllele;
 	private String minorAllele = null;
 	private float minorAlleleFreq = 0;
+	private final List<List<String>> sampleVariants;
 
 	public GenericGeneticVariant(List<String> ids, String sequenceName, int startPos, List<String> alleles,
-			String refAllele, List<String> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
+			String refAllele, List<List<String>> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
 			List<String> altDescriptions, List<String> altTypes)
 	{
-		super(ids, sequenceName, startPos, sampleVariants, annotationValues, stopPos, altDescriptions, altTypes);
+		super(ids, sequenceName, startPos, annotationValues, stopPos, altDescriptions, altTypes);
 		this.alleles = alleles;
 		this.refAllele = refAllele;
+
+		if (sampleVariants == null) throw new IllegalArgumentException("SampleVariants map is null");
+		this.sampleVariants = sampleVariants;
 	}
 
 	@Override
@@ -33,28 +37,37 @@ public class GenericGeneticVariant extends AbstractGeneticVariant
 	}
 
 	@Override
-	public String getMinorAllele() {
-		if(minorAllele == null){
+	public String getMinorAllele()
+	{
+		if (minorAllele == null)
+		{
 			deterimeMinorAllele();
 		}
 		return minorAllele;
 	}
-	
+
 	@Override
-	public float getMinorAlleleFrequency() {
-		if(minorAllele == null){
+	public List<List<String>> getSampleVariants()
+	{
+		return sampleVariants;
+	}
+
+	@Override
+	public float getMinorAlleleFrequency()
+	{
+		if (minorAllele == null)
+		{
 			deterimeMinorAllele();
 		}
 		return minorAlleleFreq;
 	}
-	
+
 	/**
 	 * Determine the minor allele and its frequency and fill in these values
 	 */
-	private void deterimeMinorAllele(){
+	private void deterimeMinorAllele()
+	{
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
-	
-	
 
 }
