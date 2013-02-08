@@ -74,4 +74,20 @@ public interface GeneticVariant
 	List<String> getAltDescriptions();
 
 	List<String> getAltTypes();
+	
+	/**
+	 * Get the frequency of the minor allele
+	 * 
+	 * @return the minor allele frequency
+	 */
+	float getMinorAlleleFrequency();
+	
+	/**
+	 * Get the minor allele
+	 * 
+	 * @return the minor allele
+	 */
+	String getMinorAllele();
+	
+	
 }

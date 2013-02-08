@@ -9,6 +9,8 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 {
 	private final char refAllele;
 	private final char[] snpAlleles;
+	private char minorAllele = '\0';
+	private float minorAlleleFreq = 0;
 
 	public SnpGeneticVariant(List<String> ids, String sequenceName, int startPos, char[] snpAlleles, char refAllele,
 			Map<String, List<String>> sampleVariants, Map<String, ?> annotationValues, Integer stopPos,
@@ -52,6 +54,36 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 	public Integer getStopPos()
 	{
 		return null;
+	}
+	
+	public char getMinorSnpAllele(){
+		if(minorAllele == '\0'){
+			deterimeSnpMinorAllele();
+		}
+		return minorAllele;
+	}
+	
+	@Override
+	public String getMinorAllele() {
+		if(minorAllele == '\0'){
+			deterimeSnpMinorAllele();
+		}
+		return Character.toString(minorAllele);
+	}
+	
+	@Override
+	public float getMinorAlleleFrequency() {
+		if(minorAllele == '\0'){
+			deterimeSnpMinorAllele();
+		}
+		return minorAlleleFreq;
+	}
+	
+	/**
+	 * Determine the minor allele and its frequency and fill in these values
+	 */
+	private void deterimeSnpMinorAllele(){
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 }
