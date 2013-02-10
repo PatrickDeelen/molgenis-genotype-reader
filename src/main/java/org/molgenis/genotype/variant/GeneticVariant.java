@@ -37,7 +37,7 @@ public interface GeneticVariant
 	Integer getStopPos();
 
 	/**
-	 * Get the Sequence this variant is lying on
+	 * Get the Sequence this variant is located on
 	 * 
 	 * @return the Sequence
 	 */
