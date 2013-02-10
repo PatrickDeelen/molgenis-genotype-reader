@@ -114,11 +114,15 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 		int totalAlleleCount = 0;
 		
 		for(char a : snpAlleles){
-			if(alleleCounts[a] < provisionalMinorAlleleCount){
-				provisionalMinorAlleleCount = alleleCounts[a];
+			
+			int alleleCount = alleleCounts[a];
+			totalAlleleCount += alleleCount;
+			
+			if(alleleCount < provisionalMinorAlleleCount){
+				provisionalMinorAlleleCount = alleleCount;
 				provisionalMinorAllele = a;
-				totalAlleleCount += alleleCounts[a];
 			}
+			
 		}
 		
 		this.minorAllele = provisionalMinorAllele;
