@@ -44,7 +44,7 @@ public interface GeneticVariant
 	String getSequenceName();
 
 	/**
-	 * Get all posible alleles (including the reference) The first value is the
+	 * Get all possible alleles (including the reference) The first value is the
 	 * reference value
 	 * 
 	 * @return List of String
