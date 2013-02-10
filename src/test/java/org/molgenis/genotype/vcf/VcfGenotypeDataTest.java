@@ -6,6 +6,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 	private VcfGenotypeData genotypeData;
 
 	@BeforeClass
-	public void beforeClass() throws IOException
+	public void beforeClass() throws IOException, URISyntaxException
 	{
 		genotypeData = new VcfGenotypeData(getTestVcfGz(), getTestVcfGzTbi());
 	}
