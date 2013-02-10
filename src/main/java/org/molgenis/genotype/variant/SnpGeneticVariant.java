@@ -22,6 +22,16 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 		this.snpAlleles = snpAlleles.clone();
 		this.sampleSnpVariants = sampleSnpVariants;
 	}
+	
+	public SnpGeneticVariant(String id, String sequenceName, int startPos, char[] snpAlleles, char refAllele,
+			List<List<Character>> sampleSnpVariants, Map<String, ?> annotationValues, Integer stopPos,
+			List<String> altDescriptions, List<String> altTypes)
+	{
+		super(id, sequenceName, startPos, annotationValues, stopPos, altDescriptions, altTypes);
+		this.refAllele = refAllele;
+		this.snpAlleles = snpAlleles.clone();
+		this.sampleSnpVariants = sampleSnpVariants;
+	}
 
 	@Override
 	public List<String> getAlleles()
