@@ -3,7 +3,6 @@ package org.molgenis.genotype;
 import java.io.File;
 import java.util.Iterator;
 
-import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.vcf.VcfGenotypeData;
 
@@ -18,10 +17,9 @@ public class Main
 		File vcfFile = new File("/Users/erwin/Documents/data/vcf/chr17.vcf.gz");
 		File indexFile = new File("/Users/erwin/Documents/data/vcf/chr17.vcf.gz.tbi");
 
-		GenotypeData data = null;
 		try
 		{
-			data = new VcfGenotypeData(vcfFile, indexFile);
+			GenotypeData data = new VcfGenotypeData(vcfFile, indexFile);
 			System.out.println(data.getSeqNames());
 
 			// Name: rs8065600, start: 13676927, alleles: [C, T]
@@ -42,7 +40,7 @@ public class Main
 			VariantQueryResult r = seq.getVariants();
 			try
 			{
-				Iterator<GeneticVariant> it = r.getGeneticVariants();
+				Iterator<GeneticVariant> it = r.iterator();
 				while (it.hasNext())
 				{
 					GeneticVariant v = it.next();
@@ -58,10 +56,6 @@ public class Main
 		catch (Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			IOUtils.closeQuietly(data);
 		}
 
 	}

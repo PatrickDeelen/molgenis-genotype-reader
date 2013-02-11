@@ -26,7 +26,7 @@ public class TabixQueryResult implements VariantQueryResult
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getGeneticVariants()
+	public Iterator<GeneticVariant> iterator()
 	{
 		return iterator;
 	}

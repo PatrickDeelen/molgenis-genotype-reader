@@ -1,6 +1,5 @@
 package org.molgenis.genotype;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 
@@ -14,7 +13,7 @@ import org.molgenis.genotype.variant.SnpGeneticVariant;
  * @author erwin
  * 
  */
-public interface GenotypeData extends Closeable
+public interface GenotypeData
 {
 	/**
 	 * Get all sequencenames

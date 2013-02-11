@@ -19,7 +19,6 @@ import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -31,12 +30,6 @@ public class VcfGenotypeDataTest extends ResourceTest
 	public void beforeClass() throws IOException, URISyntaxException
 	{
 		genotypeData = new VcfGenotypeData(getTestVcfGz(), getTestVcfGzTbi());
-	}
-
-	@AfterClass
-	public void afterClass() throws IOException
-	{
-		genotypeData.close();
 	}
 
 	@Test
@@ -82,7 +75,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		List<GeneticVariant> variants;
 		try
 		{
-			variants = Utils.iteratorToList(queryResult.getGeneticVariants());
+			variants = Utils.iteratorToList(queryResult.iterator());
 		}
 		finally
 		{
@@ -137,7 +130,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		VariantQueryResult queryResult = genotypeData.getSeqVariants("1");
 		try
 		{
-			List<GeneticVariant> variants = Utils.iteratorToList(queryResult.getGeneticVariants());
+			List<GeneticVariant> variants = Utils.iteratorToList(queryResult.iterator());
 			assertEquals(variants.size(), 6);
 		}
 		finally
@@ -148,7 +141,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		queryResult = genotypeData.getSeqVariants("2");
 		try
 		{
-			List<GeneticVariant> variants = Utils.iteratorToList(queryResult.getGeneticVariants());
+			List<GeneticVariant> variants = Utils.iteratorToList(queryResult.iterator());
 			assertEquals(variants.size(), 1);
 		}
 		finally

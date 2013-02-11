@@ -69,7 +69,7 @@ public class TabixQueryTest extends ResourceTest
 	public void queryPos() throws IOException
 	{
 		result = query.executeQuery("1", 565286, 6097450);
-		Iterator<GeneticVariant> it = result.getGeneticVariants();
+		Iterator<GeneticVariant> it = result.iterator();
 
 		int i = 0;
 		while (it.hasNext())
@@ -88,7 +88,7 @@ public class TabixQueryTest extends ResourceTest
 	public void querySeq1() throws IOException
 	{
 		result = query.executeQuery("1");
-		Iterator<GeneticVariant> it = result.getGeneticVariants();
+		Iterator<GeneticVariant> it = result.iterator();
 
 		int i = 0;
 		while (it.hasNext())
@@ -105,7 +105,7 @@ public class TabixQueryTest extends ResourceTest
 	public void querySeq2() throws IOException
 	{
 		result = query.executeQuery("2");
-		Iterator<GeneticVariant> it = result.getGeneticVariants();
+		Iterator<GeneticVariant> it = result.iterator();
 
 		int i = 0;
 		while (it.hasNext())
@@ -122,7 +122,7 @@ public class TabixQueryTest extends ResourceTest
 	public void queryStartPos()
 	{
 		result = query.executeQuery("1", 3172273);
-		Iterator<GeneticVariant> variants = result.getGeneticVariants();
+		Iterator<GeneticVariant> variants = result.iterator();
 
 		assertNotNull(variants);
 		assertTrue(variants.hasNext());
@@ -130,8 +130,8 @@ public class TabixQueryTest extends ResourceTest
 		assertFalse(variants.hasNext());
 
 		assertNotNull(query.executeQuery("x", 3172273));
-		assertFalse(query.executeQuery("x", 3172273).getGeneticVariants().hasNext());
+		assertFalse(query.executeQuery("x", 3172273).iterator().hasNext());
 		assertNotNull(query.executeQuery("1", 31722730));
-		assertFalse(query.executeQuery("1", 31722730).getGeneticVariants().hasNext());
+		assertFalse(query.executeQuery("1", 31722730).iterator().hasNext());
 	}
 }
