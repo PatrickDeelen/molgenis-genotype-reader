@@ -5,6 +5,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.molgenis.genotype.ResourceTest;
@@ -22,7 +23,7 @@ public class PedMapGenotypeDataTest extends ResourceTest
 	private PedMapGenotypeData genotypeData;
 
 	@BeforeClass
-	public void beforeClass() throws IOException
+	public void beforeClass() throws IOException, URISyntaxException
 	{
 		genotypeData = new PedMapGenotypeData(getTestMapGz(), getTestMapGzTbi(), getTestPed());
 	}
@@ -78,12 +79,18 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		// assertEquals(alleles.get(0), "G");
 		// assertEquals(alleles.get(1), "C");
 		//
-		// List<List<String>> sampleVariants = variant.getSampleVariants();
-		// assertNotNull(sampleVariants);
-		// assertEquals(sampleVariants.size(), 1);
-		// assertEquals(sampleVariants.get(0).size(), 2);
-		// assertEquals(sampleVariants.get(0).get(0), "C");
-		// assertEquals(sampleVariants.get(0).get(0), "C");
+		List<List<String>> sampleVariants = variant.getSampleVariants();
+		assertNotNull(sampleVariants);
+		assertEquals(sampleVariants.size(), 9);
+		assertEquals(sampleVariants.get(0).size(), 2);
+		assertEquals(sampleVariants.get(0).get(0), "C");
+		assertEquals(sampleVariants.get(0).get(1), "C");
+		assertEquals(sampleVariants.get(0).size(), 2);
+		assertEquals(sampleVariants.get(1).get(0), "C");
+		assertEquals(sampleVariants.get(1).get(1), "G");
+		assertEquals(sampleVariants.get(2).size(), 2);
+		assertEquals(sampleVariants.get(2).get(0), "G");
+		assertEquals(sampleVariants.get(2).get(1), "G");
 	}
 
 	@Test

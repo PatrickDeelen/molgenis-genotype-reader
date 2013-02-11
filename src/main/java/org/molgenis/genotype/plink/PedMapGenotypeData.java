@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.GenotypeDataException;
@@ -16,15 +20,20 @@ import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
+import org.molgenis.util.plink.datatypes.Biallele;
+import org.molgenis.util.plink.datatypes.MapEntry;
 import org.molgenis.util.plink.datatypes.PedEntry;
 import org.molgenis.util.plink.drivers.PedFileDriver;
+import org.molgenis.util.plink.readers.MapFileReader;
 
 public class PedMapGenotypeData extends IndexedGenotypeData
 {
 	private static final char DEFAULT_SEPARATOR = '	';
 	private final GenotypeDataIndex index;
-	private final File pedFile;
+	private final PedFileDriver pedFileDriver;
+	private final File bzipMapFile;
 	private char separator;
+	private Map<String, List<Biallele>> sampleGenotypesBySnp;
 
 	public PedMapGenotypeData(File bzipMapFile, File mapIndexFile, File pedFile)
 	{
@@ -35,15 +44,16 @@ public class PedMapGenotypeData extends IndexedGenotypeData
 	{
 		try
 		{
-			index = new TabixIndex(mapIndexFile, bzipMapFile, new PedMapVariantLineMapper(separator + ""));
+			index = new TabixIndex(mapIndexFile, bzipMapFile, new PedMapVariantLineMapper(this));
 		}
 		catch (IOException e)
 		{
 			throw new GenotypeDataException(e);
 		}
 
-		this.pedFile = pedFile;
 		this.separator = separator;
+		this.pedFileDriver = new PedFileDriver(pedFile, separator);
+		this.bzipMapFile = bzipMapFile;
 	}
 
 	@Override
@@ -63,7 +73,7 @@ public class PedMapGenotypeData extends IndexedGenotypeData
 	@Override
 	public List<Sample> getSamples()
 	{
-		PedFileDriver pedFileDriver = new PedFileDriver(pedFile, separator);
+
 		try
 		{
 			List<Sample> samples = new ArrayList<Sample>();
@@ -109,4 +119,65 @@ public class PedMapGenotypeData extends IndexedGenotypeData
 		return null;
 	}
 
+	public List<Biallele> getSampleGenotypes(String snp)
+	{
+		if (sampleGenotypesBySnp == null)
+		{
+			Map<Integer, String> idByPosition = new HashMap<Integer, String>();
+			MapFileReader mapFileReader;
+
+			try
+			{
+				mapFileReader = new MapFileReader(new BlockCompressedInputStream(bzipMapFile), separator);
+			}
+			catch (IOException e)
+			{
+				throw new GenotypeDataException(e);
+			}
+			try
+			{
+				int index = 0;
+				for (MapEntry entry : mapFileReader)
+				{
+					idByPosition.put(index++, entry.getSNP());
+				}
+			}
+			finally
+			{
+				IOUtils.closeQuietly(mapFileReader);
+			}
+
+			sampleGenotypesBySnp = new LinkedHashMap<String, List<Biallele>>();
+
+			for (PedEntry pedEntry : pedFileDriver)
+			{
+				int index = 0;
+				for (Biallele biallele : pedEntry)
+				{
+					String snpName = idByPosition.get(index);
+					if (snpName == null)
+					{
+						throw new GenotypeDataException("Missing snp at index [" + index + "]");
+					}
+
+					List<Biallele> bialleles = sampleGenotypesBySnp.get(snpName);
+					if (bialleles == null)
+					{
+						bialleles = new ArrayList<Biallele>();
+						sampleGenotypesBySnp.put(snpName, bialleles);
+					}
+
+					bialleles.add(biallele);
+					index++;
+				}
+			}
+		}
+
+		return sampleGenotypesBySnp.get(snp);
+	}
+
+	protected char getSeparator()
+	{
+		return separator;
+	}
 }

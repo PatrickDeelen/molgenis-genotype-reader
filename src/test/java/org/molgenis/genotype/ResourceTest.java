@@ -3,8 +3,6 @@ package org.molgenis.genotype;
 import java.io.File;
 import java.net.URISyntaxException;
 
-import org.molgenis.genotype.tabix.TabixIndexTest;
-
 public class ResourceTest
 {
 	protected File getTestResourceFile(String name) throws URISyntaxException
@@ -22,17 +20,17 @@ public class ResourceTest
 		return getTestResourceFile("/test.vcf.gz.tbi");
 	}
 
-	protected File getTestMapGz()
+	protected File getTestMapGz() throws URISyntaxException
 	{
 		return getTestResourceFile("/test.map.gz");
 	}
 
-	protected File getTestMapGzTbi()
+	protected File getTestMapGzTbi() throws URISyntaxException
 	{
 		return getTestResourceFile("/test.map.gz.tbi");
 	}
 
-	protected File getTestPed()
+	protected File getTestPed() throws URISyntaxException
 	{
 		return getTestResourceFile("/test.ped");
 	}

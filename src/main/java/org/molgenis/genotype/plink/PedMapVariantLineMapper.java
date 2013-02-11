@@ -1,6 +1,8 @@
 package org.molgenis.genotype.plink;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -9,16 +11,17 @@ import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
+import org.molgenis.util.plink.datatypes.Biallele;
 import org.molgenis.util.plink.datatypes.MapEntry;
 import org.molgenis.util.plink.drivers.MapFileDriver;
 
 public class PedMapVariantLineMapper implements VariantLineMapper
 {
-	private String separator;
+	private PedMapGenotypeData pedMapGenotypeData;
 
-	public PedMapVariantLineMapper(String separator)
+	public PedMapVariantLineMapper(PedMapGenotypeData pedMapGenotypeData)
 	{
-		this.separator = separator;
+		this.pedMapGenotypeData = pedMapGenotypeData;
 	}
 
 	@Override
@@ -26,7 +29,7 @@ public class PedMapVariantLineMapper implements VariantLineMapper
 	{
 		try
 		{
-			MapEntry mapEntry = MapFileDriver.parseEntry(line, separator);
+			MapEntry mapEntry = MapFileDriver.parseEntry(line, pedMapGenotypeData.getSeparator() + "");
 
 			List<String> ids = Collections.singletonList(mapEntry.getSNP());
 			String sequenceName = mapEntry.getChromosome();
@@ -39,7 +42,13 @@ public class PedMapVariantLineMapper implements VariantLineMapper
 			{};
 			char refAllele = '\0';
 
-			List<List<Character>> sampleSnpVariants = Collections.emptyList();
+			List<Biallele> sampleGenotypes = pedMapGenotypeData.getSampleGenotypes(mapEntry.getSNP());
+			List<List<Character>> sampleSnpVariants = new ArrayList<List<Character>>(sampleGenotypes.size());
+
+			for (Biallele biallele : sampleGenotypes)
+			{
+				sampleSnpVariants.add(Arrays.asList(biallele.getAllele1(), biallele.getAllele2()));
+			}
 
 			return new SnpGeneticVariant(ids, sequenceName, startPos, snpAlleles, refAllele, sampleSnpVariants,
 					annotationValues, stopPos, altDescriptions, altTypes);
