@@ -1,58 +1,75 @@
-package org.molgenis.genotype.variant;
+package org.molgenis.genotype.variant.id;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class SingleGeneticVariantId extends GeneticVariantId {
+public class SingleGeneticVariantId extends GeneticVariantId
+{
 
 	private final String variantId;
 
-	public SingleGeneticVariantId(String variantId) {
+	public SingleGeneticVariantId(String variantId)
+	{
 		super();
 		this.variantId = variantId;
 	}
 
 	@Override
-	public String getPrimairyId() {
+	public String getPrimairyId()
+	{
 		return variantId;
 	}
 
 	@Override
-	public List<String> getVariantIds() {
+	public List<String> getVariantIds()
+	{
 		ArrayList<String> variantIds = new ArrayList<String>(1);
+		variantIds.add(variantId);
 		return Collections.unmodifiableList(variantIds);
 	}
 
 	@Override
-	public String getConcatenatedId() {
+	public String getConcatenatedId()
+	{
 		return variantId;
 	}
 
 	@Override
-	public String getConcatenatedId(String separator) {
+	public String getConcatenatedId(String separator)
+	{
 		return variantId;
 	}
 
 	@Override
-	public boolean isIdInVariantIds(String queryId) {
+	public boolean isIdInVariantIds(String queryId)
+	{
 		return variantId.equals(queryId);
 	}
 
 	@Override
-	public boolean onlyPrimairyId() {
+	public boolean onlyPrimairyId()
+	{
 		return true;
 	}
-	
+
 	@Override
-	public Iterator<String> iterator() {
+	public Iterator<String> iterator()
+	{
 		return getVariantIds().iterator();
 	}
 
 	@Override
-	public List<String> getAlternativeIds() {
+	public List<String> getAlternativeIds()
+	{
 		return Collections.emptyList();
+	}
+
+	@Override
+	public boolean containsId()
+	{
+		return true;
 	}
 
 }
