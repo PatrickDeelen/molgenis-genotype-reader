@@ -4,6 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.molgenis.genotype.variant.id.BlankGeneticVariantId;
+import org.molgenis.genotype.variant.id.GeneticVariantId;
+import org.molgenis.genotype.variant.id.ListGeneticVariantId;
+import org.molgenis.genotype.variant.id.SingleGeneticVariantId;
+
 public abstract class AbstractGeneticVariant implements GeneticVariant
 {
 	private final GeneticVariantId variantId;
@@ -17,21 +22,29 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 	public AbstractGeneticVariant(List<String> ids, String sequenceName, int startPos, Map<String, ?> annotationValues,
 			Integer stopPos, List<String> altDescriptions, List<String> altTypes)
 	{
-		
+
 		if (sequenceName == null) throw new IllegalArgumentException("SequenceName is null");
 		if (annotationValues == null) throw new IllegalArgumentException("AnnotationValues is null");
 		if (altDescriptions == null) throw new IllegalArgumentException("AltDescriptions is null");
 		if (altTypes == null) throw new IllegalArgumentException("AltTypes is null");
 
-		if(ids == null){
-			this.variantId = null;
-		} else if(ids.size() == 1){
+		if (ids == null)
+		{
+			this.variantId = new BlankGeneticVariantId();
+		}
+		else if (ids.size() == 0)
+		{
+			this.variantId = new BlankGeneticVariantId();
+		}
+		else if (ids.size() == 1)
+		{
 			this.variantId = new SingleGeneticVariantId(ids.get(0));
-		} else {
+		}
+		else
+		{
 			this.variantId = new ListGeneticVariantId(ids);
 		}
-		
-		
+
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
 		this.annotationValues = annotationValues;
@@ -43,18 +56,21 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 	public AbstractGeneticVariant(String id, String sequenceName, int startPos, Map<String, ?> annotationValues,
 			Integer stopPos, List<String> altDescriptions, List<String> altTypes)
 	{
-		
+
 		if (sequenceName == null) throw new IllegalArgumentException("SequenceName is null");
 		if (annotationValues == null) throw new IllegalArgumentException("AnnotationValues is null");
 		if (altDescriptions == null) throw new IllegalArgumentException("AltDescriptions is null");
 		if (altTypes == null) throw new IllegalArgumentException("AltTypes is null");
 
-		if(id == null){
+		if (id == null)
+		{
 			this.variantId = null;
-		} else {
+		}
+		else
+		{
 			this.variantId = new SingleGeneticVariantId(id);
 		}
-		
+
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
 		this.annotationValues = annotationValues;
@@ -63,7 +79,6 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 		this.altTypes = altTypes;
 	}
 
-	
 	@Override
 	public abstract List<String> getAlleles();
 
@@ -73,11 +88,7 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 	@Override
 	public String getPrimaryVariantId()
 	{
-		if(variantId == null){
-			return null;
-		} else {
-			return variantId.getPrimairyId();
-		}
+		return variantId.getPrimairyId();
 	}
 
 	@Override
@@ -91,9 +102,10 @@ public abstract class AbstractGeneticVariant implements GeneticVariant
 	{
 		return variantId.getVariantIds();
 	}
-	
+
 	@Override
-	public GeneticVariantId getVariantId(){
+	public GeneticVariantId getVariantId()
+	{
 		return variantId;
 	}
 
