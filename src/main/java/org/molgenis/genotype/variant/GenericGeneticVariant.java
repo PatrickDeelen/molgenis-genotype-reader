@@ -1,8 +1,10 @@
 package org.molgenis.genotype.variant;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GenericGeneticVariant extends AbstractGeneticVariant
 {
@@ -67,7 +69,38 @@ public class GenericGeneticVariant extends AbstractGeneticVariant
 	 */
 	private void deterimeMinorAllele()
 	{
-		throw new UnsupportedOperationException("Not yet implemented");
+		
+		HashMap<String, AtomicInteger>alleleCounts = new HashMap<String, AtomicInteger>(alleles.size());
+		for(String allele : alleles){
+			alleleCounts.put(allele, new AtomicInteger());
+		}
+		
+		for(List<String> sampleAlleles : this.getSampleVariants()){
+			for(String sampleAllele : sampleAlleles){
+				alleleCounts.get(sampleAllele).incrementAndGet();
+			}
+		}
+		
+		String provisionalMinorAllele = null;
+		int provisionalMinorAlleleCount = Integer.MAX_VALUE;
+		int totalAlleleCount = 0;
+		
+		for(String allele : alleles){
+			
+			int alleleCount = alleleCounts.get(allele).get();
+			totalAlleleCount += alleleCount;
+			
+			if(alleleCount < provisionalMinorAlleleCount){
+				provisionalMinorAlleleCount = alleleCounts.get(allele).get();
+				provisionalMinorAllele = allele;
+				totalAlleleCount += alleleCount;
+			}
+		}
+		
+		this.minorAllele = provisionalMinorAllele;
+		this.minorAlleleFreq = provisionalMinorAlleleCount / (float) totalAlleleCount;
+		
+		
 	}
 
 }
