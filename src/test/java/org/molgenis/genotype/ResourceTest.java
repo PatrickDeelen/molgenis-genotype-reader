@@ -20,4 +20,19 @@ public class ResourceTest
 	{
 		return getTestResourceFile("/test.vcf.gz.tbi");
 	}
+
+	protected File getTestMapGz()
+	{
+		return getTestResourceFile("/test.map.gz");
+	}
+
+	protected File getTestMapGzTbi()
+	{
+		return getTestResourceFile("/test.map.gz.tbi");
+	}
+
+	protected File getTestPed()
+	{
+		return getTestResourceFile("/test.ped");
+	}
 }

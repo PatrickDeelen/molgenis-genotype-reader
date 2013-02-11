@@ -1,7 +1,6 @@
 package org.molgenis.genotype;
 
 import java.io.Closeable;
-import java.util.Iterator;
 
 import org.molgenis.genotype.variant.GeneticVariant;
 
@@ -11,12 +10,6 @@ import org.molgenis.genotype.variant.GeneticVariant;
  * @author erwin
  * 
  */
-public interface VariantQueryResult extends Closeable
+public interface VariantQueryResult extends Closeable, Iterable<GeneticVariant>
 {
-	/**
-	 * Iterator over the requested data
-	 * 
-	 * @return
-	 */
-	Iterator<GeneticVariant> getGeneticVariants();
 }
