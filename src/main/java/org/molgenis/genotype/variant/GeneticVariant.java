@@ -3,6 +3,8 @@ package org.molgenis.genotype.variant;
 import java.util.List;
 import java.util.Map;
 
+import org.molgenis.genotype.variant.id.GeneticVariantId;
+
 public interface GeneticVariant
 {
 	/**

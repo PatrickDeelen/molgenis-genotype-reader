@@ -1,8 +1,9 @@
-package org.molgenis.genotype.variant;
+package org.molgenis.genotype.variant.id;
 
 import java.util.List;
 
-public abstract class GeneticVariantId implements Iterable<String>{
+public abstract class GeneticVariantId implements Iterable<String>
+{
 
 	public static final String DEFAULT_ID_SEPARATOR = ";";
 
@@ -26,7 +27,7 @@ public abstract class GeneticVariantId implements Iterable<String>{
 	 * @return
 	 */
 	public abstract List<String> getAlternativeIds();
-	
+
 	/**
 	 * Get all Ids as one string using the default separator (;)
 	 * 
@@ -58,39 +59,64 @@ public abstract class GeneticVariantId implements Iterable<String>{
 	public abstract boolean onlyPrimairyId();
 
 	/**
+	 * Does this variant have an ID
+	 * 
+	 * @return true if the variant has an id
+	 */
+	public abstract boolean containsId();
+
+	/**
 	 * Test is other variantId is the same ID. Two IDs are the same if they
 	 * share one ID. Even if one or both have multiple other IDs that do not
-	 * necessarily overlap
+	 * necessarily overlap. Two empty variants are not identical.
 	 * 
 	 * @param otherVariantId
 	 */
-	public boolean isSameId(GeneticVariantId otherVariantId) {
+	public boolean isSameId(GeneticVariantId otherVariantId)
+	{
 
-		if(this.onlyPrimairyId() && otherVariantId.onlyPrimairyId()) {
-			
+		if (!this.containsId() || !otherVariantId.containsId())
+		{
+
+			return false;
+
+		}
+		if (this.onlyPrimairyId() && otherVariantId.onlyPrimairyId())
+		{
+
 			return this.getPrimairyId().equals(otherVariantId.getPrimairyId());
-			
-		} else if (this.onlyPrimairyId()) {
-			
-			if(otherVariantId.isIdInVariantIds(this.getPrimairyId())){
+
+		}
+		else if (this.onlyPrimairyId())
+		{
+
+			if (otherVariantId.isIdInVariantIds(this.getPrimairyId()))
+			{
 				return true;
 			}
-						
-		} else if(otherVariantId.onlyPrimairyId()){
-			
-			if(this.isIdInVariantIds(otherVariantId.getPrimairyId())){
+
+		}
+		else if (otherVariantId.onlyPrimairyId())
+		{
+
+			if (this.isIdInVariantIds(otherVariantId.getPrimairyId()))
+			{
 				return true;
 			}
-			
-		} else {
-			for(String thisId : this){
-				if(otherVariantId.isIdInVariantIds(thisId)){
+
+		}
+		else
+		{
+			for (String thisId : this)
+			{
+				if (otherVariantId.isIdInVariantIds(thisId))
+				{
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
-		
+
 	}
 }
