@@ -15,12 +15,26 @@ public interface GeneticVariant
 	String getPrimaryVariantId();
 
 	/**
-	 * Gets all the other id's (names) besides the primaryVariantId by wich this
+	 * Gets all the other id's (names) besides the primaryVariantId by which this
 	 * variant is known.
 	 * 
 	 * @return List of String
 	 */
 	List<String> getAlternativeVariantIds();
+	
+	/**
+	 * Get all IDs for this variant
+	 * 
+	 * @return List of String
+	 */
+	public List<String> getAllIds();
+	
+	/**
+	 * Get the variant ID object for this variant
+	 * 
+	 * @return
+	 */
+	public GeneticVariantId getVariantId();
 
 	/**
 	 * Gets the starting position on the sequence
@@ -37,14 +51,14 @@ public interface GeneticVariant
 	Integer getStopPos();
 
 	/**
-	 * Get the Sequence this variant is lying on
+	 * Get the Sequence this variant is located on
 	 * 
 	 * @return the Sequence
 	 */
 	String getSequenceName();
 
 	/**
-	 * Get all posible alleles (including the reference) The first value is the
+	 * Get all possible alleles (including the reference) The first value is the
 	 * reference value
 	 * 
 	 * @return List of String

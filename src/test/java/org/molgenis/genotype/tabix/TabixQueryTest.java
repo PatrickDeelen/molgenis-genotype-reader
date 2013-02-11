@@ -6,6 +6,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -31,7 +32,7 @@ public class TabixQueryTest extends ResourceTest
 	private VariantQueryResult result;
 
 	@BeforeClass
-	public void beforeClass() throws IOException
+	public void beforeClass() throws IOException, URISyntaxException
 	{
 		VcfReader reader = new VcfReader(new BlockCompressedInputStream(getTestVcfGz()));
 

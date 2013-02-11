@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.molgenis.genotype.ResourceTest;
@@ -17,7 +18,7 @@ public class TabixIndexTest extends ResourceTest
 	private TabixIndex index;
 
 	@BeforeClass
-	private void setUp() throws IOException
+	private void setUp() throws IOException, URISyntaxException
 	{
 		index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz(), new VariantLineMapper()
 		{
