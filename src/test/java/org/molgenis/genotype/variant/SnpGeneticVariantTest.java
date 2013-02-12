@@ -144,4 +144,292 @@ public class SnpGeneticVariantTest
 	{
 		Assert.assertEquals(testSnpVariant.getStopPos(), null);
 	}
+
+	@Test
+	public void getMinorAlleleFrequency2()
+	{
+
+		char[] snpAlleles2;
+		List<List<Character>> sampleSnpVariants2;
+		ArrayList<Character> sampleSnp;
+		SnpGeneticVariant testSnpVariant2;
+
+		// Test MAF 0 for bi-allelic SNP
+
+		snpAlleles2 = new char[2];
+		snpAlleles2[0] = 'A';
+		snpAlleles2[1] = 'C';
+		sampleSnpVariants2 = new ArrayList<List<Character>>();
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		testSnpVariant2 = new SnpGeneticVariant("SNP", "1", 1, snpAlleles2, snpAlleles2[0], sampleSnpVariants2,
+				Collections.<String, Object> emptyMap(), 1, Collections.<String> emptyList(),
+				Collections.<String> emptyList());
+
+		Assert.assertEquals(testSnpVariant2.getMinorSnpAllele(), 'C');
+		Assert.assertEquals(testSnpVariant2.getMinorAlleleFrequency(), 0f);
+
+		// Test MAF 0 for mono-morphic
+
+		snpAlleles2 = new char[1];
+		snpAlleles2[0] = 'A';
+		sampleSnpVariants2 = new ArrayList<List<Character>>();
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		testSnpVariant2 = new SnpGeneticVariant("SNP", "1", 1, snpAlleles2, snpAlleles2[0], sampleSnpVariants2,
+				Collections.<String, Object> emptyMap(), 1, Collections.<String> emptyList(),
+				Collections.<String> emptyList());
+
+		Assert.assertEquals(testSnpVariant2.getMinorSnpAllele(), '\0');
+		Assert.assertEquals(testSnpVariant2.getMinorAllele(), "\0");
+		Assert.assertEquals(testSnpVariant2.getMinorAlleleFrequency(), 0f);
+
+		// Test MAF 0.5
+
+		snpAlleles2 = new char[2];
+		snpAlleles2[0] = 'A';
+		snpAlleles2[1] = 'T';
+		sampleSnpVariants2 = new ArrayList<List<Character>>();
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('T');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('T');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('T');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('T');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('T');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		testSnpVariant2 = new SnpGeneticVariant("SNP", "1", 1, snpAlleles2, snpAlleles2[0], sampleSnpVariants2,
+				Collections.<String, Object> emptyMap(), 1, Collections.<String> emptyList(),
+				Collections.<String> emptyList());
+
+		// first allele in list of alleles is listed as minor in case of tie. So
+		// expect A
+		Assert.assertEquals(testSnpVariant2.getMinorSnpAllele(), 'A');
+		Assert.assertEquals(testSnpVariant2.getMinorAlleleFrequency(), 0.5f);
+
+		// Test MAF with non defined missing genotypes
+
+		snpAlleles2 = new char[2];
+		snpAlleles2[0] = 'A';
+		snpAlleles2[1] = 'G';
+		sampleSnpVariants2 = new ArrayList<List<Character>>();
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('G');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		testSnpVariant2 = new SnpGeneticVariant("SNP", "1", 1, snpAlleles2, snpAlleles2[0], sampleSnpVariants2,
+				Collections.<String, Object> emptyMap(), 1, Collections.<String> emptyList(),
+				Collections.<String> emptyList());
+
+		Assert.assertEquals(testSnpVariant2.getMinorSnpAllele(), 'G');
+		Assert.assertEquals(testSnpVariant2.getMinorAlleleFrequency(), 0.25f);
+
+		// Test MAF with non defined missing genotypes
+
+		snpAlleles2 = new char[2];
+		snpAlleles2[0] = 'T';
+		snpAlleles2[1] = 'G';
+		sampleSnpVariants2 = new ArrayList<List<Character>>();
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('\0');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('\0');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('T');
+		sampleSnp.add('G');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('T');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('G');
+		sampleSnpVariants2.add(sampleSnp);
+
+		testSnpVariant2 = new SnpGeneticVariant("SNP", "1", 1, snpAlleles2, snpAlleles2[0], sampleSnpVariants2,
+				Collections.<String, Object> emptyMap(), 1, Collections.<String> emptyList(),
+				Collections.<String> emptyList());
+
+		Assert.assertEquals(testSnpVariant2.getMinorSnpAllele(), 'T');
+		Assert.assertEquals(testSnpVariant2.getMinorAlleleFrequency(), 0.25f);
+
+		// Test MAF with three possible alleles
+
+		snpAlleles2 = new char[3];
+		snpAlleles2[0] = 'T';
+		snpAlleles2[1] = 'G';
+		snpAlleles2[2] = 'A';
+		sampleSnpVariants2 = new ArrayList<List<Character>>();
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('T');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('T');
+		sampleSnp.add('G');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('T');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('G');
+		sampleSnpVariants2.add(sampleSnp);
+
+		testSnpVariant2 = new SnpGeneticVariant("SNP", "1", 1, snpAlleles2, snpAlleles2[0], sampleSnpVariants2,
+				Collections.<String, Object> emptyMap(), 1, Collections.<String> emptyList(),
+				Collections.<String> emptyList());
+
+		Assert.assertEquals(testSnpVariant2.getMinorSnpAllele(), 'A');
+		Assert.assertEquals(testSnpVariant2.getMinorAlleleFrequency(), 0.1f);
+
+		// Test MAF with four possible alleles
+
+		snpAlleles2 = new char[4];
+		snpAlleles2[0] = 'T';
+		snpAlleles2[1] = 'G';
+		snpAlleles2[2] = 'A';
+		snpAlleles2[3] = 'C';
+		sampleSnpVariants2 = new ArrayList<List<Character>>();
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('A');
+		sampleSnp.add('A');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('C');
+		sampleSnp.add('T');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('T');
+		sampleSnp.add('G');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('T');
+		sampleSnpVariants2.add(sampleSnp);
+
+		sampleSnp = new ArrayList<Character>();
+		sampleSnp.add('G');
+		sampleSnp.add('G');
+		sampleSnpVariants2.add(sampleSnp);
+
+		testSnpVariant2 = new SnpGeneticVariant("SNP", "1", 1, snpAlleles2, snpAlleles2[0], sampleSnpVariants2,
+				Collections.<String, Object> emptyMap(), 1, Collections.<String> emptyList(),
+				Collections.<String> emptyList());
+
+		Assert.assertEquals(testSnpVariant2.getMinorSnpAllele(), 'C');
+		Assert.assertEquals(testSnpVariant2.getMinorAlleleFrequency(), 0.1f);
+
+	}
+
 }

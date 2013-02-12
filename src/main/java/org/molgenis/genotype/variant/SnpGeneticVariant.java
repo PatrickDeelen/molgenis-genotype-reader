@@ -22,7 +22,7 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 		this.snpAlleles = snpAlleles.clone();
 		this.sampleSnpVariants = sampleSnpVariants;
 	}
-	
+
 	public SnpGeneticVariant(String id, String sequenceName, int startPos, char[] snpAlleles, char refAllele,
 			List<List<Character>> sampleSnpVariants, Map<String, ?> annotationValues, Integer stopPos,
 			List<String> altDescriptions, List<String> altTypes)
@@ -102,42 +102,59 @@ public class SnpGeneticVariant extends AbstractGeneticVariant
 	 */
 	private void deterimeSnpMinorAllele()
 	{
-		
+
+		if (snpAlleles.length == 1)
+		{
+			minorAllele = '\0';
+			minorAlleleFreq = 0f;
+			return;
+		}
+
 		char maxAlleleValue = '\0';
-		
-		for(char a : snpAlleles){
-			if(a > maxAlleleValue){
+
+		for (char a : snpAlleles)
+		{
+			if (a > maxAlleleValue)
+			{
 				maxAlleleValue = a;
 			}
 		}
-		
-		int[] alleleCounts = new int[ maxAlleleValue + 1 ];
-		
-		for(List<Character> sampleAlleles : this.getSampleSnpVariants()){
-			for(Character sampleAllele : sampleAlleles){
+
+		int[] alleleCounts = new int[maxAlleleValue + 1];
+
+		for (List<Character> sampleAlleles : this.getSampleSnpVariants())
+		{
+			for (Character sampleAllele : sampleAlleles)
+			{
+				if (sampleAllele == '\0')
+				{
+					continue;
+				}
 				alleleCounts[sampleAllele]++;
 			}
 		}
-		
+
 		char provisionalMinorAllele = '\0';
 		int provisionalMinorAlleleCount = Integer.MAX_VALUE;
 		int totalAlleleCount = 0;
-		
-		for(char a : snpAlleles){
-			
+
+		for (char a : snpAlleles)
+		{
+
 			int alleleCount = alleleCounts[a];
 			totalAlleleCount += alleleCount;
-			
-			if(alleleCount < provisionalMinorAlleleCount){
+
+			if (alleleCount < provisionalMinorAlleleCount)
+			{
 				provisionalMinorAlleleCount = alleleCount;
 				provisionalMinorAllele = a;
 			}
-			
+
 		}
-		
+
 		this.minorAllele = provisionalMinorAllele;
 		this.minorAlleleFreq = provisionalMinorAlleleCount / (float) totalAlleleCount;
-		
+
 	}
 
 	@Override
