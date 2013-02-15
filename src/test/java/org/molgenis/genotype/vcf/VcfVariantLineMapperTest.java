@@ -11,28 +11,25 @@ import java.util.List;
 
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.testng.annotations.Test;
 
-public class VcfVariantLineMapperTest
+public class VcfVariantLineMapperTest implements SampleVariantsProvider
 {
 	private static final List<String> COL_NAMES = Arrays.asList("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER",
 			"INFO", "FORMAT", "sample1");
-	private static final List<String> SAMPLE_NAMES = Arrays.asList("sample1");
 
 	@Test
 	public void mapLineSnp()
 	{
 		String line = "1	565286	rs1578391	C	T	.	flt	NS=1;DP=5;AF=1.000;ANNOT=INT;GI=LOC100131754	GT:DP:EC:CONFS	1/1:5:5:5.300,5.300,1.000,1.000,1.000,1.000,1.000";
 
-		VariantLineMapper mapper = new VcfVariantLineMapper(COL_NAMES, SAMPLE_NAMES,
-				Collections.<Annotation> emptyList(), Collections.<String, String> emptyMap());
-		GeneticVariant var = mapper.mapLine(line);
-		assertNotNull(var);
-		assertTrue(var instanceof SnpGeneticVariant);
-		SnpGeneticVariant variant = (SnpGeneticVariant) var;
-
+		VariantLineMapper mapper = new VcfVariantLineMapper(COL_NAMES, Collections.<Annotation> emptyList(),
+				Collections.<String, String> emptyMap(), this);
+		GeneticVariant variant = mapper.mapLine(line);
+		assertNotNull(variant);
+		assertEquals(variant.getType(), GeneticVariant.Type.SNP);
 		assertEquals(variant.getSequenceName(), "1");
 		assertEquals(variant.getStartPos(), 565286);
 		assertEquals(variant.getPrimaryVariantId(), "rs1578391");
@@ -50,12 +47,12 @@ public class VcfVariantLineMapperTest
 		assertEquals(alleles.get(0), "C");
 		assertEquals(alleles.get(1), "T");
 
-		assertEquals(variant.getSnpRefAlelle(), 'C');
-		char[] snpAlleles = variant.getSnpAlleles();
+		assertEquals(variant.getRefAllele(), "C");
+		List<String> snpAlleles = variant.getAlleles();
 		assertNotNull(snpAlleles);
-		assertEquals(snpAlleles.length, 2);
-		assertEquals(snpAlleles[0], 'C');
-		assertEquals(snpAlleles[1], 'T');
+		assertEquals(snpAlleles.size(), 2);
+		assertEquals(snpAlleles.get(0), "C");
+		assertEquals(snpAlleles.get(1), "T");
 	}
 
 	@Test
@@ -63,8 +60,8 @@ public class VcfVariantLineMapperTest
 	{
 		String line = "1	565286	.	C	CTA,CA	.	flt	NS=1;DP=5;AF=1.000;ANNOT=INT;GI=LOC100131754	GT:DP:EC:CONFS	1/1:5:5:5.300,5.300,1.000,1.000,1.000,1.000,1.000";
 
-		VariantLineMapper mapper = new VcfVariantLineMapper(COL_NAMES, SAMPLE_NAMES,
-				Collections.<Annotation> emptyList(), Collections.<String, String> emptyMap());
+		VariantLineMapper mapper = new VcfVariantLineMapper(COL_NAMES, Collections.<Annotation> emptyList(),
+				Collections.<String, String> emptyMap(), this);
 		GeneticVariant variant = mapper.mapLine(line);
 		assertNotNull(variant);
 
@@ -84,5 +81,11 @@ public class VcfVariantLineMapperTest
 		assertTrue(alleles.contains("C"));
 		assertTrue(alleles.contains("CTA"));
 		assertTrue(alleles.contains("CA"));
+	}
+
+	@Override
+	public List<List<String>> getSampleVariants(GeneticVariant variant)
+	{
+		return Collections.emptyList();
 	}
 }

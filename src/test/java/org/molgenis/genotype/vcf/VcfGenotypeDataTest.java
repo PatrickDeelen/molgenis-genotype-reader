@@ -18,7 +18,6 @@ import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -89,7 +88,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getStartPos(), 7569187);
 		assertEquals(variant.getRefAllele(), "G");
 		assertEquals(variant.getSequenceName(), "2");
-		assertTrue(variant instanceof SnpGeneticVariant);
+		assertEquals(variant.getType(), GeneticVariant.Type.SNP);
 
 		List<String> alleles = variant.getAlleles();
 		assertNotNull(alleles);
@@ -157,34 +156,12 @@ public class VcfGenotypeDataTest extends ResourceTest
 	}
 
 	@Test
-	public void testGetSampleSnpVariants()
+	public void testSnpVariants()
 	{
-		List<GeneticVariant> geneticVariants = genotypeData.getVariantsByPos("1", 3172273);
+		List<GeneticVariant> geneticVariants = genotypeData.getSnpVariantsByPos("1", 3172273);
 		assertNotNull(geneticVariants);
 		assertEquals(geneticVariants.size(), 1);
-
-		assertTrue(geneticVariants.get(0) instanceof SnpGeneticVariant);
-		SnpGeneticVariant snpGeneticVariant = (SnpGeneticVariant) geneticVariants.get(0);
-		List<List<Character>> sampleSnpVariants = snpGeneticVariant.getSampleSnpVariants();
-		assertNotNull(sampleSnpVariants);
-		assertEquals(sampleSnpVariants.size(), 1);
-		assertEquals(sampleSnpVariants.get(0).get(0), Character.valueOf('C'));
-		assertEquals(sampleSnpVariants.get(0).get(1), Character.valueOf('C'));
-	}
-
-	@Test
-	public void testGetSampleGeneticVariants()
-	{
-		List<List<String>> variants = genotypeData.getSampleGeneticVariants("1", 3172273);
-		assertNotNull(variants);
-		assertEquals(variants.size(), 1);
-		assertEquals(variants.get(0).size(), 2);
-		assertEquals(variants.get(0).get(0), "C");
-		assertEquals(variants.get(0).get(1), "C");
-
-		variants = genotypeData.getSampleGeneticVariants("1", 1);
-		assertNotNull(variants);
-		assertTrue(variants.isEmpty());
+		assertEquals(geneticVariants.get(0).getType(), GeneticVariant.Type.SNP);
 	}
 
 	@Test
@@ -250,5 +227,15 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertNotNull(variant.getAltDescriptions());
 		assertEquals(variant.getAltDescriptions().size(), 1);
 		assertEquals(variant.getAltDescriptions().get(0), "Deletion");
+	}
+
+	@Test
+	public void testGetVariantById()
+	{
+		GeneticVariant variant = genotypeData.getVariantById("rs1295089");
+		assertNotNull(variant);
+		assertEquals(variant.getPrimaryVariantId(), "rs1295089");
+		assertEquals(variant.getStartPos(), 6097450);
+		assertNull(genotypeData.getVariantById("bogus"));
 	}
 }

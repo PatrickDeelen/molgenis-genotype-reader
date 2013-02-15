@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
@@ -17,6 +18,7 @@ import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.genotype.vcf.VcfVariantLineMapper;
 import org.molgenis.io.vcf.VcfReader;
@@ -25,7 +27,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TabixQueryTest extends ResourceTest
+public class TabixQueryTest extends ResourceTest implements SampleVariantsProvider
 {
 	private VariantQuery query;
 	private TabixIndex index;
@@ -39,8 +41,7 @@ public class TabixQueryTest extends ResourceTest
 		try
 		{
 			VariantLineMapper variantLineMapper = new VcfVariantLineMapper(reader.getColNames(),
-					reader.getSampleNames(), Collections.<Annotation> emptyList(),
-					Collections.<String, String> emptyMap());
+					Collections.<Annotation> emptyList(), Collections.<String, String> emptyMap(), this);
 			index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz(), variantLineMapper);
 		}
 		finally
@@ -133,5 +134,11 @@ public class TabixQueryTest extends ResourceTest
 		assertFalse(query.executeQuery("x", 3172273).iterator().hasNext());
 		assertNotNull(query.executeQuery("1", 31722730));
 		assertFalse(query.executeQuery("1", 31722730).iterator().hasNext());
+	}
+
+	@Override
+	public List<List<String>> getSampleVariants(GeneticVariant variant)
+	{
+		return Collections.emptyList();
 	}
 }

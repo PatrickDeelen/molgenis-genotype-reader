@@ -2,16 +2,21 @@ package org.molgenis.genotype.tabix;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.tabix.TabixIndex.TabixIterator;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
+import org.molgenis.io.vcf.VcfRecord;
+import org.molgenis.io.vcf.VcfSampleGenotype;
 
 /**
  * Execute a query on the tabix iondex to get a subset of the data
@@ -133,5 +138,50 @@ public class TabixQuery implements VariantQuery
 			throw new UnsupportedOperationException();
 		}
 
+	}
+
+	@Override
+	public List<List<String>> findSamplesForVariant(String sequence, int startPos, List<String> alleles,
+			List<String> columnNames, List<String> sampleNames)
+	{
+		try
+		{
+			TabixIterator tabixIterator = index.queryTabixIndex(sequence, startPos - 1, startPos, inputStream);
+			if (tabixIterator != null)
+			{
+				String line = tabixIterator.next();
+				while (line != null)
+				{
+					VcfRecord record = new VcfRecord(line, columnNames);
+
+					if (record.getChrom().equalsIgnoreCase(sequence) && (record.getPos() == startPos)
+							&& record.getAlleles().equals(alleles))
+					{
+						List<List<String>> sampleVariants = new ArrayList<List<String>>(sampleNames.size());
+						for (String sampleName : sampleNames)
+						{
+							VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
+							if (geno == null) throw new GenotypeDataException("Missing GT format value for sample ["
+									+ sampleName + "]");
+
+							sampleVariants.add(new ArrayList<String>(geno.getSamleVariants(alleles)));
+						}
+
+						return sampleVariants;
+					}
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			IOUtils.closeQuietly(inputStream);
+		}
+
+		return null;
 	}
 }

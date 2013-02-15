@@ -1,10 +1,10 @@
 package org.molgenis.genotype;
 
 import java.io.File;
-import java.util.Iterator;
+import java.util.List;
 
+import org.molgenis.genotype.plink.PedMapGenotypeData;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.vcf.VcfGenotypeData;
 
 public class Main
 {
@@ -14,50 +14,71 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		File vcfFile = new File("/Users/erwin/Documents/data/vcf/chr17.vcf.gz");
-		File indexFile = new File("/Users/erwin/Documents/data/vcf/chr17.vcf.gz.tbi");
-
 		try
 		{
-			GenotypeData data = new VcfGenotypeData(vcfFile, indexFile);
-			System.out.println(data.getSeqNames());
+			File pedFile = new File("/Users/erwin/Documents/data/plink/hapmap.ped");
+			File mapFile = new File("/Users/erwin/Documents/data/plink/hapmap.map.gz");
+			File indexFile = new File("/Users/erwin/Documents/data/plink/hapmap.map.gz.tbi");
 
-			// Name: rs8065600, start: 13676927, alleles: [C, T]
-			// GeneticVariant variant = data.getVariant("17", 13676927);
-			// System.out.println(variant.getCompoundId());
-			// System.out.println(variant.getAlleles());
-			// Map<String, List<String>> sampleVariants =
-			// variant.getSampleVariants();
-			//
-			// for (String id : sampleVariants.keySet())
-			// {
-			// System.out.println(id + ":" + sampleVariants.get(id));
-			// }
+			GenotypeData data = new PedMapGenotypeData(mapFile, indexFile, pedFile, ' ');
+			System.out.println("Sequences:" + data.getSequences());
+			List<GeneticVariant> variants = data.getVariants();
+			System.out.println("Variant count = " + variants.size());
+			System.out.println(variants.get(0).getPrimaryVariantId());
+			System.out.println(variants.get(0).getAlleles());
+			System.out.println(variants.get(0).getSampleVariants().size());
 
-			// System.out.println("Sample count:" + sampleVariants.size());
+			GeneticVariant var = data.getVariantById("rs9629043");
+			System.out.println(var.getPrimaryVariantId());
+			System.out.println(var.getStartPos());
+			System.out.println(var.getSampleVariants());
+			System.out.println(var.getSequenceName());
 
-			Sequence seq = data.getSequenceByName("17");
-			VariantQueryResult r = seq.getVariants();
-			try
-			{
-				Iterator<GeneticVariant> it = r.iterator();
-				while (it.hasNext())
-				{
-					GeneticVariant v = it.next();
-					System.out.println(v.getSequenceName() + ":" + v.getPrimaryVariantId() + ":" + v.getStartPos());
-				}
-			}
-			finally
-			{
-				r.close();
-			}
+			long t0 = System.currentTimeMillis();
+			System.out.println(var.getMinorAllele() + ":" + var.getMinorAlleleFrequency());
+			long t = System.currentTimeMillis() - t0;
+			System.out.println("t = " + t);
+
+			variants = data.getSnpVariantsByPos("1", 554636);
+			System.out.println(variants.size());
+			System.out.println(variants.get(0).getStartPos());
+			System.out.println(variants.get(0).getSampleVariants());
 
 		}
-		catch (Exception e)
+		catch (Throwable e)
 		{
 			e.printStackTrace();
 		}
 
-	}
+		// File vcfFile = new
+		// File("/Users/erwin/Documents/data/vcf/chr17.vcf.gz");
+		// File indexFile = new
+		// File("/Users/erwin/Documents/data/vcf/chr17.vcf.gz.tbi");
+		//
+		// try
+		// {
+		// GenotypeData data = new VcfGenotypeData(vcfFile, indexFile);
+		// System.out.println("Sequences:" + data.getSequences());
+		// System.out.println("Samples:" + data.getSamples().size());
+		// List<GeneticVariant> variants = data.getVariants();
+		// System.out.println("Variant count = " + variants.size());
+		// System.out.println(variants.get(0).getPrimaryVariantId());
+		// System.out.println(variants.get(0).getAlleles());
+		// System.out.println(variants.get(0).getSampleVariants().size());
+		//
+		// GeneticVariant var = data.getVariantById("rs113037146");
+		// System.out.println("rs113037146:" + var.getPrimaryVariantId());
+		// System.out.println("rs113037146:" + var.getStartPos());
+		//
+		// var = data.getVariantById(variants.get(0).getPrimaryVariantId());
+		// System.out.println(var.getPrimaryVariantId());
+		// System.out.println(var.getAlleles());
+		// System.out.println(var.getSampleVariants().size());
+		// }
+		// catch (Exception e)
+		// {
+		// e.printStackTrace();
+		// }
 
+	}
 }

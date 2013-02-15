@@ -5,30 +5,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.variant.GenericGeneticVariant;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfRecord;
-import org.molgenis.io.vcf.VcfSampleGenotype;
 
 public class VcfVariantLineMapper implements VariantLineMapper
 {
 	private static final String END_INFO_ID = "END";
 	private final List<String> colNames;
-	private final List<String> sampleNames;
 	private final List<Annotation> infoAnnotations;
 	private final Map<String, String> altDescriptions;
+	private final SampleVariantsProvider sampleVariantsProvider;
 
-	public VcfVariantLineMapper(List<String> colNames, List<String> sampleNames, List<Annotation> infoAnnotations,
-			Map<String, String> altDescriptions)
+	public VcfVariantLineMapper(List<String> colNames, List<Annotation> infoAnnotations,
+			Map<String, String> altDescriptions, SampleVariantsProvider sampleVariantsProvider)
 	{
 		this.colNames = colNames;
-		this.sampleNames = sampleNames;
 		this.infoAnnotations = infoAnnotations;
 		this.altDescriptions = altDescriptions;
+		this.sampleVariantsProvider = sampleVariantsProvider;
 	}
 
 	@Override
@@ -41,16 +38,6 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		Integer startPos = record.getPos();
 		List<String> alleles = record.getAlleles();
 		String refAllele = record.getRef();
-
-		// Get the GT format values (example: 0/0/1)
-		List<List<String>> sampleVariants = new ArrayList<List<String>>(sampleNames.size());
-		for (String sampleName : sampleNames)
-		{
-			VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
-			if (geno == null) throw new GenotypeDataException("Missing GT format value for sample [" + sampleName + "]");
-
-			sampleVariants.add(new ArrayList<String>(geno.getSamleVariants(alleles)));
-		}
 
 		Map<String, Object> annotationValues = getAnnotationValues(record, infoAnnotations);
 		Integer stopPos = (Integer) annotationValues.get(END_INFO_ID);
@@ -78,33 +65,10 @@ public class VcfVariantLineMapper implements VariantLineMapper
 			}
 		}
 
-		GeneticVariant variant;
-		if (isSnp(alleles))
-		{
-			List<List<Character>> snpSampleVariants = new ArrayList<List<Character>>(sampleVariants.size());
+		GeneticVariant.Type type = isSnp(alleles) ? GeneticVariant.Type.SNP : GeneticVariant.Type.GENERIC;
 
-			for (List<String> sampleVariant : sampleVariants)
-			{
-				List<Character> snpSampleVariant = new ArrayList<Character>(sampleVariant.size());
-				for (String var : sampleVariant)
-				{
-					snpSampleVariant.add(var.charAt(0));
-				}
-
-				snpSampleVariants.add(snpSampleVariant);
-			}
-
-			variant = new SnpGeneticVariant(ids, sequenceName, startPos, toCharArray(alleles), refAllele.charAt(0),
-					snpSampleVariants, annotationValues, stopPos, altDescriptions, altTypes);
-		}
-		else
-		{
-
-			variant = new GenericGeneticVariant(ids, sequenceName, startPos, alleles, refAllele, sampleVariants,
-					annotationValues, stopPos, altDescriptions, altTypes);
-		}
-
-		return variant;
+		return new GeneticVariant(ids, sequenceName, startPos, alleles, refAllele, annotationValues, stopPos,
+				altDescriptions, altTypes, sampleVariantsProvider, type);
 	}
 
 	private Map<String, Object> getAnnotationValues(VcfRecord record, List<Annotation> annotations)
@@ -127,6 +91,7 @@ public class VcfVariantLineMapper implements VariantLineMapper
 							List<Integer> ints = new ArrayList<Integer>();
 							for (String value : values)
 							{
+
 								ints.add(Integer.valueOf(value));
 							}
 							annoValue = ints;
@@ -220,17 +185,6 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		}
 
 		return true;
-	}
-
-	private char[] toCharArray(List<String> alleles)
-	{
-		char[] result = new char[alleles.size()];
-		for (int i = 0; i < alleles.size(); i++)
-		{
-			result[i] = alleles.get(i).charAt(0);
-		}
-
-		return result;
 	}
 
 }

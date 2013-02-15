@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 public abstract class AbstractGenotypeData implements GenotypeData
 {
@@ -53,32 +52,20 @@ public abstract class AbstractGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public List<List<String>> getSampleGeneticVariants(String seqName, int startPos)
+	public List<GeneticVariant> getSnpVariantsByPos(String seqName, int startPos)
 	{
-		List<List<String>> sampleVariants = new ArrayList<List<String>>();
-
 		List<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
+		List<GeneticVariant> snps = new ArrayList<GeneticVariant>();
+
 		for (GeneticVariant variant : variants)
 		{
-			sampleVariants.addAll(variant.getSampleVariants());
-		}
-
-		return sampleVariants;
-	}
-
-	@Override
-	public List<SnpGeneticVariant> getSnpVariantsByPos(String seqName, int startPos)
-	{
-		List<SnpGeneticVariant> snpGeneticVariants = new ArrayList<SnpGeneticVariant>();
-		for (GeneticVariant geneticVariant : getVariantsByPos(seqName, startPos))
-		{
-			if (geneticVariant instanceof SnpGeneticVariant)
+			if (variant.getType() == GeneticVariant.Type.SNP)
 			{
-				snpGeneticVariants.add((SnpGeneticVariant) geneticVariant);
+				snps.add(variant);
 			}
 		}
 
-		return snpGeneticVariants;
+		return snps;
 	}
 
 	/**

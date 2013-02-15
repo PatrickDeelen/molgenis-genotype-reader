@@ -10,7 +10,11 @@ import org.molgenis.genotype.VariantQueryResult;
 public class TabixSequence implements Sequence
 {
 	private static final List<String> CHROMOSOMES = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-			"11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "x", "y");
+			"11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "x", "y", "xy", "mt", "23", "24",
+			"25", "26");
+	private static final List<String> AUTOSOMES = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22");
+
 	private final String name;
 	private final Integer length;
 	private final GenotypeDataIndex index;
@@ -44,9 +48,20 @@ public class TabixSequence implements Sequence
 	}
 
 	@Override
+	public boolean isAutosome()
+	{
+		return AUTOSOMES.contains(name.toLowerCase());
+	}
+
+	@Override
 	public VariantQueryResult getVariants()
 	{
 		return index.createQuery().executeQuery(name);
 	}
 
+	@Override
+	public String toString()
+	{
+		return "TabixSequence [name=" + name + ", length=" + length + ", chromosome=" + isChromosome() + "]";
+	}
 }

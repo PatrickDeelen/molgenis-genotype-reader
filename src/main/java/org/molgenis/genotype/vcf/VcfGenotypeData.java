@@ -12,27 +12,34 @@ import java.util.Map;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.IndexedGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
+import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfAlt;
 import org.molgenis.io.vcf.VcfContig;
 import org.molgenis.io.vcf.VcfInfo;
 import org.molgenis.io.vcf.VcfReader;
 
-public class VcfGenotypeData extends IndexedGenotypeData
+public class VcfGenotypeData extends IndexedGenotypeData implements SampleVariantsProvider
 {
+	private static final Logger LOG = Logger.getLogger(VcfGenotypeData.class);
 	private final GenotypeDataIndex index;
 	private final VcfReader reader;
 	private Map<String, Annotation> sampleAnnotationsMap;
 	private Map<String, String> altDescriptions;
+	private List<GeneticVariant> variants = new ArrayList<GeneticVariant>(1000000);
+	private Map<String, Integer> variantIndexByPrimaryId = new HashMap<String, Integer>(1000000);
 
 	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile)
 	{
@@ -43,17 +50,85 @@ public class VcfGenotypeData extends IndexedGenotypeData
 			try
 			{
 				VariantLineMapper variantLineMapper = new VcfVariantLineMapper(reader.getColNames(),
-						reader.getSampleNames(), getVariantAnnotations(), getAltDescriptions());
+						getVariantAnnotations(), getAltDescriptions(), this);
 				index = new TabixIndex(tabixIndexFile, bzipVcfFile, variantLineMapper);
 			}
 			finally
 			{
 				IOUtils.closeQuietly(reader);
 			}
+
+			int index = 0;
+			for (Sequence sequence : getSequences())
+			{
+				VariantQueryResult vqr = sequence.getVariants();
+				try
+				{
+					for (GeneticVariant variant : vqr)
+					{
+						variants.add(variant);
+
+						if (variant.getPrimaryVariantId() != null)
+						{
+							variantIndexByPrimaryId.put(variant.getPrimaryVariantId(), index);
+						}
+
+						if ((++index % 1000) == 0)
+						{
+							System.out.println(index);
+							LOG.info("Loaded [" + index + "] variants");
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					throw new GenotypeDataException("Exception caching variants", e);
+				}
+				finally
+				{
+					IOUtils.closeQuietly(vqr);
+				}
+			}
+
 		}
 		catch (IOException e)
 		{
 			throw new GenotypeDataException(e);
+		}
+	}
+
+	@Override
+	public GeneticVariant getVariantById(String primaryVariantId)
+	{
+		if (primaryVariantId == null) throw new IllegalArgumentException("PrimaryVariantId can not be null");
+
+		Integer index = variantIndexByPrimaryId.get(primaryVariantId);
+		if (index != null)
+		{
+			return variants.get(index);
+		}
+
+		return null;
+	}
+
+	@Override
+	public List<GeneticVariant> getVariants()
+	{
+		return variants;
+	}
+
+	@Override
+	public List<List<String>> getSampleVariants(GeneticVariant variant)
+	{
+		try
+		{
+			return index.createQuery().findSamplesForVariant(variant.getSequenceName(), variant.getStartPos(),
+					variant.getAlleles(), reader.getColNames(), reader.getSampleNames());
+		}
+		catch (IOException e)
+		{
+			throw new GenotypeDataException("IOException getSampleVariants for variant with id [" + variant.getAllIds()
+					+ "]", e);
 		}
 	}
 
@@ -110,20 +185,6 @@ public class VcfGenotypeData extends IndexedGenotypeData
 		}
 
 		return samples;
-	}
-
-	@Override
-	public List<Annotation> getSampleAnnotations()
-	{
-		// TODO
-		return Collections.emptyList();
-	}
-
-	@Override
-	public Annotation getSampleAnnotation(String annotationId)
-	{
-		// TODO
-		return null;
 	}
 
 	/**

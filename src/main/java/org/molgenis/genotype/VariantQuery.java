@@ -1,6 +1,7 @@
 package org.molgenis.genotype;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface VariantQuery
 {
@@ -36,4 +37,7 @@ public interface VariantQuery
 	 * @return
 	 */
 	VariantQueryResult executeQuery(String sequence, int startPos);
+
+	List<List<String>> findSamplesForVariant(String sequence, int startPos, List<String> alleles,
+			List<String> columnNames, List<String> sampleNames);
 }

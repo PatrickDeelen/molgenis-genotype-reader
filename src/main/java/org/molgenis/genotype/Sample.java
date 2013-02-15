@@ -31,4 +31,10 @@ public class Sample
 		return Collections.unmodifiableMap(annotations);
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Sample [id=" + id + ", familyId=" + familyId + ", annotations=" + annotations + "]";
+	}
+
 }
