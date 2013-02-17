@@ -1,12 +1,70 @@
 package org.molgenis.genotype.variant;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.molgenis.genotype.variant.id.BlankGeneticVariantId;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
+import org.molgenis.genotype.variant.id.ListGeneticVariantId;
+import org.molgenis.genotype.variant.id.SingleGeneticVariantId;
 
-public interface GeneticVariant
+public class GeneticVariant
 {
+	public enum Type
+	{
+		GENERIC, SNP
+	}
+
+	private final GeneticVariantId variantId;
+	private final int startPos;
+	private final String sequenceName;
+	private final Map<String, ?> annotationValues;
+	private final Integer stopPos;
+	private final List<String> altDescriptions;
+	private final List<String> altTypes;
+	private final SampleVariantsProvider sampleVariantsProvider;
+	private final List<String> alleles;
+	private final String refAllele;
+	private String minorAllele = null;
+	private float minorAlleleFreq = 0;
+	private final GeneticVariant.Type type;
+
+	public GeneticVariant(List<String> ids, String sequenceName, int startPos, List<String> alleles, String refAllele,
+			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes,
+			SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
+	{
+		if ((ids == null) || ids.isEmpty())
+		{
+			this.variantId = new BlankGeneticVariantId();
+		}
+		else if (ids.size() == 0)
+		{
+			this.variantId = new BlankGeneticVariantId();
+		}
+		else if (ids.size() == 1)
+		{
+			this.variantId = new SingleGeneticVariantId(ids.get(0));
+		}
+		else
+		{
+			this.variantId = new ListGeneticVariantId(ids);
+		}
+
+		this.startPos = startPos;
+		this.sequenceName = sequenceName;
+		this.annotationValues = annotationValues;
+		this.stopPos = stopPos;
+		this.altDescriptions = altDescriptions;
+		this.altTypes = altTypes;
+		this.sampleVariantsProvider = sampleVariantsProvider;
+		this.alleles = alleles;
+		this.refAllele = refAllele;
+		this.type = type;
+	}
+
 	/**
 	 * A Variant can have multiple id's (it's known under different names). The
 	 * compoundId is a concatination of these ids with ';' as separator. This is
@@ -14,50 +72,71 @@ public interface GeneticVariant
 	 * 
 	 * @return String
 	 */
-	String getPrimaryVariantId();
+	public String getPrimaryVariantId()
+	{
+		return variantId.getPrimairyId();
+	}
 
 	/**
-	 * Gets all the other id's (names) besides the primaryVariantId by which this
-	 * variant is known.
+	 * Gets all the other id's (names) besides the primaryVariantId by which
+	 * this variant is known.
 	 * 
 	 * @return List of String
 	 */
-	List<String> getAlternativeVariantIds();
-	
+	public List<String> getAlternativeVariantIds()
+	{
+		return variantId.getAlternativeIds();
+	}
+
 	/**
 	 * Get all IDs for this variant
 	 * 
 	 * @return List of String
 	 */
-	public List<String> getAllIds();
-	
+	public List<String> getAllIds()
+	{
+		return variantId.getVariantIds();
+	}
+
 	/**
 	 * Get the variant ID object for this variant
 	 * 
 	 * @return
 	 */
-	public GeneticVariantId getVariantId();
+	public GeneticVariantId getVariantId()
+	{
+		return variantId;
+	}
 
 	/**
 	 * Gets the starting position on the sequence
 	 * 
 	 * @return int
 	 */
-	int getStartPos();
+	public int getStartPos()
+	{
+		return startPos;
+	}
 
 	/**
 	 * Get the rnd position of the variant, returns null if unknown
 	 * 
 	 * @return
 	 */
-	Integer getStopPos();
+	public Integer getStopPos()
+	{
+		return stopPos;
+	}
 
 	/**
 	 * Get the Sequence this variant is located on
 	 * 
 	 * @return the Sequence
 	 */
-	String getSequenceName();
+	public String getSequenceName()
+	{
+		return sequenceName;
+	}
 
 	/**
 	 * Get all possible alleles (including the reference) The first value is the
@@ -65,20 +144,29 @@ public interface GeneticVariant
 	 * 
 	 * @return List of String
 	 */
-	List<String> getAlleles();
+	public List<String> getAlleles()
+	{
+		return Collections.unmodifiableList(alleles);
+	}
 
 	/**
 	 * Gets the reference allele
 	 * 
 	 * @return String
 	 */
-	String getRefAllele();
+	public String getRefAllele()
+	{
+		return refAllele;
+	}
 
 	/**
 	 * Returns list sample variants. The list of variants can contain null !!!!
 	 * if unknown
 	 */
-	List<List<String>> getSampleVariants();
+	public List<List<String>> getSampleVariants()
+	{
+		return Collections.unmodifiableList(sampleVariantsProvider.getSampleVariants(this));
+	}
 
 	/**
 	 * Get the annotations for this variant. The key is the annotationId, the
@@ -87,24 +175,96 @@ public interface GeneticVariant
 	 * 
 	 * @return
 	 */
-	Map<String, ?> getAnnotationValues();
+	public Map<String, ?> getAnnotationValues()
+	{
+		return Collections.unmodifiableMap(annotationValues);
+	}
 
-	List<String> getAltDescriptions();
+	public List<String> getAltDescriptions()
+	{
+		return Collections.unmodifiableList(altDescriptions);
+	}
 
-	List<String> getAltTypes();
+	public List<String> getAltTypes()
+	{
+		return Collections.unmodifiableList(altTypes);
+	}
 
 	/**
 	 * Get the frequency of the minor allele
 	 * 
 	 * @return the minor allele frequency
 	 */
-	float getMinorAlleleFrequency();
+	public float getMinorAlleleFrequency()
+	{
+		if (minorAllele == null)
+		{
+			deterimeMinorAllele();
+		}
+		return minorAlleleFreq;
+	}
 
 	/**
 	 * Get the minor allele
 	 * 
 	 * @return the minor allele
 	 */
-	String getMinorAllele();
+	public String getMinorAllele()
+	{
+		if (minorAllele == null)
+		{
+			deterimeMinorAllele();
+		}
+		return minorAllele;
+	}
 
+	public GeneticVariant.Type getType()
+	{
+		return type;
+	}
+
+	/**
+	 * Determine the minor allele and its frequency and fill in these values
+	 */
+	private void deterimeMinorAllele()
+	{
+
+		HashMap<String, AtomicInteger> alleleCounts = new HashMap<String, AtomicInteger>(alleles.size());
+		for (String allele : alleles)
+		{
+			alleleCounts.put(allele, new AtomicInteger());
+		}
+
+		for (List<String> sampleAlleles : getSampleVariants())
+		{
+			for (String sampleAllele : sampleAlleles)
+			{
+				if (sampleAllele != null)
+				{
+					alleleCounts.get(sampleAllele).incrementAndGet();
+				}
+			}
+		}
+
+		String provisionalMinorAllele = null;
+		int provisionalMinorAlleleCount = Integer.MAX_VALUE;
+		int totalAlleleCount = 0;
+
+		for (String allele : alleles)
+		{
+
+			int alleleCount = alleleCounts.get(allele).get();
+			totalAlleleCount += alleleCount;
+
+			if (alleleCount < provisionalMinorAlleleCount)
+			{
+				provisionalMinorAlleleCount = alleleCounts.get(allele).get();
+				provisionalMinorAllele = allele;
+				totalAlleleCount += alleleCount;
+			}
+		}
+
+		this.minorAllele = provisionalMinorAllele;
+		this.minorAlleleFreq = provisionalMinorAlleleCount / (float) totalAlleleCount;
+	}
 }

@@ -5,26 +5,24 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.testng.annotations.Test;
 
-public class AbstractGeneticVariantTest
+public class GeneticVariantTest
 {
 	@Test
 	public void getPrimaryVatiantId()
 	{
-		AbstractGeneticVariant variant = new TestGeneticVariant(Arrays.asList("X"));
+		GeneticVariant variant = createGeneticVariant(Arrays.asList("X"));
 		assertNotNull(variant.getPrimaryVariantId());
 		assertEquals("X", variant.getPrimaryVariantId());
 
-		variant = new TestGeneticVariant(Arrays.asList("X", "Y"));
+		variant = createGeneticVariant(Arrays.asList("X", "Y"));
 		assertNotNull(variant.getPrimaryVariantId());
 		assertEquals("X", variant.getPrimaryVariantId());
 
-		variant = new TestGeneticVariant(Arrays.asList("X", "Y", "Z"));
+		variant = createGeneticVariant(Arrays.asList("X", "Y", "Z"));
 		assertNotNull(variant.getPrimaryVariantId());
 		assertEquals("X", variant.getPrimaryVariantId());
 	}
@@ -32,59 +30,25 @@ public class AbstractGeneticVariantTest
 	@Test
 	public void getAlternativeVariantIds()
 	{
-		AbstractGeneticVariant variant = new TestGeneticVariant(Arrays.asList("X"));
+		GeneticVariant variant = createGeneticVariant(Arrays.asList("X"));
 		assertNotNull(variant.getAlternativeVariantIds());
 		assertTrue(variant.getAlternativeVariantIds().isEmpty());
 
-		variant = new TestGeneticVariant(Arrays.asList("X", "Y"));
+		variant = createGeneticVariant(Arrays.asList("X", "Y"));
 		assertNotNull(variant.getAlternativeVariantIds());
 		assertEquals(variant.getAlternativeVariantIds().size(), 1);
 		assertEquals(variant.getAlternativeVariantIds().get(0), "Y");
 
-		variant = new TestGeneticVariant(Arrays.asList("X", "Y", "Z"));
+		variant = createGeneticVariant(Arrays.asList("X", "Y", "Z"));
 		assertNotNull(variant.getAlternativeVariantIds());
 		assertEquals(variant.getAlternativeVariantIds().size(), 2);
 		assertEquals(variant.getAlternativeVariantIds().get(0), "Y");
 		assertEquals(variant.getAlternativeVariantIds().get(1), "Z");
 	}
 
-	private class TestGeneticVariant extends AbstractGeneticVariant
+	private GeneticVariant createGeneticVariant(List<String> ids)
 	{
-		public TestGeneticVariant(List<String> ids)
-		{
-			super(ids, "1", 0, new HashMap<String, Object>(), null, Collections.<String> emptyList(), Collections
-					.<String> emptyList());
-		}
-
-		@Override
-		public List<String> getAlleles()
-		{
-			return null;
-		}
-
-		@Override
-		public String getRefAllele()
-		{
-			return null;
-		}
-
-		@Override
-		public float getMinorAlleleFrequency()
-		{
-			return 0;
-		}
-
-		@Override
-		public String getMinorAllele()
-		{
-			return null;
-		}
-
-		@Override
-		public List<List<String>> getSampleVariants()
-		{
-			return null;
-		}
-
+		return new GeneticVariant(ids, "sequenceName", 1, null, null, null, null, null, null, null,
+				GeneticVariant.Type.SNP);
 	}
 }

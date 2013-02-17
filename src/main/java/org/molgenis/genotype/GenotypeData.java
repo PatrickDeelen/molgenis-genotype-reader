@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 /**
  * Interface that represents genomic data, can be backed by different data types
@@ -69,7 +68,7 @@ public interface GenotypeData
 	 * @param startPos
 	 * @return all snp variants found at startPos, can be empty if none found
 	 */
-	List<SnpGeneticVariant> getSnpVariantsByPos(String seqName, int startPos);
+	List<GeneticVariant> getSnpVariantsByPos(String seqName, int startPos);
 
 	/**
 	 * Get all variants of a sequence Close the VariantQueryResult after use
@@ -81,20 +80,13 @@ public interface GenotypeData
 	VariantQueryResult getSeqVariants(String seqName);
 
 	/**
-	 * Get all sample variant values of the variants at the specified position
-	 * 
-	 * The list of variants can contain null !!!! if unknown
-	 */
-	List<List<String>> getSampleGeneticVariants(String seqName, int startPos);
-
-	/**
 	 * Get all samples
 	 * 
 	 * @return
 	 */
 	List<Sample> getSamples();
 
-	List<Annotation> getSampleAnnotations();
+	List<GeneticVariant> getVariants();
 
-	Annotation getSampleAnnotation(String annotationId);
+	GeneticVariant getVariantById(String primaryVariantId);
 }

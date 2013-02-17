@@ -2,6 +2,7 @@ package org.molgenis.genotype.plink;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -14,7 +15,6 @@ import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -25,7 +25,7 @@ public class PedMapGenotypeDataTest extends ResourceTest
 	@BeforeClass
 	public void beforeClass() throws IOException, URISyntaxException
 	{
-		genotypeData = new PedMapGenotypeData(getTestMapGz(), getTestMapGzTbi(), getTestPed());
+		genotypeData = new PedMapGenotypeData(getTestMapGz(), getTestMapGzTbi(), getTestPed(), '	');
 	}
 
 	@Test
@@ -69,16 +69,17 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		GeneticVariant variant = variants.get(0);
 		assertEquals(variant.getPrimaryVariantId(), "rs11089130");
 		assertEquals(variant.getStartPos(), 14431347);
-		// assertEquals(variant.getRefAllele(), "G");
-		assertEquals(variant.getSequenceName(), "22");
-		assertTrue(variant instanceof SnpGeneticVariant);
 
-		// List<String> alleles = variant.getAlleles();
-		// assertNotNull(alleles);
-		// assertEquals(alleles.size(), 2);
-		// assertEquals(alleles.get(0), "G");
-		// assertEquals(alleles.get(1), "C");
-		//
+		assertNull(variant.getRefAllele());
+		assertEquals(variant.getSequenceName(), "22");
+		assertEquals(variant.getType(), GeneticVariant.Type.SNP);
+
+		List<String> alleles = variant.getAlleles();
+		assertNotNull(alleles);
+		assertEquals(alleles.size(), 2);
+		assertTrue(alleles.contains("C"));
+		assertTrue(alleles.contains("G"));
+
 		List<List<String>> sampleVariants = variant.getSampleVariants();
 		assertNotNull(sampleVariants);
 		assertEquals(sampleVariants.size(), 9);

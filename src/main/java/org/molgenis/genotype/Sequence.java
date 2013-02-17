@@ -17,6 +17,8 @@ public interface Sequence
 	 */
 	boolean isChromosome();
 
+	boolean isAutosome();
+
 	/**
 	 * Get all variants in this sequence. Result should be closed
 	 */
