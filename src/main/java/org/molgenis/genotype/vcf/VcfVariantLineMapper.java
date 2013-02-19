@@ -170,12 +170,6 @@ public class VcfVariantLineMapper implements VariantLineMapper
 	// Variant is a SNP if all alleles are one nucleotide long
 	private boolean isSnp(List<String> alleles)
 	{
-		if (alleles.size() < 2)
-		{
-			// This is a monomorphic reference (i.e. with no alternate alleles)
-			return false;
-		}
-
 		for (String allele : alleles)
 		{
 			if (allele.length() != 1)
