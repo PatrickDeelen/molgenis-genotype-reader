@@ -1,10 +1,8 @@
 package org.molgenis.genotype;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-
 import java.util.Arrays;
 
+import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 public class VariantAllelesTest
@@ -14,23 +12,23 @@ public class VariantAllelesTest
 	public void getAlleles()
 	{
 		VariantAlleles alleles = VariantAlleles.create(Arrays.asList("A", "T"));
-		assertNotNull(alleles.getAlleles());
-		assertEquals(alleles.getAlleles().size(), 2);
-		assertEquals(alleles.getAlleles().get(0), "A");
-		assertEquals(alleles.getAlleles().get(1), "T");
+		AssertJUnit.assertNotNull(alleles.getAlleles());
+		AssertJUnit.assertEquals(alleles.getAlleles().size(), 2);
+		AssertJUnit.assertEquals(alleles.getAlleles().get(0), "A");
+		AssertJUnit.assertEquals(alleles.getAlleles().get(1), "T");
 
 		VariantAlleles alleles2 = VariantAlleles.create('A', 'T');
-		assertEquals(alleles2, alleles);
+		AssertJUnit.assertEquals(alleles2, alleles);
 	}
 
 	@Test
 	public void getAsChar()
 	{
 		VariantAlleles alleles = VariantAlleles.create(Arrays.asList("A", "T"));
-		assertNotNull(alleles.getAllelesAsChars());
-		assertEquals(alleles.getAllelesAsChars().length, 2);
-		assertEquals(alleles.getAllelesAsChars()[0], 'A');
-		assertEquals(alleles.getAllelesAsChars()[1], 'T');
+		AssertJUnit.assertNotNull(alleles.getAllelesAsChars());
+		AssertJUnit.assertEquals(alleles.getAllelesAsChars().length, 2);
+		AssertJUnit.assertEquals(alleles.getAllelesAsChars()[0], 'A');
+		AssertJUnit.assertEquals(alleles.getAllelesAsChars()[1], 'T');
 	}
 
 	@Test(expectedExceptions = RuntimeException.class)
