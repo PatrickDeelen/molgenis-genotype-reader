@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.variant.id.BlankGeneticVariantId;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
 import org.molgenis.genotype.variant.id.ListGeneticVariantId;
@@ -26,15 +27,15 @@ public class GeneticVariant
 	private final List<String> altDescriptions;
 	private final List<String> altTypes;
 	private final SampleVariantsProvider sampleVariantsProvider;
-	private final List<String> alleles;
+	private final VariantAlleles alleles;
 	private final String refAllele;
 	private String minorAllele = null;
 	private float minorAlleleFreq = 0;
 	private final GeneticVariant.Type type;
 
-	public GeneticVariant(List<String> ids, String sequenceName, int startPos, List<String> alleles, String refAllele,
-			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes,
-			SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
+	public GeneticVariant(List<String> ids, String sequenceName, int startPos, VariantAlleles alleles,
+			String refAllele, Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions,
+			List<String> altTypes, SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
 	{
 		if ((ids == null) || ids.isEmpty())
 		{
@@ -142,11 +143,11 @@ public class GeneticVariant
 	 * Get all possible alleles (including the reference) The first value is the
 	 * reference value
 	 * 
-	 * @return List of String
+	 * @return VariantAlleles
 	 */
-	public List<String> getAlleles()
+	public VariantAlleles getVariantAlleles()
 	{
-		return Collections.unmodifiableList(alleles);
+		return alleles;
 	}
 
 	/**
@@ -163,7 +164,7 @@ public class GeneticVariant
 	 * Returns list sample variants. The list of variants can contain null !!!!
 	 * if unknown
 	 */
-	public List<List<String>> getSampleVariants()
+	public List<VariantAlleles> getSampleVariants()
 	{
 		return Collections.unmodifiableList(sampleVariantsProvider.getSampleVariants(this));
 	}
@@ -229,19 +230,22 @@ public class GeneticVariant
 	private void deterimeMinorAllele()
 	{
 
-		HashMap<String, AtomicInteger> alleleCounts = new HashMap<String, AtomicInteger>(alleles.size());
-		for (String allele : alleles)
+		HashMap<String, AtomicInteger> alleleCounts = new HashMap<String, AtomicInteger>(alleles.getAlleles().size());
+		for (String allele : alleles.getAlleles())
 		{
 			alleleCounts.put(allele, new AtomicInteger());
 		}
 
-		for (List<String> sampleAlleles : getSampleVariants())
+		for (VariantAlleles sampleAlleles : getSampleVariants())
 		{
-			for (String sampleAllele : sampleAlleles)
+			if (sampleAlleles != null)
 			{
-				if (sampleAllele != null)
+				for (String sampleAllele : sampleAlleles.getAlleles())
 				{
-					alleleCounts.get(sampleAllele).incrementAndGet();
+					if (sampleAllele != null)
+					{
+						alleleCounts.get(sampleAllele).incrementAndGet();
+					}
 				}
 			}
 		}
@@ -250,7 +254,7 @@ public class GeneticVariant
 		int provisionalMinorAlleleCount = Integer.MAX_VALUE;
 		int totalAlleleCount = 0;
 
-		for (String allele : alleles)
+		for (String allele : alleles.getAlleles())
 		{
 
 			int alleleCount = alleleCounts.get(allele).get();

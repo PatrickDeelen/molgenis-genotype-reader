@@ -12,6 +12,7 @@ import java.util.List;
 import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
@@ -74,24 +75,27 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getSequenceName(), "22");
 		assertEquals(variant.getType(), GeneticVariant.Type.SNP);
 
-		List<String> alleles = variant.getAlleles();
+		List<String> alleles = variant.getVariantAlleles().getAlleles();
 		assertNotNull(alleles);
 		assertEquals(alleles.size(), 2);
 		assertTrue(alleles.contains("C"));
 		assertTrue(alleles.contains("G"));
 
-		List<List<String>> sampleVariants = variant.getSampleVariants();
+		List<VariantAlleles> sampleVariants = variant.getSampleVariants();
 		assertNotNull(sampleVariants);
 		assertEquals(sampleVariants.size(), 9);
-		assertEquals(sampleVariants.get(0).size(), 2);
-		assertEquals(sampleVariants.get(0).get(0), "C");
-		assertEquals(sampleVariants.get(0).get(1), "C");
-		assertEquals(sampleVariants.get(0).size(), 2);
-		assertEquals(sampleVariants.get(1).get(0), "C");
-		assertEquals(sampleVariants.get(1).get(1), "G");
-		assertEquals(sampleVariants.get(2).size(), 2);
-		assertEquals(sampleVariants.get(2).get(0), "G");
-		assertEquals(sampleVariants.get(2).get(1), "G");
+		assertNotNull(sampleVariants.get(0).getAllelesAsChars());
+		assertEquals(sampleVariants.get(0).getAlleles().size(), 2);
+		assertEquals(sampleVariants.get(0).getAllelesAsChars()[0], 'C');
+		assertEquals(sampleVariants.get(0).getAllelesAsChars()[1], 'C');
+		assertNotNull(sampleVariants.get(1).getAllelesAsChars());
+		assertEquals(sampleVariants.get(1).getAllelesAsChars().length, 2);
+		assertEquals(sampleVariants.get(1).getAllelesAsChars()[0], 'C');
+		assertEquals(sampleVariants.get(1).getAllelesAsChars()[1], 'G');
+		assertNotNull(sampleVariants.get(2).getAllelesAsChars());
+		assertEquals(sampleVariants.get(2).getAllelesAsChars().length, 2);
+		assertEquals(sampleVariants.get(2).getAllelesAsChars()[0], 'G');
+		assertEquals(sampleVariants.get(2).getAllelesAsChars()[1], 'G');
 	}
 
 	@Test

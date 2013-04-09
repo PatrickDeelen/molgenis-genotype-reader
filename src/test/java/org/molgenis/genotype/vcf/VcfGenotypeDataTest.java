@@ -13,6 +13,7 @@ import java.util.Map;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
@@ -90,18 +91,19 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getSequenceName(), "2");
 		assertEquals(variant.getType(), GeneticVariant.Type.SNP);
 
-		List<String> alleles = variant.getAlleles();
+		List<String> alleles = variant.getVariantAlleles().getAlleles();
 		assertNotNull(alleles);
 		assertEquals(alleles.size(), 2);
 		assertEquals(alleles.get(0), "G");
 		assertEquals(alleles.get(1), "C");
 
-		List<List<String>> sampleVariants = variant.getSampleVariants();
+		List<VariantAlleles> sampleVariants = variant.getSampleVariants();
 		assertNotNull(sampleVariants);
 		assertEquals(sampleVariants.size(), 1);
-		assertEquals(sampleVariants.get(0).size(), 2);
-		assertEquals(sampleVariants.get(0).get(0), "C");
-		assertEquals(sampleVariants.get(0).get(0), "C");
+		assertNotNull(sampleVariants.get(0).getAlleles());
+		assertEquals(sampleVariants.get(0).getAlleles().size(), 2);
+		assertEquals(sampleVariants.get(0).getAlleles().get(0), "C");
+		assertEquals(sampleVariants.get(0).getAlleles().get(0), "C");
 	}
 
 	@Test
@@ -125,7 +127,6 @@ public class VcfGenotypeDataTest extends ResourceTest
 	@Test
 	public void testSeqVariants() throws IOException
 	{
-
 		VariantQueryResult queryResult = genotypeData.getSeqVariants("1");
 		try
 		{

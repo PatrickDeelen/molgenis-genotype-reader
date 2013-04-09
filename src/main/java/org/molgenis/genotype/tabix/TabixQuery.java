@@ -10,6 +10,7 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.GenotypeDataException;
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.tabix.TabixIndex.TabixIterator;
@@ -141,41 +142,41 @@ public class TabixQuery implements VariantQuery
 	}
 
 	@Override
-	public List<List<String>> findSamplesForVariant(String sequence, int startPos, List<String> alleles,
+	public List<VariantAlleles> findSamplesForVariant(String sequence, int startPos, VariantAlleles alleles,
 			List<String> columnNames, List<String> sampleNames)
 	{
 		try
 		{
 			TabixIterator tabixIterator = index.queryTabixIndex(sequence, startPos - 1, startPos, inputStream);
+
 			if (tabixIterator != null)
 			{
 				String line = tabixIterator.next();
 				while (line != null)
 				{
 					VcfRecord record = new VcfRecord(line, columnNames);
-
 					if (record.getChrom().equalsIgnoreCase(sequence) && (record.getPos() == startPos)
-							&& record.getAlleles().equals(alleles))
+							&& record.getAlleles().equals(alleles.getAlleles()))
 					{
-						List<List<String>> sampleVariants = new ArrayList<List<String>>(sampleNames.size());
+						List<VariantAlleles> sampleVariants = new ArrayList<VariantAlleles>(sampleNames.size());
 						for (String sampleName : sampleNames)
 						{
 							VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
 							if (geno == null) throw new GenotypeDataException("Missing GT format value for sample ["
 									+ sampleName + "]");
-
-							sampleVariants.add(new ArrayList<String>(geno.getSamleVariants(alleles)));
+							sampleVariants.add(VariantAlleles.create(geno.getSamleVariants(alleles.getAlleles())));
 						}
 
 						return sampleVariants;
 					}
+
+					line = tabixIterator.next();
 				}
 			}
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		finally
 		{

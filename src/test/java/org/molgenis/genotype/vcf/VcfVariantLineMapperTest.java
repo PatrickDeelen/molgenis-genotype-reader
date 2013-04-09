@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
@@ -41,14 +42,14 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 
 		assertEquals(variant.getRefAllele(), "C");
 
-		List<String> alleles = variant.getAlleles();
+		List<String> alleles = variant.getVariantAlleles().getAlleles();
 		assertNotNull(alleles);
 		assertEquals(alleles.size(), 2);
 		assertEquals(alleles.get(0), "C");
 		assertEquals(alleles.get(1), "T");
 
 		assertEquals(variant.getRefAllele(), "C");
-		List<String> snpAlleles = variant.getAlleles();
+		List<String> snpAlleles = variant.getVariantAlleles().getAlleles();
 		assertNotNull(snpAlleles);
 		assertEquals(snpAlleles.size(), 2);
 		assertEquals(snpAlleles.get(0), "C");
@@ -75,7 +76,7 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 
 		assertEquals(variant.getRefAllele(), "C");
 
-		List<String> alleles = variant.getAlleles();
+		List<String> alleles = variant.getVariantAlleles().getAlleles();
 		assertNotNull(alleles);
 		assertEquals(alleles.size(), 3);
 		assertTrue(alleles.contains("C"));
@@ -84,7 +85,7 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 	}
 
 	@Override
-	public List<List<String>> getSampleVariants(GeneticVariant variant)
+	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
 	{
 		return Collections.emptyList();
 	}
