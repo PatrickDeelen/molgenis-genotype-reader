@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.util.Utils;
+import org.molgenis.genotype.variant.GenericGeneticVariant;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfRecord;
 
@@ -65,10 +69,19 @@ public class VcfVariantLineMapper implements VariantLineMapper
 			}
 		}
 
-		GeneticVariant.Type type = isSnp(alleles) ? GeneticVariant.Type.SNP : GeneticVariant.Type.GENERIC;
+		GeneticVariant variant;
+		if (Utils.isSnp(alleles))
+		{
+			variant = new SnpGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles), refAllele,
+					annotationValues, stopPos, altDescriptions, altTypes, sampleVariantsProvider);
+		}
+		else
+		{
+			variant = new GenericGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles), refAllele,
+					annotationValues, stopPos, altDescriptions, altTypes, sampleVariantsProvider);
+		}
 
-		return new GeneticVariant(ids, sequenceName, startPos, alleles, refAllele, annotationValues, stopPos,
-				altDescriptions, altTypes, sampleVariantsProvider, type);
+		return variant;
 	}
 
 	private Map<String, Object> getAnnotationValues(VcfRecord record, List<Annotation> annotations)
@@ -165,20 +178,6 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		}
 
 		return annotationValues;
-	}
-
-	// Variant is a SNP if all alleles are one nucleotide long
-	private boolean isSnp(List<String> alleles)
-	{
-		for (String allele : alleles)
-		{
-			if (allele.length() != 1)
-			{
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 }

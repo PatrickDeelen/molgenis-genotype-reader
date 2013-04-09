@@ -3,7 +3,6 @@ package org.molgenis.genotype.plink;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +17,13 @@ import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.IndexedGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.util.plink.datatypes.Biallele;
 import org.molgenis.util.plink.datatypes.MapEntry;
 import org.molgenis.util.plink.datatypes.PedEntry;
@@ -128,8 +129,8 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 				}
 			}
 
-			GeneticVariant snp = new GeneticVariant(ids, sequenceName, startPos, alleles, refAllele, annotationValues,
-					stopPos, altDescriptions, altTypes, this, GeneticVariant.Type.SNP);
+			GeneticVariant snp = new SnpGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles),
+					refAllele, annotationValues, stopPos, altDescriptions, altTypes, this);
 
 			snps.add(snp);
 			snpById.put(snp.getPrimaryVariantId(), snp);
@@ -197,7 +198,7 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 	}
 
 	@Override
-	public List<List<String>> getSampleVariants(GeneticVariant variant)
+	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
 	{
 		if (variant.getPrimaryVariantId() == null)
 		{
@@ -212,12 +213,10 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 		}
 
 		List<Biallele> bialleles = sampleAllelesBySnpIndex.get(index);
-		List<List<String>> sampleVariants = new ArrayList<List<String>>(bialleles.size());
+		List<VariantAlleles> sampleVariants = new ArrayList<VariantAlleles>(bialleles.size());
 		for (Biallele biallele : bialleles)
 		{
-			String allele1 = biallele.getAllele1() == NULL_VALUE ? null : biallele.getAllele1() + "";
-			String allele2 = biallele.getAllele1() == NULL_VALUE ? null : biallele.getAllele2() + "";
-			sampleVariants.add(Arrays.asList(allele1, allele2));
+			sampleVariants.add(VariantAlleles.create(biallele.getAllele1(), biallele.getAllele2()));
 		}
 
 		return sampleVariants;

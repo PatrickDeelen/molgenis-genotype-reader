@@ -18,6 +18,7 @@ import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.IndexedGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
@@ -118,12 +119,12 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
-	public List<List<String>> getSampleVariants(GeneticVariant variant)
+	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
 	{
 		try
 		{
 			return index.createQuery().findSamplesForVariant(variant.getSequenceName(), variant.getStartPos(),
-					variant.getAlleles(), reader.getColNames(), reader.getSampleNames());
+					variant.getVariantAlleles(), reader.getColNames(), reader.getSampleNames());
 		}
 		catch (IOException e)
 		{

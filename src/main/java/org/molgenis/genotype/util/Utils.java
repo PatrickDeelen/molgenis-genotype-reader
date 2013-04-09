@@ -29,4 +29,19 @@ public class Utils
 		return result;
 	}
 
+	/**
+	 * Variant is a SNP if all alleles are one nucleotide long
+	 */
+	public static boolean isSnp(List<String> alleles)
+	{
+		for (String allele : alleles)
+		{
+			if ((allele != null) && allele.length() != 1)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

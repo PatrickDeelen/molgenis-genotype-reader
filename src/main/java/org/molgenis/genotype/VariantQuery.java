@@ -38,6 +38,6 @@ public interface VariantQuery
 	 */
 	VariantQueryResult executeQuery(String sequence, int startPos);
 
-	List<List<String>> findSamplesForVariant(String sequence, int startPos, List<String> alleles,
+	List<VariantAlleles> findSamplesForVariant(String sequence, int startPos, VariantAlleles alleles,
 			List<String> columnNames, List<String> sampleNames);
 }

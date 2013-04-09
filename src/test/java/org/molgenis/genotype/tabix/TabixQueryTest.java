@@ -14,6 +14,7 @@ import java.util.List;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.molgenis.genotype.ResourceTest;
+import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
@@ -137,7 +138,7 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	}
 
 	@Override
-	public List<List<String>> getSampleVariants(GeneticVariant variant)
+	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
 	{
 		return Collections.emptyList();
 	}
