@@ -40,7 +40,7 @@ public class Main
 			long t = System.currentTimeMillis() - t0;
 			System.out.println("t = " + t);
 
-			SnpGeneticVariant snpvariant = data.getSnpVariantsByPos("1", 554636);
+			SnpGeneticVariant snpvariant = data.getSnpVariantByPos("1", 554636);
 			System.out.println(snpvariant.getStartPos());
 			System.out.println(snpvariant.getSampleVariants());
 

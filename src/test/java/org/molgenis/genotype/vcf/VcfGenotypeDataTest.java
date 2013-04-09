@@ -160,7 +160,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 	@Test
 	public void testSnpVariants()
 	{
-		SnpGeneticVariant snpGeneticVariant = genotypeData.getSnpVariantsByPos("1", 3172273);
+		SnpGeneticVariant snpGeneticVariant = genotypeData.getSnpVariantByPos("1", 3172273);
 		assertNotNull(snpGeneticVariant);
 		assertEquals(snpGeneticVariant.getType(), GeneticVariant.Type.SNP);
 	}

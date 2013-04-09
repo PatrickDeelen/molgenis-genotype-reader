@@ -70,7 +70,7 @@ public interface GenotypeData
 	 * @param startPos
 	 * @return The SNP found at this startPos, will be null if not present
 	 */
-	SnpGeneticVariant getSnpVariantsByPos(String seqName, int startPos);
+	SnpGeneticVariant getSnpVariantByPos(String seqName, int startPos);
 
 	/**
 	 * Get all variants of a sequence Close the VariantQueryResult after use

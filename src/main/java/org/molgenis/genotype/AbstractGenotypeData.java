@@ -53,10 +53,9 @@ public abstract class AbstractGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public SnpGeneticVariant getSnpVariantsByPos(String seqName, int startPos)
+	public SnpGeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
 		List<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
-		List<GeneticVariant> snps = new ArrayList<GeneticVariant>();
 
 		for (GeneticVariant variant : variants)
 		{
