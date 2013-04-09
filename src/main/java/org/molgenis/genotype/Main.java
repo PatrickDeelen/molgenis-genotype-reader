@@ -25,7 +25,7 @@ public class Main
 			List<GeneticVariant> variants = data.getVariants();
 			System.out.println("Variant count = " + variants.size());
 			System.out.println(variants.get(0).getPrimaryVariantId());
-			System.out.println(variants.get(0).getAlleles());
+			System.out.println(variants.get(0).getVariantAlleles());
 			System.out.println(variants.get(0).getSampleVariants().size());
 
 			GeneticVariant var = data.getVariantById("rs9629043");
@@ -63,7 +63,7 @@ public class Main
 		// List<GeneticVariant> variants = data.getVariants();
 		// System.out.println("Variant count = " + variants.size());
 		// System.out.println(variants.get(0).getPrimaryVariantId());
-		// System.out.println(variants.get(0).getAlleles());
+		// System.out.println(variants.get(0).getVariantAlleles().getAlleles());
 		// System.out.println(variants.get(0).getSampleVariants().size());
 		//
 		// GeneticVariant var = data.getVariantById("rs113037146");
@@ -72,7 +72,7 @@ public class Main
 		//
 		// var = data.getVariantById(variants.get(0).getPrimaryVariantId());
 		// System.out.println(var.getPrimaryVariantId());
-		// System.out.println(var.getAlleles());
+		// System.out.println(var.getVariantAlleles().getAlleles());
 		// System.out.println(var.getSampleVariants().size());
 		// }
 		// catch (Exception e)
