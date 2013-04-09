@@ -271,4 +271,9 @@ public class GeneticVariant
 		this.minorAllele = provisionalMinorAllele;
 		this.minorAlleleFreq = provisionalMinorAlleleCount / (float) totalAlleleCount;
 	}
+
+	public boolean isSnp()
+	{
+		return type == GeneticVariant.Type.SNP ? true : false;
+	}
 }

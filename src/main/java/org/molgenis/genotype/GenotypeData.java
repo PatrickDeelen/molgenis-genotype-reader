@@ -91,4 +91,6 @@ public interface GenotypeData
 	List<GeneticVariant> getVariants();
 
 	GeneticVariant getVariantById(String primaryVariantId);
+
+	GeneticVariant getSnpVariantById(String primaryVariantId);
 }

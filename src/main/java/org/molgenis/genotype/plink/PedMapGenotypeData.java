@@ -197,6 +197,11 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 		return snpById.get(primaryVariantId);
 	}
 
+	public SnpGeneticVariant getSnpVariantById(String primaryVariantId)
+	{
+		return (SnpGeneticVariant) getVariantById(primaryVariantId);
+	}
+
 	@Override
 	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
 	{
