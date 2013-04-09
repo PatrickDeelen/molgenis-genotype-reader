@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.molgenis.genotype.plink.PedMapGenotypeData;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 public class Main
 {
@@ -39,10 +40,9 @@ public class Main
 			long t = System.currentTimeMillis() - t0;
 			System.out.println("t = " + t);
 
-			variants = data.getSnpVariantsByPos("1", 554636);
-			System.out.println(variants.size());
-			System.out.println(variants.get(0).getStartPos());
-			System.out.println(variants.get(0).getSampleVariants());
+			SnpGeneticVariant snpvariant = data.getSnpVariantsByPos("1", 554636);
+			System.out.println(snpvariant.getStartPos());
+			System.out.println(snpvariant.getSampleVariants());
 
 		}
 		catch (Throwable e)
