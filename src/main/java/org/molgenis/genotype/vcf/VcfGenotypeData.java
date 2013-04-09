@@ -26,6 +26,7 @@ import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfAlt;
 import org.molgenis.io.vcf.VcfContig;
@@ -110,6 +111,26 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		}
 
 		return null;
+	}
+
+	@Override
+	public SnpGeneticVariant getSnpVariantById(String primaryVariantId)
+	{
+		GeneticVariant variant = getVariantById(primaryVariantId);
+		if (variant == null)
+		{
+			return null;
+		}
+		else if (variant.isSnp())
+		{
+
+			return (SnpGeneticVariant) variant;
+
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	@Override

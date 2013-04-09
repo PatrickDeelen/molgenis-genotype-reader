@@ -19,6 +19,7 @@ import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -159,10 +160,9 @@ public class VcfGenotypeDataTest extends ResourceTest
 	@Test
 	public void testSnpVariants()
 	{
-		List<GeneticVariant> geneticVariants = genotypeData.getSnpVariantsByPos("1", 3172273);
-		assertNotNull(geneticVariants);
-		assertEquals(geneticVariants.size(), 1);
-		assertEquals(geneticVariants.get(0).getType(), GeneticVariant.Type.SNP);
+		SnpGeneticVariant snpGeneticVariant = genotypeData.getSnpVariantByPos("1", 3172273);
+		assertNotNull(snpGeneticVariant);
+		assertEquals(snpGeneticVariant.getType(), GeneticVariant.Type.SNP);
 	}
 
 	@Test
