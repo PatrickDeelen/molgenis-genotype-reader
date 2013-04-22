@@ -108,7 +108,6 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 			int startPos = (int) entry.getBpPos();
 			String refAllele = null;// Unknown for ped/map
 			Map<String, ?> annotationValues = Collections.emptyMap();
-			Integer stopPos = null;
 			List<String> altDescriptions = Collections.emptyList();
 			List<String> altTypes = Collections.emptyList();
 
@@ -130,7 +129,7 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 			}
 
 			GeneticVariant snp = new SnpGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles),
-					refAllele, annotationValues, stopPos, altDescriptions, altTypes, this);
+					refAllele, annotationValues, altDescriptions, altTypes, this);
 
 			snps.add(snp);
 			snpById.put(snp.getPrimaryVariantId(), snp);

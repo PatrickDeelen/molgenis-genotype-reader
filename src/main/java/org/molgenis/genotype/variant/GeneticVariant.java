@@ -69,6 +69,31 @@ public class GeneticVariant
 		this.type = type;
 	}
 
+	public GeneticVariant(String id, String sequenceName, int startPos, VariantAlleles alleles, String refAllele,
+			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes,
+			SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
+	{
+		if (id == null)
+		{
+			this.variantId = new BlankGeneticVariantId();
+		}
+		else
+		{
+			this.variantId = new SingleGeneticVariantId(id);
+		}
+
+		this.startPos = startPos;
+		this.sequenceName = sequenceName;
+		this.annotationValues = annotationValues;
+		this.stopPos = stopPos;
+		this.altDescriptions = altDescriptions;
+		this.altTypes = altTypes;
+		this.sampleVariantsProvider = sampleVariantsProvider;
+		this.alleles = alleles;
+		this.refAllele = refAllele;
+		this.type = type;
+	}
+
 	/**
 	 * A Variant can have multiple id's (it's known under different names). The
 	 * compoundId is a concatination of these ids with ';' as separator. This is
@@ -258,8 +283,8 @@ public class GeneticVariant
 			}
 		}
 
-		String provisionalMinorAllele = null;
-		int provisionalMinorAlleleCount = Integer.MAX_VALUE;
+		String provisionalMinorAllele = this.getRefAllele();
+		int provisionalMinorAlleleCount = alleleCounts.get(this.getRefAllele()).get();
 		int totalAlleleCount = 0;
 
 		for (String allele : alleles.getAlleles())
@@ -272,7 +297,6 @@ public class GeneticVariant
 			{
 				provisionalMinorAlleleCount = alleleCounts.get(allele).get();
 				provisionalMinorAllele = allele;
-				totalAlleleCount += alleleCount;
 			}
 		}
 
@@ -297,7 +321,7 @@ public class GeneticVariant
 
 	/**
 	 * 
-	 * @return dosage based on called genotypes
+	 * @return dosage based on called genotypes (count of ref allele)
 	 */
 	public byte[] getCalledDosages()
 	{
