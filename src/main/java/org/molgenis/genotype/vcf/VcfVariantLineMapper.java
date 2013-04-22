@@ -73,7 +73,7 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		if (Utils.isSnp(alleles))
 		{
 			variant = new SnpGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles), refAllele,
-					annotationValues, stopPos, altDescriptions, altTypes, sampleVariantsProvider);
+					annotationValues, altDescriptions, altTypes, sampleVariantsProvider);
 		}
 		else
 		{

@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.util.Ld;
+import org.molgenis.genotype.util.LdCalculator;
+import org.molgenis.genotype.util.LdCalculatorException;
 import org.molgenis.genotype.variant.id.BlankGeneticVariantId;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
 import org.molgenis.genotype.variant.id.ListGeneticVariantId;
@@ -52,6 +55,31 @@ public class GeneticVariant
 		else
 		{
 			this.variantId = new ListGeneticVariantId(ids);
+		}
+
+		this.startPos = startPos;
+		this.sequenceName = sequenceName;
+		this.annotationValues = annotationValues;
+		this.stopPos = stopPos;
+		this.altDescriptions = altDescriptions;
+		this.altTypes = altTypes;
+		this.sampleVariantsProvider = sampleVariantsProvider;
+		this.alleles = alleles;
+		this.refAllele = refAllele;
+		this.type = type;
+	}
+
+	public GeneticVariant(String id, String sequenceName, int startPos, VariantAlleles alleles, String refAllele,
+			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes,
+			SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
+	{
+		if (id == null)
+		{
+			this.variantId = new BlankGeneticVariantId();
+		}
+		else
+		{
+			this.variantId = new SingleGeneticVariantId(id);
 		}
 
 		this.startPos = startPos;
@@ -148,6 +176,11 @@ public class GeneticVariant
 	public VariantAlleles getVariantAlleles()
 	{
 		return alleles;
+	}
+
+	public int getAlleleCount()
+	{
+		return alleles.getAlleleCount();
 	}
 
 	/**
@@ -250,8 +283,8 @@ public class GeneticVariant
 			}
 		}
 
-		String provisionalMinorAllele = null;
-		int provisionalMinorAlleleCount = Integer.MAX_VALUE;
+		String provisionalMinorAllele = this.getRefAllele();
+		int provisionalMinorAlleleCount = alleleCounts.get(this.getRefAllele()).get();
 		int totalAlleleCount = 0;
 
 		for (String allele : alleles.getAlleles())
@@ -264,7 +297,6 @@ public class GeneticVariant
 			{
 				provisionalMinorAlleleCount = alleleCounts.get(allele).get();
 				provisionalMinorAllele = allele;
-				totalAlleleCount += alleleCount;
 			}
 		}
 
@@ -275,5 +307,49 @@ public class GeneticVariant
 	public boolean isSnp()
 	{
 		return type == GeneticVariant.Type.SNP ? true : false;
+	}
+
+	public Ld calculateLd(GeneticVariant other) throws LdCalculatorException
+	{
+		return LdCalculator.calculateLd(this, other);
+	}
+
+	public boolean isBiallelic()
+	{
+		return getAlleleCount() == 2 ? true : false;
+	}
+
+	/**
+	 * 
+	 * @return dosage based on called genotypes (count of ref allele)
+	 */
+	public byte[] getCalledDosages()
+	{
+		List<VariantAlleles> sampleVariants = getSampleVariants();
+
+		byte[] dosages = new byte[getSampleVariants().size()];
+
+		for (int i = 0; i < dosages.length; ++i)
+		{
+			VariantAlleles sampleVariant = sampleVariants.get(i);
+			boolean missing = false;
+			byte dosage = 0;
+
+			for (String allele : sampleVariant.getAlleles())
+			{
+				if (allele == null)
+				{
+					missing = true;
+				}
+				else if (allele.equals(refAllele))
+				{
+					++dosage;
+				}
+			}
+
+			dosages[i] = missing ? -1 : dosage;
+		}
+
+		return dosages;
 	}
 }

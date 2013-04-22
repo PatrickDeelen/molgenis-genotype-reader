@@ -73,6 +73,11 @@ public class VariantAlleles
 		return alleles;
 	}
 
+	public int getAlleleCount()
+	{
+		return alleles.size();
+	}
+
 	public boolean isSnp()
 	{
 		return snp;
