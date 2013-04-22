@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.util.Ld;
+import org.molgenis.genotype.util.LdCalculator;
+import org.molgenis.genotype.util.LdCalculatorException;
 import org.molgenis.genotype.variant.id.BlankGeneticVariantId;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
 import org.molgenis.genotype.variant.id.ListGeneticVariantId;
@@ -150,6 +153,11 @@ public class GeneticVariant
 		return alleles;
 	}
 
+	public int getAlleleCount()
+	{
+		return alleles.getAlleleCount();
+	}
+
 	/**
 	 * Gets the reference allele
 	 * 
@@ -275,5 +283,49 @@ public class GeneticVariant
 	public boolean isSnp()
 	{
 		return type == GeneticVariant.Type.SNP ? true : false;
+	}
+
+	public Ld calculateLd(GeneticVariant other) throws LdCalculatorException
+	{
+		return LdCalculator.calculateLd(this, other);
+	}
+
+	public boolean isBiallelic()
+	{
+		return getAlleleCount() == 2 ? true : false;
+	}
+
+	/**
+	 * 
+	 * @return dosage based on called genotypes
+	 */
+	public byte[] getCalledDosages()
+	{
+		List<VariantAlleles> sampleVariants = getSampleVariants();
+
+		byte[] dosages = new byte[getSampleVariants().size()];
+
+		for (int i = 0; i < dosages.length; ++i)
+		{
+			VariantAlleles sampleVariant = sampleVariants.get(i);
+			boolean missing = false;
+			byte dosage = 0;
+
+			for (String allele : sampleVariant.getAlleles())
+			{
+				if (allele == null)
+				{
+					missing = true;
+				}
+				else if (allele.equals(refAllele))
+				{
+					++dosage;
+				}
+			}
+
+			dosages[i] = missing ? -1 : dosage;
+		}
+
+		return dosages;
 	}
 }
