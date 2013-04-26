@@ -1,5 +1,6 @@
 package org.molgenis.genotype;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,23 @@ public class VariantAlleles
 		this.alleles = alleles;
 		this.allelesAsChar = allelesAsChar;
 		this.snp = snp;
+	}
+
+	public VariantAlleles swap()
+	{
+		if (!snp)
+		{
+			throw new GenotypeDataException("Only snps can be swapped");
+		}
+
+		char[] swapped = Utils.swapSnpStrand(allelesAsChar);
+		List<String> swappedAlleles = new ArrayList<String>(swapped.length);
+		for (char c : swapped)
+		{
+			swappedAlleles.add(String.valueOf(c));
+		}
+
+		return create(swappedAlleles);
 	}
 
 	public static VariantAlleles create(List<String> alleles)

@@ -77,7 +77,6 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 
 						if ((++index % 1000) == 0)
 						{
-							System.out.println(index);
 							LOG.info("Loaded [" + index + "] variants");
 						}
 					}

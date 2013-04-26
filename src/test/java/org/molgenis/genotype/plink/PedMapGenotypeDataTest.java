@@ -7,6 +7,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.molgenis.genotype.ResourceTest;
@@ -16,6 +17,7 @@ import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -106,5 +108,26 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		assertEquals(samples.size(), 9);
 		assertEquals(samples.get(0).getId(), "1042");
 		assertEquals(samples.get(0).getFamilyId(), "F1042");
+	}
+
+	@Test
+	public void testSwap()
+	{
+		GeneticVariant variant = genotypeData.getVariantById("rs11089130");
+		assertNotNull(variant);
+		assertTrue((variant instanceof SnpGeneticVariant));
+
+		SnpGeneticVariant swapped = ((SnpGeneticVariant) variant).swapAlleles();
+		assertEquals(swapped.getVariantAlleles().getAlleles(), Arrays.asList("G", "C"));
+		assertNull(swapped.getRefAllele());
+		assertEquals(swapped.getSampleVariants().size(), 9);
+		assertEquals(swapped.getSampleSnpVariants().get(0), new char[]
+		{ 'G', 'G' });
+		assertEquals(swapped.getSampleSnpVariants().get(1), new char[]
+		{ 'G', 'C' });
+		assertEquals(swapped.getSampleSnpVariants().get(8), new char[]
+		{ 'G', 'C' });
+		assertEquals(swapped.getMinorAllele(), "C");
+		assertEquals(swapped.getMinorAlleleFrequency(), 0.139, 0.001);
 	}
 }

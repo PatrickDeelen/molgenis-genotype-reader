@@ -32,6 +32,11 @@ import org.molgenis.util.plink.readers.MapFileReader;
 
 public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVariantsProvider
 {
+	public static final String FATHER_SAMPLE_ANNOTATION_NAME = "father";
+	public static final String MOTHER_SAMPLE_ANNOTATION_NAME = "mother";
+	public static final String SEX_SAMPLE_ANNOTATION_NAME = "sex";
+	public static final String PHENOTYPE_SAMPLE_ANNOTATION_NAME = "phenotype";
+
 	public static final char SEPARATOR_MAP = '	';
 	private static final char NULL_VALUE = '0';
 	private static final Logger LOG = Logger.getLogger(PedMapGenotypeData.class);
@@ -91,11 +96,9 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 			}
 
 			LOG.info("Loaded [" + (++count) + "] samples");
-			System.out.println("Loaded [" + count + "] samples");
 		}
 
 		LOG.info("Total [" + count + "] samples");
-		System.out.println("Total [" + count + "] samples");
 	}
 
 	private void loadSnps(MapFileReader reader)
@@ -139,12 +142,10 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 			if ((index % 1000) == 0)
 			{
 				LOG.info("Loaded [" + index + "] snps");
-				System.out.println("Loaded [" + index + "] snps");
 			}
 		}
 
 		LOG.info("Total [" + index + "] snps");
-		System.out.println("Total [" + index + "] snps");
 	}
 
 	@Override
@@ -172,8 +173,13 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 			List<Sample> samples = new ArrayList<Sample>();
 			for (PedEntry pedEntry : pedFileDriver)
 			{
-				samples.add(new Sample(pedEntry.getIndividual(), pedEntry.getFamily(), Collections
-						.<String, Object> emptyMap()));
+				Map<String, Object> annotations = new HashMap<String, Object>(4);
+				annotations.put(FATHER_SAMPLE_ANNOTATION_NAME, pedEntry.getFather());
+				annotations.put(MOTHER_SAMPLE_ANNOTATION_NAME, pedEntry.getMother());
+				annotations.put(SEX_SAMPLE_ANNOTATION_NAME, pedEntry.getSex());
+				annotations.put(PHENOTYPE_SAMPLE_ANNOTATION_NAME, pedEntry.getPhenotype());
+
+				samples.add(new Sample(pedEntry.getIndividual(), pedEntry.getFamily(), annotations));
 			}
 
 			return samples;
@@ -196,6 +202,7 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 		return snpById.get(primaryVariantId);
 	}
 
+	@Override
 	public SnpGeneticVariant getSnpVariantById(String primaryVariantId)
 	{
 		return (SnpGeneticVariant) getVariantById(primaryVariantId);
