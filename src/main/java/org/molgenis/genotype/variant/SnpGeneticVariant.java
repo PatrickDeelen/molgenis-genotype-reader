@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.util.Utils;
 
 public class SnpGeneticVariant extends GeneticVariant
 {
@@ -32,4 +33,23 @@ public class SnpGeneticVariant extends GeneticVariant
 	{
 		return getVariantAlleles().getAllelesAsChars();
 	}
+
+	/**
+	 * The new SnpGeneticVariant will return a new SnpGeneticVariant that has
+	 * for all alleles the complement of the alleles in this SnpGeneticVariant
+	 * 
+	 * @return
+	 */
+	public SnpGeneticVariant swapAlleles()
+	{
+		String swappedRef = getRefAllele() == null ? null : String.valueOf(Utils.getComplementNucleotide(getRefAllele()
+				.charAt(0)));
+
+		SampleVariantsProvider provider = new SwappingSampleVariantsProvider(sampleVariantsProvider);
+		List<String> ids = getVariantId().getVariantIds();
+
+		return new SnpGeneticVariant(ids, getSequenceName(), getStartPos(), getVariantAlleles().swap(), swappedRef,
+				getAnnotationValues(), getStopPos(), getAltDescriptions(), getAltTypes(), provider);
+	}
+
 }

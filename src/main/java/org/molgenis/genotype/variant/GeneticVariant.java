@@ -26,7 +26,7 @@ public class GeneticVariant
 	private final Integer stopPos;
 	private final List<String> altDescriptions;
 	private final List<String> altTypes;
-	private final SampleVariantsProvider sampleVariantsProvider;
+	protected final SampleVariantsProvider sampleVariantsProvider;
 	private final VariantAlleles alleles;
 	private final String refAllele;
 	private String minorAllele = null;
@@ -38,10 +38,6 @@ public class GeneticVariant
 			List<String> altTypes, SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
 	{
 		if ((ids == null) || ids.isEmpty())
-		{
-			this.variantId = new BlankGeneticVariantId();
-		}
-		else if (ids.size() == 0)
 		{
 			this.variantId = new BlankGeneticVariantId();
 		}
