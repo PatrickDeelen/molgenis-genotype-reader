@@ -113,21 +113,24 @@ public class PedMapGenotypeDataTest extends ResourceTest
 	@Test
 	public void testSwap()
 	{
-		GeneticVariant variant = genotypeData.getVariantById("rs11089130");
+		SnpGeneticVariant variant = (SnpGeneticVariant) genotypeData.getVariantById("rs11089130");
 		assertNotNull(variant);
 		assertTrue((variant instanceof SnpGeneticVariant));
 
-		SnpGeneticVariant swapped = ((SnpGeneticVariant) variant).swapAlleles();
-		assertEquals(swapped.getVariantAlleles().getAlleles(), Arrays.asList("G", "C"));
-		assertNull(swapped.getRefAllele());
-		assertEquals(swapped.getSampleVariants().size(), 9);
-		assertEquals(swapped.getSampleSnpVariants().get(0), new char[]
+		assertEquals(variant.getMinorAllele(), "G");
+		assertEquals(variant.getMinorAlleleFrequency(), 0.277, 0.001);
+
+		variant.swapAlleles();
+		assertEquals(variant.getVariantAlleles().getAlleles(), Arrays.asList("G", "C"));
+		assertNull(variant.getRefAllele());
+		assertEquals(variant.getSampleVariants().size(), 9);
+		assertEquals(variant.getSampleSnpVariants().get(0), new char[]
 		{ 'G', 'G' });
-		assertEquals(swapped.getSampleSnpVariants().get(1), new char[]
+		assertEquals(variant.getSampleSnpVariants().get(1), new char[]
 		{ 'G', 'C' });
-		assertEquals(swapped.getSampleSnpVariants().get(8), new char[]
+		assertEquals(variant.getSampleSnpVariants().get(8), new char[]
 		{ 'G', 'C' });
-		assertEquals(swapped.getMinorAllele(), "C");
-		assertEquals(swapped.getMinorAlleleFrequency(), 0.139, 0.001);
+		assertEquals(variant.getMinorAllele(), "C");
+		assertEquals(variant.getMinorAlleleFrequency(), 0.277, 0.001);
 	}
 }

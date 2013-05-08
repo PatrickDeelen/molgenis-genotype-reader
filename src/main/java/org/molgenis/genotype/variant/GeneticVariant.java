@@ -15,6 +15,10 @@ import org.molgenis.genotype.variant.id.GeneticVariantId;
 import org.molgenis.genotype.variant.id.ListGeneticVariantId;
 import org.molgenis.genotype.variant.id.SingleGeneticVariantId;
 
+/**
+ * @author Patrick Deelen
+ * 
+ */
 public class GeneticVariant
 {
 	public enum Type
@@ -29,10 +33,10 @@ public class GeneticVariant
 	private final Integer stopPos;
 	private final List<String> altDescriptions;
 	private final List<String> altTypes;
-	protected final SampleVariantsProvider sampleVariantsProvider;
-	private final VariantAlleles alleles;
-	private final String refAllele;
-	private String minorAllele = null;
+	private SampleVariantsProvider sampleVariantsProvider;
+	private VariantAlleles alleles;
+	private String refAllele;
+	protected String minorAllele = null;
 	private float minorAlleleFreq = 0;
 	private final GeneticVariant.Type type;
 
@@ -279,8 +283,8 @@ public class GeneticVariant
 			}
 		}
 
-		String provisionalMinorAllele = this.getRefAllele();
-		int provisionalMinorAlleleCount = alleleCounts.get(this.getRefAllele()).get();
+		String provisionalMinorAllele = this.getRefAllele() != null ? this.getRefAllele() : alleles.getAlleles().get(0);
+		int provisionalMinorAlleleCount = alleleCounts.get(provisionalMinorAllele).get();
 		int totalAlleleCount = 0;
 
 		for (String allele : alleles.getAlleles())
@@ -347,5 +351,35 @@ public class GeneticVariant
 		}
 
 		return dosages;
+	}
+
+	protected void setSampleVariantsProvider(SampleVariantsProvider sampleVariantsProvider)
+	{
+		this.sampleVariantsProvider = sampleVariantsProvider;
+	}
+
+	protected void setRefAllele(String refAllele)
+	{
+		this.refAllele = refAllele;
+	}
+
+	protected SampleVariantsProvider getSampleVariantsProvider()
+	{
+		return sampleVariantsProvider;
+	}
+
+	protected void setMinorAllele(String minorAllele)
+	{
+		this.minorAllele = minorAllele;
+	}
+
+	protected VariantAlleles getAlleles()
+	{
+		return alleles;
+	}
+
+	protected void setAlleles(VariantAlleles alleles)
+	{
+		this.alleles = alleles;
 	}
 }

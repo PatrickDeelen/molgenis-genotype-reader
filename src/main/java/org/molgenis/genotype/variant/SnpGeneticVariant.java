@@ -43,21 +43,25 @@ public class SnpGeneticVariant extends GeneticVariant
 	}
 
 	/**
-	 * The new SnpGeneticVariant will return a new SnpGeneticVariant that has
-	 * for all alleles the complement of the alleles in this SnpGeneticVariant
+	 * The alleles of this genetic variants will be swapped for all future
+	 * access
 	 * 
 	 * @return
 	 */
-	public SnpGeneticVariant swapAlleles()
+	public void swapAlleles()
 	{
-		String swappedRef = getRefAllele() == null ? null : String.valueOf(Utils.getComplementNucleotide(getRefAllele()
-				.charAt(0)));
+		String swappedRef = this.getRefAllele() == null ? null : String.valueOf(Utils.getComplementNucleotide(this
+				.getRefAllele().charAt(0)));
+		this.setRefAllele(swappedRef);
 
-		SampleVariantsProvider provider = new SwappingSampleVariantsProvider(sampleVariantsProvider);
-		List<String> ids = getVariantId().getVariantIds();
+		this.setSampleVariantsProvider(new SwappingSampleVariantsProvider(this.getSampleVariantsProvider()));
+		this.setAlleles(this.getAlleles().getComplement());
 
-		return new SnpGeneticVariant(ids, getSequenceName(), getStartPos(), getVariantAlleles().swap(), swappedRef,
-				getAnnotationValues(), getStopPos(), getAltDescriptions(), getAltTypes(), provider);
+		if (this.minorAllele != null)
+		{
+			this.setMinorAllele(String.valueOf(Utils.getComplementNucleotide(this.getMinorAllele().charAt(0))));
+		}
+
 	}
 
 }

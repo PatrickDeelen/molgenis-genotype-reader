@@ -19,7 +19,7 @@ public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 		List<VariantAlleles> alleles = sampleVariantsProvider.getSampleVariants(variant);
 		for (int i = 0; i < alleles.size(); i++)
 		{
-			alleles.set(i, alleles.get(i).swap());
+			alleles.set(i, alleles.get(i).getComplement());
 		}
 
 		return alleles;

@@ -18,6 +18,8 @@ public class VariantAllelesTest
 		assertEquals(alleles.getAlleles().size(), 2);
 		assertEquals(alleles.getAlleles().get(0), "A");
 		assertEquals(alleles.getAlleles().get(1), "T");
+		assertEquals(alleles.getAllelesAsChars()[0], 'A');
+		assertEquals(alleles.getAllelesAsChars()[1], 'T');
 
 		VariantAlleles alleles2 = VariantAlleles.create('A', 'T');
 		assertEquals(alleles2, alleles);
@@ -52,9 +54,19 @@ public class VariantAllelesTest
 	{
 		List<String> alleles = Arrays.asList("A", "T", "C", "G");
 		VariantAlleles variantAlleles = VariantAlleles.create(alleles);
-		VariantAlleles swapped = variantAlleles.swap();
+		VariantAlleles swapped = variantAlleles.getComplement();
 		assertEquals(swapped.getAlleles(), Arrays.asList("T", "A", "G", "C"));
 		assertEquals(swapped.getAllelesAsChars(), new char[]
 		{ 'T', 'A', 'G', 'C' });
+	}
+
+	@Test
+	public void swapSnp()
+	{
+		VariantAlleles variantAlleles = VariantAlleles.create('A', 'G');
+		VariantAlleles swapped = variantAlleles.getComplement();
+		assertEquals(swapped.getAlleles(), Arrays.asList("T", "C"));
+		assertEquals(swapped.getAllelesAsChars(), new char[]
+		{ 'T', 'C' });
 	}
 }

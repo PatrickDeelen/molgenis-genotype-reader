@@ -1,7 +1,7 @@
 package org.molgenis.genotype;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,32 +11,31 @@ import org.molgenis.genotype.util.Utils;
 public class VariantAlleles
 {
 	private static Map<List<String>, VariantAlleles> cache = new HashMap<List<String>, VariantAlleles>();
-	private List<String> alleles;
-	private char[] allelesAsChar;
-	private boolean snp;
+	private static Map<CharArrayWrapper, VariantAlleles> snpCache = new HashMap<CharArrayWrapper, VariantAlleles>();
+	private final List<String> alleles;
+	private final char[] allelesAsChar;
+	private final boolean snp;
+	private VariantAlleles complement;
 
 	private VariantAlleles(List<String> alleles, char[] allelesAsChar, boolean snp)
 	{
-		this.alleles = alleles;
+		this.alleles = Collections.unmodifiableList(alleles);
 		this.allelesAsChar = allelesAsChar;
 		this.snp = snp;
 	}
 
-	public VariantAlleles swap()
+	public VariantAlleles(char[] allelesAsChar)
 	{
-		if (!snp)
-		{
-			throw new GenotypeDataException("Only snps can be swapped");
-		}
+		this.allelesAsChar = allelesAsChar;
+		this.snp = true;
 
-		char[] swapped = Utils.swapSnpStrand(allelesAsChar);
-		List<String> swappedAlleles = new ArrayList<String>(swapped.length);
-		for (char c : swapped)
+		ArrayList<String> allelesBuilder = new ArrayList<String>();
+		for (char allele : allelesAsChar)
 		{
-			swappedAlleles.add(String.valueOf(c));
+			allelesBuilder.add(String.valueOf(allele));
 		}
+		this.alleles = Collections.unmodifiableList(allelesBuilder);
 
-		return create(swappedAlleles);
 	}
 
 	public static VariantAlleles create(List<String> alleles)
@@ -52,13 +51,16 @@ public class VariantAlleles
 					allelesAsChar[i] = alleles.get(i) == null ? '0' : alleles.get(i).charAt(0);
 				}
 				variantAlleles = new VariantAlleles(alleles, allelesAsChar, true);
+
 			}
 			else
 			{
 				variantAlleles = new VariantAlleles(alleles, null, false);
 			}
 
-			cache.put(alleles, variantAlleles);
+			addToCache(variantAlleles);
+			variantAlleles.addComplement();
+
 		}
 
 		return variantAlleles;
@@ -66,23 +68,53 @@ public class VariantAlleles
 
 	public static VariantAlleles create(char allele1, char allele2)
 	{
-		String strAllele1 = allele1 == '0' ? null : String.valueOf(allele1);
-		String strAllele2 = allele2 == '0' ? null : String.valueOf(allele2);
-		List<String> alleles = Arrays.asList(strAllele1, strAllele2);
 
-		VariantAlleles variantAlleles = cache.get(alleles);
+		return create(new char[]
+		{ allele1, allele2 });
+
+	}
+
+	public static VariantAlleles create(char[] alleles)
+	{
+		VariantAlleles variantAlleles = snpCache.get(new CharArrayWrapper(alleles));
 		if (variantAlleles == null)
 		{
-			variantAlleles = new VariantAlleles(alleles, new char[]
-			{ allele1, allele2 }, true);
-			cache.put(alleles, variantAlleles);
+			variantAlleles = new VariantAlleles(alleles);
+			addToCache(variantAlleles);
+			variantAlleles.addComplement();
 		}
 
 		return variantAlleles;
 	}
 
+	private static void addToCache(VariantAlleles variantAlleles)
+	{
+		cache.put(variantAlleles.getAlleles(), variantAlleles);
+		if (variantAlleles.isSnp())
+		{
+			snpCache.put(new CharArrayWrapper(variantAlleles.getAllelesAsChars()), variantAlleles);
+		}
+	}
+
 	/**
-	 * List of the posible alleles, can contain null if not known!!!!!
+	 * Add complement. Not done in constructor to prevent infinite loop. Cache
+	 * must be up to date before this is called
+	 */
+	public void addComplement()
+	{
+		if (snp)
+		{
+			this.complement = VariantAlleles.create(Utils.swapSnpStrand(allelesAsChar));
+		}
+		else
+		{
+			this.complement = null;
+		}
+
+	}
+
+	/**
+	 * List of the possible alleles, can contain null if not known!!!!!
 	 * 
 	 * @return
 	 */
@@ -115,6 +147,23 @@ public class VariantAlleles
 	public String toString()
 	{
 		return "VariantAlleles [alleles=" + alleles + ", snp=" + snp + "]";
+	}
+
+	/**
+	 * Returns the complements of this variant alleles. Currently only works for
+	 * SNPs
+	 * 
+	 * @return complement of current variant alleles
+	 */
+	public VariantAlleles getComplement()
+	{
+
+		if (!isSnp())
+		{
+			throw new RuntimeException("Complement currenlty only supported for SNPs");
+		}
+
+		return complement;
 	}
 
 }
