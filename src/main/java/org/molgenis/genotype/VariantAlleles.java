@@ -166,4 +166,13 @@ public class VariantAlleles
 		return complement;
 	}
 
+	public boolean sameAlleles(VariantAlleles other)
+	{
+		if (this.alleles.size() != other.alleles.size())
+		{
+			return false;
+		}
+		return this.alleles.containsAll(other.alleles);
+	}
+
 }

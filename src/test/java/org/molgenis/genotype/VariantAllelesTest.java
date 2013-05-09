@@ -69,4 +69,23 @@ public class VariantAllelesTest
 		assertEquals(swapped.getAllelesAsChars(), new char[]
 		{ 'T', 'C' });
 	}
+
+	@Test
+	public void sameAlleles()
+	{
+		VariantAlleles variantAlleles = VariantAlleles.create('A', 'G');
+		VariantAlleles variantAlleles2 = VariantAlleles.create('T', 'G');
+		VariantAlleles variantAlleles3 = VariantAlleles.create('G', 'A');
+		VariantAlleles variantAlleles4 = VariantAlleles.create(new char[]
+		{ 'A', 'G', 'T' });
+		VariantAlleles variantAlleles5 = VariantAlleles.create(new char[]
+		{ 'A' });
+		VariantAlleles variantAlleles6 = VariantAlleles.create('A', 'G');
+
+		assertEquals(variantAlleles.sameAlleles(variantAlleles2), false);
+		assertEquals(variantAlleles.sameAlleles(variantAlleles3), true);
+		assertEquals(variantAlleles.sameAlleles(variantAlleles4), false);
+		assertEquals(variantAlleles.sameAlleles(variantAlleles5), false);
+		assertEquals(variantAlleles.sameAlleles(variantAlleles6), true);
+	}
 }
