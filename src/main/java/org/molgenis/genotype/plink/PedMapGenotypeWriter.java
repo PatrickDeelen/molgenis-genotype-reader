@@ -53,7 +53,7 @@ public class PedMapGenotypeWriter
 		{
 			writer = new MapFileWriter(mapFile);
 
-			int total = genotypeData.getVariants().size();
+			int total = genotypeData.getVariantCount();
 			int count = 0;
 
 			for (GeneticVariant variant : genotypeData.getVariants())
@@ -193,7 +193,7 @@ public class PedMapGenotypeWriter
 		private Iterator<GeneticVariant> variantsIterator;
 		private int sampleIndex;
 
-		public BialleleIterator(List<GeneticVariant> variants, int sampleIndex)
+		public BialleleIterator(Iterable<GeneticVariant> variants, int sampleIndex)
 		{
 			this.variantsIterator = variants.iterator();
 			this.sampleIndex = sampleIndex;

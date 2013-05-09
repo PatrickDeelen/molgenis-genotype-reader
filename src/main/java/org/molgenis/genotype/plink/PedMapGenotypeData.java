@@ -245,4 +245,10 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 		return Collections.emptyMap();
 	}
 
+	@Override
+	public int getVariantCount()
+	{
+		return snps.size();
+	}
+
 }

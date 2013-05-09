@@ -251,4 +251,10 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		return index;
 	}
 
+	@Override
+	public int getVariantCount()
+	{
+		return variants.size();
+	}
+
 }
