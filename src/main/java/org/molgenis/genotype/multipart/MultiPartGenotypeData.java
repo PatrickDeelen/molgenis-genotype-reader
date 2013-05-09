@@ -71,6 +71,8 @@ public class MultiPartGenotypeData implements GenotypeData
 				genotypeDatasets.put(seqName, genotypeData);
 			}
 
+			variantCount += genotypeData.getVariantCount();
+
 		}
 
 		this.genotypeDataCollection = genotypeDataCollection;
