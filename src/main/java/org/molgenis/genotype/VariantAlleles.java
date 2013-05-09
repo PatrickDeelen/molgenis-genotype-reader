@@ -24,7 +24,7 @@ public class VariantAlleles
 		this.snp = snp;
 	}
 
-	public VariantAlleles(char[] allelesAsChar)
+	private VariantAlleles(char[] allelesAsChar)
 	{
 		this.allelesAsChar = allelesAsChar;
 		this.snp = true;

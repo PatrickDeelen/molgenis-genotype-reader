@@ -33,6 +33,9 @@ public class VariantAllelesTest
 		assertEquals(alleles.getAllelesAsChars().length, 2);
 		assertEquals(alleles.getAllelesAsChars()[0], 'A');
 		assertEquals(alleles.getAllelesAsChars()[1], 'T');
+
+		assertEquals(alleles == VariantAlleles.create('A', 'T'), true);
+
 	}
 
 	@Test(expectedExceptions = RuntimeException.class)
