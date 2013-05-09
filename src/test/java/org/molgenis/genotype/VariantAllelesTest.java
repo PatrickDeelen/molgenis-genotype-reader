@@ -91,4 +91,32 @@ public class VariantAllelesTest
 		assertEquals(variantAlleles.sameAlleles(variantAlleles5), false);
 		assertEquals(variantAlleles.sameAlleles(variantAlleles6), true);
 	}
+
+	@Test
+	public void isAtOrGcSnp()
+	{
+
+		VariantAlleles variantAlleles;
+
+		variantAlleles = VariantAlleles.create('A', 'G');
+		assertEquals(variantAlleles.isAtOrGcSnp(), false);
+
+		variantAlleles = VariantAlleles.create(Arrays.asList("A", "G"));
+		assertEquals(variantAlleles.isAtOrGcSnp(), false);
+
+		variantAlleles = VariantAlleles.create(Arrays.asList("G", "C"));
+		assertEquals(variantAlleles.isAtOrGcSnp(), true);
+
+		variantAlleles = VariantAlleles.create('A', 'T');
+		assertEquals(variantAlleles.isAtOrGcSnp(), true);
+
+		variantAlleles = VariantAlleles.create(Arrays.asList("G", "C", "GC"));
+		assertEquals(variantAlleles.isAtOrGcSnp(), false);
+
+		variantAlleles = VariantAlleles.create(Arrays.asList("G", "C", "G"));
+		assertEquals(variantAlleles.isAtOrGcSnp(), true);
+
+		variantAlleles = VariantAlleles.create(Arrays.asList("G", "C", "T"));
+		assertEquals(variantAlleles.isAtOrGcSnp(), false);
+	}
 }

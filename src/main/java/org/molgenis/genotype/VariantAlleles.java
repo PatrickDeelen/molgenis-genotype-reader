@@ -12,20 +12,26 @@ public class VariantAlleles
 {
 	private static Map<List<String>, VariantAlleles> cache = new HashMap<List<String>, VariantAlleles>();
 	private static Map<CharArrayWrapper, VariantAlleles> snpCache = new HashMap<CharArrayWrapper, VariantAlleles>();
+
 	private final List<String> alleles;
 	private final char[] allelesAsChar;
 	private final boolean snp;
 	private VariantAlleles complement;
+	private final boolean isAtOrGcSnp;
 
 	private VariantAlleles(List<String> alleles, char[] allelesAsChar, boolean snp)
 	{
 		this.alleles = Collections.unmodifiableList(alleles);
 		this.allelesAsChar = allelesAsChar;
 		this.snp = snp;
+
+		this.isAtOrGcSnp = areAlleleCharsAtOrGc(allelesAsChar);
+
 	}
 
 	private VariantAlleles(char[] allelesAsChar)
 	{
+
 		this.allelesAsChar = allelesAsChar;
 		this.snp = true;
 
@@ -35,6 +41,36 @@ public class VariantAlleles
 			allelesBuilder.add(String.valueOf(allele));
 		}
 		this.alleles = Collections.unmodifiableList(allelesBuilder);
+
+		this.isAtOrGcSnp = areAlleleCharsAtOrGc(allelesAsChar);
+
+	}
+
+	private static boolean areAlleleCharsAtOrGc(char[] allelesAsChar)
+	{
+		if (allelesAsChar == null)
+		{
+			return false;
+		}
+		if (allelesAsChar.length == 0)
+		{
+			return false;
+		}
+
+		boolean onlyAt = true;
+		boolean onlyGc = true;
+		for (char allele : allelesAsChar)
+		{
+			if (allele == 'A' || allele == 'T')
+			{
+				onlyGc = false;
+			}
+			if (allele == 'C' || allele == 'G')
+			{
+				onlyAt = false;
+			}
+		}
+		return onlyAt || onlyGc;
 
 	}
 
@@ -166,13 +202,29 @@ public class VariantAlleles
 		return complement;
 	}
 
+	/**
+	 * Assess if two variantAllele instances have same alleles regardless of
+	 * order. Only true if also identical number of alleles
+	 * 
+	 * @param other
+	 * @return
+	 */
 	public boolean sameAlleles(VariantAlleles other)
 	{
+		if (this == other)
+		{
+			return true;
+		}
 		if (this.alleles.size() != other.alleles.size())
 		{
 			return false;
 		}
 		return this.alleles.containsAll(other.alleles);
+	}
+
+	public boolean isAtOrGcSnp()
+	{
+		return isAtOrGcSnp;
 	}
 
 }

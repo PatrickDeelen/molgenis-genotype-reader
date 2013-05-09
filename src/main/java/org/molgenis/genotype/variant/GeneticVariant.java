@@ -309,6 +309,11 @@ public class GeneticVariant
 		return type == GeneticVariant.Type.SNP ? true : false;
 	}
 
+	public boolean isAtOrGcSnp()
+	{
+		return this.alleles.isAtOrGcSnp();
+	}
+
 	public Ld calculateLd(GeneticVariant other) throws LdCalculatorException
 	{
 		return LdCalculator.calculateLd(this, other);
