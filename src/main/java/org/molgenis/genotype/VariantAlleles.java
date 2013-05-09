@@ -100,7 +100,7 @@ public class VariantAlleles
 	 * Add complement. Not done in constructor to prevent infinite loop. Cache
 	 * must be up to date before this is called
 	 */
-	public void addComplement()
+	private void addComplement()
 	{
 		if (snp)
 		{
