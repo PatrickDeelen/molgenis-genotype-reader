@@ -10,7 +10,6 @@ import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
-import org.molgenis.genotype.variant.id.BlankGeneticVariantId;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
 import org.molgenis.genotype.variant.id.ListGeneticVariantId;
 import org.molgenis.genotype.variant.id.SingleGeneticVariantId;
@@ -37,7 +36,7 @@ public class GeneticVariant
 	private VariantAlleles alleles;
 	private String refAllele;
 	protected String minorAllele = null;
-	private float minorAlleleFreq = 0;
+	private float minorAlleleFrequency = 0;
 	private final GeneticVariant.Type type;
 
 	public GeneticVariant(List<String> ids, String sequenceName, int startPos, VariantAlleles alleles,
@@ -46,7 +45,7 @@ public class GeneticVariant
 	{
 		if ((ids == null) || ids.isEmpty())
 		{
-			this.variantId = new BlankGeneticVariantId();
+			this.variantId = GeneticVariantId.getEmptyGeneticVariantId();
 		}
 		else if (ids.size() == 1)
 		{
@@ -75,7 +74,7 @@ public class GeneticVariant
 	{
 		if (id == null)
 		{
-			this.variantId = new BlankGeneticVariantId();
+			this.variantId = GeneticVariantId.getEmptyGeneticVariantId();
 		}
 		else
 		{
@@ -235,7 +234,7 @@ public class GeneticVariant
 		{
 			deterimeMinorAllele();
 		}
-		return minorAlleleFreq;
+		return minorAlleleFrequency;
 	}
 
 	/**
@@ -301,7 +300,7 @@ public class GeneticVariant
 		}
 
 		this.minorAllele = provisionalMinorAllele;
-		this.minorAlleleFreq = provisionalMinorAlleleCount / (float) totalAlleleCount;
+		this.minorAlleleFrequency = provisionalMinorAlleleCount / (float) totalAlleleCount;
 	}
 
 	public boolean isSnp()
@@ -387,4 +386,51 @@ public class GeneticVariant
 	{
 		this.alleles = alleles;
 	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((refAllele == null) ? 0 : refAllele.hashCode());
+		result = prime * result + ((sequenceName == null) ? 0 : sequenceName.hashCode());
+		result = prime * result + startPos;
+		result = prime * result + ((stopPos == null) ? 0 : stopPos.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((variantId == null) ? 0 : variantId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		GeneticVariant other = (GeneticVariant) obj;
+		if (refAllele == null)
+		{
+			if (other.refAllele != null) return false;
+		}
+		else if (!refAllele.equals(other.refAllele)) return false;
+		if (sequenceName == null)
+		{
+			if (other.sequenceName != null) return false;
+		}
+		else if (!sequenceName.equals(other.sequenceName)) return false;
+		if (startPos != other.startPos) return false;
+		if (stopPos == null)
+		{
+			if (other.stopPos != null) return false;
+		}
+		else if (!stopPos.equals(other.stopPos)) return false;
+		if (type != other.type) return false;
+		if (variantId == null)
+		{
+			if (other.variantId != null) return false;
+		}
+		else if (!variantId.equals(other.variantId)) return false;
+		return true;
+	}
+
 }

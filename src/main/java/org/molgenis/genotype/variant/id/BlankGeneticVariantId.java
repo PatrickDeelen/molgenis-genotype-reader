@@ -7,6 +7,10 @@ import java.util.List;
 public class BlankGeneticVariantId extends GeneticVariantId
 {
 
+	protected BlankGeneticVariantId()
+	{
+	}
+
 	@Override
 	public Iterator<String> iterator()
 	{
@@ -59,6 +63,22 @@ public class BlankGeneticVariantId extends GeneticVariantId
 	public boolean containsId()
 	{
 		return false;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return 1;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+
+		return true;
 	}
 
 }
