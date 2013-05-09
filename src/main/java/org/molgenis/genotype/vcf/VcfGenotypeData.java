@@ -43,6 +43,11 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	private List<GeneticVariant> variants = new ArrayList<GeneticVariant>(1000000);
 	private Map<String, Integer> variantIndexByPrimaryId = new HashMap<String, Integer>(1000000);
 
+	public VcfGenotypeData(File bzipVcfFile)
+	{
+		this(bzipVcfFile, new File(bzipVcfFile.getAbsolutePath() + ".tbi"));
+	}
+
 	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile)
 	{
 		try
