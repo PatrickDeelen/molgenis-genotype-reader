@@ -43,7 +43,7 @@ public class Ld
 		return dPrime;
 	}
 
-	protected HashMap<String, Double> getHaplotypesFreq()
+	public HashMap<String, Double> getHaplotypesFreq()
 	{
 		return haplotypesFreq;
 	}
