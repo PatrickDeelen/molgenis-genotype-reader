@@ -3,6 +3,7 @@ package org.molgenis.genotype.util;
 import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.molgenis.genotype.DummySampleVariantsProvider;
 import org.molgenis.genotype.VariantAlleles;
@@ -71,5 +72,13 @@ public class LdCalculatorTest
 
 		assertEquals(ld.getR2(), 0.1, 0.1, "R2");
 		assertEquals(ld.getDPrime(), 0.4, 0.1, "D-prime");
+
+		ArrayList<Double> hapFreqExpect = new ArrayList<Double>(Arrays.asList(0.1198269630761759d,
+				0.38017303692382415d, 0.2801730369238241d, 0.2801730369238241d));
+		ArrayList<String> haps = new ArrayList<String>(Arrays.asList("CT", "CC", "AT", "AC"));
+
+		assertEquals(ld.getHaplotypesFreq().keySet(), haps);
+		assertEquals(ld.getHaplotypesFreq().values(), hapFreqExpect);
+
 	}
 }

@@ -64,7 +64,7 @@ public class GeneticVariant
 		this.altTypes = altTypes;
 		this.sampleVariantsProvider = sampleVariantsProvider;
 		this.alleles = alleles;
-		this.refAllele = refAllele;
+		this.refAllele = refAllele != null ? refAllele : alleles.getAlleles().get(0);
 		this.type = type;
 	}
 
@@ -89,13 +89,13 @@ public class GeneticVariant
 		this.altTypes = altTypes;
 		this.sampleVariantsProvider = sampleVariantsProvider;
 		this.alleles = alleles;
-		this.refAllele = refAllele;
+		this.refAllele = refAllele != null ? refAllele : alleles.getAlleles().get(0);
 		this.type = type;
 	}
 
 	/**
 	 * A Variant can have multiple id's (it's known under different names). The
-	 * compoundId is a concatination of these ids with ';' as separator. This is
+	 * compoundId is a concatenation of these ids with ';' as separator. This is
 	 * the first in the list
 	 * 
 	 * @return String
