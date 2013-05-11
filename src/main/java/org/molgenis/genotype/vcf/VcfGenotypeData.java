@@ -24,6 +24,7 @@ import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
+import org.molgenis.genotype.variant.CachedSampleVariantProvider;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
@@ -43,12 +44,33 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	private List<GeneticVariant> variants = new ArrayList<GeneticVariant>(1000000);
 	private Map<String, Integer> variantIndexByPrimaryId = new HashMap<String, Integer>(1000000);
 
+	/**
+	 * VCF genotype reader with default cache of 100
+	 * 
+	 * @param bzipVcfFile
+	 */
 	public VcfGenotypeData(File bzipVcfFile)
 	{
-		this(bzipVcfFile, new File(bzipVcfFile.getAbsolutePath() + ".tbi"));
+		this(bzipVcfFile, 100);
 	}
 
+	public VcfGenotypeData(File bzipVcfFile, int cacheSize)
+	{
+		this(bzipVcfFile, new File(bzipVcfFile.getAbsolutePath() + ".tbi"), cacheSize);
+	}
+
+	/**
+	 * VCF genotype reader with default cache of 100
+	 * 
+	 * @param bzipVcfFile
+	 * @param tabixIndexFile
+	 */
 	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile)
+	{
+		this(bzipVcfFile, tabixIndexFile, 100);
+	}
+
+	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile, int cacheSize)
 	{
 		try
 		{
@@ -56,8 +78,11 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 
 			try
 			{
+				SampleVariantsProvider sampleVariantProvider = cacheSize <= 0 ? this : new CachedSampleVariantProvider(
+						this, cacheSize);
+
 				VariantLineMapper variantLineMapper = new VcfVariantLineMapper(reader.getColNames(),
-						getVariantAnnotations(), getAltDescriptions(), this);
+						getVariantAnnotations(), getAltDescriptions(), sampleVariantProvider);
 				index = new TabixIndex(tabixIndexFile, bzipVcfFile, variantLineMapper);
 			}
 			finally
