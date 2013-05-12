@@ -85,13 +85,15 @@ public class MultiPartGenotypeData implements GenotypeData
 	 * 
 	 * @param vcfFolder
 	 *            folder with vcf files
+	 * @param cacheSize
+	 *            size of the cache per vcf file.
 	 * @throws IOException
 	 * @throws IncompetibleMultiPartGenotypeDataException
 	 *             if the datasets are not compatible
 	 * @throws Exception
 	 *             If multiple files for one chr found
 	 */
-	public MultiPartGenotypeData createFromVcfFolder(File vcfFolder) throws IOException,
+	public MultiPartGenotypeData createFromVcfFolder(File vcfFolder, int cacheSize) throws IOException,
 			IncompetibleMultiPartGenotypeDataException
 	{
 
@@ -112,7 +114,7 @@ public class MultiPartGenotypeData implements GenotypeData
 
 			if (matcher.matches())
 			{
-				genotypeDataSets.add(new VcfGenotypeData(file));
+				genotypeDataSets.add(new VcfGenotypeData(file, cacheSize));
 			}
 		}
 
