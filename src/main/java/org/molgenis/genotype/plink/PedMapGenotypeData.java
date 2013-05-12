@@ -37,30 +37,27 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 	public static final String SEX_SAMPLE_ANNOTATION_NAME = "sex";
 	public static final String PHENOTYPE_SAMPLE_ANNOTATION_NAME = "phenotype";
 
-	public static final char SEPARATOR_MAP = '	';
 	private static final char NULL_VALUE = '0';
 	private static final Logger LOG = Logger.getLogger(PedMapGenotypeData.class);
 	private final GenotypeDataIndex dataIndex;
 	private final File pedFile;
-	private final char pedFileSeparator;
 	private Map<Integer, List<Biallele>> sampleAllelesBySnpIndex = new HashMap<Integer, List<Biallele>>();
 	private List<GeneticVariant> snps = new ArrayList<GeneticVariant>(1000000);
 	private Map<String, GeneticVariant> snpById = new HashMap<String, GeneticVariant>(1000000);
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
 
-	public PedMapGenotypeData(File bzipMapFile, File mapIndexFile, File pedFile, char pedFileSeparator)
+	public PedMapGenotypeData(File bzipMapFile, File mapIndexFile, File pedFile)
 	{
 		this.pedFile = pedFile;
-		this.pedFileSeparator = pedFileSeparator;
 
 		MapFileReader mapFileReader = null;
 		PedFileDriver pedFileDriver = null;
 		try
 		{
-			pedFileDriver = new PedFileDriver(pedFile, pedFileSeparator);
+			pedFileDriver = new PedFileDriver(pedFile);
 			loadSampleBialleles(pedFileDriver);
 
-			mapFileReader = new MapFileReader(new BlockCompressedInputStream(bzipMapFile), SEPARATOR_MAP);
+			mapFileReader = new MapFileReader(new BlockCompressedInputStream(bzipMapFile));
 			loadSnps(mapFileReader);
 			dataIndex = new TabixIndex(mapIndexFile, bzipMapFile, new PedMapVariantLineMapper(this));
 		}
@@ -169,7 +166,7 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 
 		try
 		{
-			pedFileDriver = new PedFileDriver(pedFile, pedFileSeparator);
+			pedFileDriver = new PedFileDriver(pedFile);
 			List<Sample> samples = new ArrayList<Sample>();
 			for (PedEntry pedEntry : pedFileDriver)
 			{

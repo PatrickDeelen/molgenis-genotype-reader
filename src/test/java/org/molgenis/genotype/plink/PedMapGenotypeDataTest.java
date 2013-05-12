@@ -27,7 +27,7 @@ public class PedMapGenotypeDataTest extends ResourceTest
 	@BeforeClass
 	public void beforeClass() throws IOException, URISyntaxException
 	{
-		genotypeData = new PedMapGenotypeData(getTestMapGz(), getTestMapGzTbi(), getTestPed(), '	');
+		genotypeData = new PedMapGenotypeData(getTestMapGz(), getTestMapGzTbi(), getTestPed());
 	}
 
 	@Test

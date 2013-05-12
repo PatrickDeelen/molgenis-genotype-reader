@@ -20,7 +20,7 @@ public class Main
 			File mapFile = new File("/Users/erwin/Documents/data/plink/hapmap.map.gz");
 			File indexFile = new File("/Users/erwin/Documents/data/plink/hapmap.map.gz.tbi");
 
-			GenotypeData data = new PedMapGenotypeData(mapFile, indexFile, pedFile, ' ');
+			GenotypeData data = new PedMapGenotypeData(mapFile, indexFile, pedFile);
 			System.out.println("Sequences:" + data.getSequences());
 			// List<GeneticVariant> variants = data.getVariants();
 			// System.out.println("Variant count = " + variants.size());

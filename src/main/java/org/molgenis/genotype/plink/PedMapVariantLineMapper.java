@@ -22,7 +22,7 @@ public class PedMapVariantLineMapper implements VariantLineMapper
 	{
 		try
 		{
-			MapEntry mapEntry = MapFileDriver.parseEntry(line, PedMapGenotypeData.SEPARATOR_MAP + "");
+			MapEntry mapEntry = MapFileDriver.parseEntry(line, MapFileDriver.DEFAULT_READ_FIELD_SEPARATORS);
 
 			return pedMapGenotypeData.getVariantById(mapEntry.getSNP());
 		}
