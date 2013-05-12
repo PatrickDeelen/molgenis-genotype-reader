@@ -2,7 +2,6 @@ package org.molgenis.genotype.plink;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -73,7 +72,6 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getPrimaryVariantId(), "rs11089130");
 		assertEquals(variant.getStartPos(), 14431347);
 
-		assertNull(variant.getRefAllele());
 		assertEquals(variant.getSequenceName(), "22");
 		assertEquals(variant.getType(), GeneticVariant.Type.SNP);
 
@@ -122,7 +120,6 @@ public class PedMapGenotypeDataTest extends ResourceTest
 
 		variant.swapAlleles();
 		assertEquals(variant.getVariantAlleles().getAlleles(), Arrays.asList("G", "C"));
-		assertNull(variant.getRefAllele());
 		assertEquals(variant.getSampleVariants().size(), 9);
 		assertEquals(variant.getSampleSnpVariants().get(0), new char[]
 		{ 'G', 'G' });
