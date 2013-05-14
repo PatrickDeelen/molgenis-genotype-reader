@@ -38,6 +38,11 @@ public class PedMapGenotypeWriter
 		this.phenoSampleAnnotionId = phenoSampleAnnotionId;
 	}
 
+	public void write(String basePath) throws IOException
+	{
+		write(new File(basePath + ".ped"), new File(basePath + ".map"));
+	}
+
 	public void write(File pedFile, File mapFile) throws IOException
 	{
 		writeMapFile(mapFile);
