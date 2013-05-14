@@ -115,4 +115,28 @@ public class ListGeneticVariantId extends GeneticVariantId
 		return true;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((variantIds == null) ? 0 : variantIds.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		ListGeneticVariantId other = (ListGeneticVariantId) obj;
+		if (variantIds == null)
+		{
+			if (other.variantIds != null) return false;
+		}
+		else if (!variantIds.equals(other.variantIds)) return false;
+		return true;
+	}
+
 }

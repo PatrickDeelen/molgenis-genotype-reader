@@ -38,6 +38,11 @@ public class PedMapGenotypeWriter
 		this.phenoSampleAnnotionId = phenoSampleAnnotionId;
 	}
 
+	public void write(String basePath) throws IOException
+	{
+		write(new File(basePath + ".ped"), new File(basePath + ".map"));
+	}
+
 	public void write(File pedFile, File mapFile) throws IOException
 	{
 		writeMapFile(mapFile);
@@ -53,7 +58,7 @@ public class PedMapGenotypeWriter
 		{
 			writer = new MapFileWriter(mapFile);
 
-			int total = genotypeData.getVariants().size();
+			int total = genotypeData.getVariantCount();
 			int count = 0;
 
 			for (GeneticVariant variant : genotypeData.getVariants())
@@ -193,7 +198,7 @@ public class PedMapGenotypeWriter
 		private Iterator<GeneticVariant> variantsIterator;
 		private int sampleIndex;
 
-		public BialleleIterator(List<GeneticVariant> variants, int sampleIndex)
+		public BialleleIterator(Iterable<GeneticVariant> variants, int sampleIndex)
 		{
 			this.variantsIterator = variants.iterator();
 			this.sampleIndex = sampleIndex;

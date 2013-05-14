@@ -148,7 +148,7 @@ public class GeneticVariantTest
 
 	private GeneticVariant createGeneticVariant(List<String> ids)
 	{
-		return new GeneticVariant(ids, "sequenceName", 1, null, null, null, null, null, null, null,
-				GeneticVariant.Type.SNP);
+		return new GeneticVariant(ids, "sequenceName", 1, VariantAlleles.create('A', 'T'), null, null, null, null,
+				null, null, GeneticVariant.Type.SNP);
 	}
 }

@@ -119,4 +119,16 @@ public abstract class GeneticVariantId implements Iterable<String>
 		return false;
 
 	}
+
+	@Override
+	public abstract boolean equals(Object obj);
+
+	@Override
+	public abstract int hashCode();
+
+	public static GeneticVariantId getEmptyGeneticVariantId()
+	{
+		return new BlankGeneticVariantId();
+	}
+
 }

@@ -25,9 +25,9 @@ public interface GenotypeData
 	/**
 	 * Get all sequences in the data
 	 * 
-	 * @return List of Sequence
+	 * @return Iterable of Sequences
 	 */
-	List<Sequence> getSequences();
+	Iterable<Sequence> getSequences();
 
 	/**
 	 * Get a Sequence buy it's name. Name is case sensitive
@@ -88,9 +88,11 @@ public interface GenotypeData
 	 */
 	List<Sample> getSamples();
 
-	List<GeneticVariant> getVariants();
+	Iterable<GeneticVariant> getVariants();
 
 	GeneticVariant getVariantById(String primaryVariantId);
 
 	GeneticVariant getSnpVariantById(String primaryVariantId);
+
+	int getVariantCount();
 }

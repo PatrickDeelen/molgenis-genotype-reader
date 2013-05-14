@@ -1,7 +1,6 @@
 package org.molgenis.genotype;
 
 import java.io.File;
-import java.util.List;
 
 import org.molgenis.genotype.plink.PedMapGenotypeData;
 import org.molgenis.genotype.variant.GeneticVariant;
@@ -21,13 +20,13 @@ public class Main
 			File mapFile = new File("/Users/erwin/Documents/data/plink/hapmap.map.gz");
 			File indexFile = new File("/Users/erwin/Documents/data/plink/hapmap.map.gz.tbi");
 
-			GenotypeData data = new PedMapGenotypeData(mapFile, indexFile, pedFile, ' ');
+			GenotypeData data = new PedMapGenotypeData(mapFile, indexFile, pedFile);
 			System.out.println("Sequences:" + data.getSequences());
-			List<GeneticVariant> variants = data.getVariants();
-			System.out.println("Variant count = " + variants.size());
-			System.out.println(variants.get(0).getPrimaryVariantId());
-			System.out.println(variants.get(0).getVariantAlleles());
-			System.out.println(variants.get(0).getSampleVariants().size());
+			// List<GeneticVariant> variants = data.getVariants();
+			// System.out.println("Variant count = " + variants.size());
+			// System.out.println(variants.get(0).getPrimaryVariantId());
+			// System.out.println(variants.get(0).getVariantAlleles());
+			// System.out.println(variants.get(0).getSampleVariants().size());
 
 			GeneticVariant var = data.getVariantById("rs9629043");
 			System.out.println(var.getPrimaryVariantId());

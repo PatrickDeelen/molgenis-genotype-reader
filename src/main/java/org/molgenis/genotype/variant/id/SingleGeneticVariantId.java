@@ -72,4 +72,28 @@ public class SingleGeneticVariantId extends GeneticVariantId
 		return true;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((variantId == null) ? 0 : variantId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		SingleGeneticVariantId other = (SingleGeneticVariantId) obj;
+		if (variantId == null)
+		{
+			if (other.variantId != null) return false;
+		}
+		else if (!variantId.equals(other.variantId)) return false;
+		return true;
+	}
+
 }
