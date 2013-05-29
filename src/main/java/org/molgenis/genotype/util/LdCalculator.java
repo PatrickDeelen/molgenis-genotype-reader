@@ -2,7 +2,7 @@ package org.molgenis.genotype.util;
 
 import java.util.LinkedHashMap;
 
-import org.molgenis.genotype.variant.GeneticVariantOld;
+import org.molgenis.genotype.variant.GeneticVariant;
 
 public class LdCalculator
 {
@@ -19,7 +19,7 @@ public class LdCalculator
 	 * @return LD information
 	 * @throws LdCalculatorException
 	 */
-	public static Ld calculateLd(GeneticVariantOld variant1, GeneticVariantOld variant2) throws LdCalculatorException
+	public static Ld calculateLd(GeneticVariant variant1, GeneticVariant variant2) throws LdCalculatorException
 	{
 
 		if (variant1 == null)
@@ -37,8 +37,8 @@ public class LdCalculator
 			throw new UnsupportedOperationException("Ld calculator currently only supports biallelic variants");
 		}
 
-		final byte[] variant1Genotypes = variant1.getCalledDosages();
-		final byte[] variant2Genotypes = variant2.getCalledDosages();
+		final byte[] variant1Genotypes = variant1.getSampleCalledDosage();
+		final byte[] variant2Genotypes = variant2.getSampleCalledDosage();
 
 		if (variant1Genotypes.length != variant2Genotypes.length)
 		{
@@ -158,11 +158,13 @@ public class LdCalculator
 		dPrime = Math.min(1, dPrime);
 
 		String variant1Alt = variant1.getRefAllele().equals(variant1.getVariantAlleles().getAlleles().get(0)) ? variant1
-				.getVariantAlleles().getAlleles().get(1) : variant1.getVariantAlleles().getAlleles().get(0);
-		String variant1Ref = variant1.getRefAllele();
+				.getVariantAlleles().getAlleles().get(1).getAlleleAsString() : variant1.getVariantAlleles().getAlleles()
+				.get(0).getAlleleAsString();
+		String variant1Ref = variant1.getRefAllele().getAlleleAsString();
 		String variant2Alt = variant2.getRefAllele().equals(variant2.getVariantAlleles().getAlleles().get(0)) ? variant2
-				.getVariantAlleles().getAlleles().get(1) : variant2.getVariantAlleles().getAlleles().get(0);
-		String variant2Ref = variant2.getRefAllele();
+				.getVariantAlleles().getAlleles().get(1).getAlleleAsString() : variant2.getVariantAlleles().getAlleles()
+				.get(0).getAlleleAsString();
+		String variant2Ref = variant2.getRefAllele().getAlleleAsString();
 
 		LinkedHashMap<String, Double> haplotypesFreq = new LinkedHashMap<String, Double>(4);
 		haplotypesFreq.put(variant1Alt + variant2Alt, h11);
