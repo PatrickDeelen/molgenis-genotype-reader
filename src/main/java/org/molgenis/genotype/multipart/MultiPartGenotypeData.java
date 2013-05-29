@@ -16,7 +16,7 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.vcf.VcfGenotypeData;
 
@@ -163,7 +163,7 @@ public class MultiPartGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
+	public List<GeneticVariantOld> getVariantsByPos(String seqName, int startPos)
 	{
 		if (genotypeDatasets.containsKey(seqName))
 		{
@@ -208,17 +208,17 @@ public class MultiPartGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public Iterable<GeneticVariant> getVariants()
+	public Iterable<GeneticVariantOld> getVariants()
 	{
 		return new MultiPartVariantsIterable(genotypeDataCollection);
 	}
 
 	@Override
-	public GeneticVariant getVariantById(String primaryVariantId)
+	public GeneticVariantOld getVariantById(String primaryVariantId)
 	{
 		for (GenotypeData genotypeData : genotypeDatasets.values())
 		{
-			GeneticVariant variant = genotypeData.getVariantById(primaryVariantId);
+			GeneticVariantOld variant = genotypeData.getVariantById(primaryVariantId);
 			if (variant != null)
 			{
 				return variant;
@@ -228,11 +228,11 @@ public class MultiPartGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public GeneticVariant getSnpVariantById(String primaryVariantId)
+	public GeneticVariantOld getSnpVariantById(String primaryVariantId)
 	{
 		for (GenotypeData genotypeData : genotypeDatasets.values())
 		{
-			GeneticVariant variant = genotypeData.getSnpVariantById(primaryVariantId);
+			GeneticVariantOld variant = genotypeData.getSnpVariantById(primaryVariantId);
 			if (variant != null)
 			{
 				return variant;

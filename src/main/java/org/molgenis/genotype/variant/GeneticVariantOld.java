@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
@@ -16,7 +16,7 @@ import org.molgenis.genotype.variant.id.GeneticVariantId;
  * @author Patrick Deelen
  * 
  */
-public class GeneticVariant
+public class GeneticVariantOld
 {
 	public enum Type
 	{
@@ -31,15 +31,15 @@ public class GeneticVariant
 	private final List<String> altDescriptions;
 	private final List<String> altTypes;
 	private SampleVariantsProvider sampleVariantsProvider;
-	private VariantAlleles alleles;
+	private Alleles alleles;
 	private String refAllele;
 	protected String minorAllele = null;
 	private float minorAlleleFrequency = 0;
-	private final GeneticVariant.Type type;
+	private final GeneticVariantOld.Type type;
 
-	public GeneticVariant(List<String> ids, String sequenceName, int startPos, VariantAlleles alleles,
+	public GeneticVariantOld(List<String> ids, String sequenceName, int startPos, Alleles alleles,
 			String refAllele, Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions,
-			List<String> altTypes, SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
+			List<String> altTypes, SampleVariantsProvider sampleVariantsProvider, GeneticVariantOld.Type type)
 	{
 
 		this.variantId = GeneticVariantId.createVariantId(ids);
@@ -56,9 +56,9 @@ public class GeneticVariant
 		this.type = type;
 	}
 
-	public GeneticVariant(String id, String sequenceName, int startPos, VariantAlleles alleles, String refAllele,
+	public GeneticVariantOld(String id, String sequenceName, int startPos, Alleles alleles, String refAllele,
 			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes,
-			SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
+			SampleVariantsProvider sampleVariantsProvider, GeneticVariantOld.Type type)
 	{
 
 		this.variantId = GeneticVariantId.createVariantId(id);
@@ -154,7 +154,7 @@ public class GeneticVariant
 	 * 
 	 * @return VariantAlleles
 	 */
-	public VariantAlleles getVariantAlleles()
+	public Alleles getVariantAlleles()
 	{
 		return alleles;
 	}
@@ -178,7 +178,7 @@ public class GeneticVariant
 	 * Returns list sample variants. The list of variants can contain null !!!!
 	 * if unknown
 	 */
-	public List<VariantAlleles> getSampleVariants()
+	public List<Alleles> getSampleVariants()
 	{
 		return Collections.unmodifiableList(sampleVariantsProvider.getSampleVariants(this));
 	}
@@ -233,7 +233,7 @@ public class GeneticVariant
 		return minorAllele;
 	}
 
-	public GeneticVariant.Type getType()
+	public GeneticVariantOld.Type getType()
 	{
 		return type;
 	}
@@ -250,7 +250,7 @@ public class GeneticVariant
 			alleleCounts.put(allele, new AtomicInteger());
 		}
 
-		for (VariantAlleles sampleAlleles : getSampleVariants())
+		for (Alleles sampleAlleles : getSampleVariants())
 		{
 			if (sampleAlleles != null)
 			{
@@ -287,7 +287,7 @@ public class GeneticVariant
 
 	public boolean isSnp()
 	{
-		return type == GeneticVariant.Type.SNP ? true : false;
+		return type == GeneticVariantOld.Type.SNP ? true : false;
 	}
 
 	public boolean isAtOrGcSnp()
@@ -295,7 +295,7 @@ public class GeneticVariant
 		return this.alleles.isAtOrGcSnp();
 	}
 
-	public Ld calculateLd(GeneticVariant other) throws LdCalculatorException
+	public Ld calculateLd(GeneticVariantOld other) throws LdCalculatorException
 	{
 		return LdCalculator.calculateLd(this, other);
 	}
@@ -311,13 +311,13 @@ public class GeneticVariant
 	 */
 	public byte[] getCalledDosages()
 	{
-		List<VariantAlleles> sampleVariants = getSampleVariants();
+		List<Alleles> sampleVariants = getSampleVariants();
 
 		byte[] dosages = new byte[getSampleVariants().size()];
 
 		for (int i = 0; i < dosages.length; ++i)
 		{
-			VariantAlleles sampleVariant = sampleVariants.get(i);
+			Alleles sampleVariant = sampleVariants.get(i);
 			boolean missing = false;
 			byte dosage = 0;
 
@@ -359,12 +359,12 @@ public class GeneticVariant
 		this.minorAllele = minorAllele;
 	}
 
-	protected VariantAlleles getAlleles()
+	protected Alleles getAlleles()
 	{
 		return alleles;
 	}
 
-	protected void setAlleles(VariantAlleles alleles)
+	protected void setAlleles(Alleles alleles)
 	{
 		this.alleles = alleles;
 	}
@@ -389,7 +389,7 @@ public class GeneticVariant
 		if (this == obj) return true;
 		if (obj == null) return false;
 		if (getClass() != obj.getClass()) return false;
-		GeneticVariant other = (GeneticVariant) obj;
+		GeneticVariantOld other = (GeneticVariantOld) obj;
 		if (refAllele == null)
 		{
 			if (other.refAllele != null) return false;

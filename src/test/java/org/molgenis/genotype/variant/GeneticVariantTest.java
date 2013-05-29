@@ -9,26 +9,26 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.molgenis.genotype.DummySampleVariantsProvider;
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class GeneticVariantTest
 {
-	private GeneticVariant testInstance;
+	private GeneticVariantOld testInstance;
 
 	@BeforeClass
 	public void setUp()
 	{
 
-		VariantAlleles alleles = VariantAlleles.create('A', 'C');
+		Alleles alleles = Alleles.create('A', 'C');
 
-		ArrayList<VariantAlleles> sampleAlleles = new ArrayList<VariantAlleles>();
-		sampleAlleles.add(VariantAlleles.create('A', 'C'));
-		sampleAlleles.add(VariantAlleles.create('A', 'C'));
-		sampleAlleles.add(VariantAlleles.create('C', 'C'));
-		sampleAlleles.add(VariantAlleles.create('A', 'A'));
-		sampleAlleles.add(VariantAlleles.create('A', 'A'));
+		ArrayList<Alleles> sampleAlleles = new ArrayList<Alleles>();
+		sampleAlleles.add(Alleles.create('A', 'C'));
+		sampleAlleles.add(Alleles.create('A', 'C'));
+		sampleAlleles.add(Alleles.create('C', 'C'));
+		sampleAlleles.add(Alleles.create('A', 'A'));
+		sampleAlleles.add(Alleles.create('A', 'A'));
 		SampleVariantsProvider sampleAllelesProvider = new DummySampleVariantsProvider(sampleAlleles);
 
 		testInstance = new SnpGeneticVariant("rs1", "chr1", 1, alleles, "A", null, null, null, sampleAllelesProvider);
@@ -96,7 +96,7 @@ public class GeneticVariantTest
 	@Test
 	public void getType()
 	{
-		assertEquals(testInstance.getType(), GeneticVariant.Type.SNP);
+		assertEquals(testInstance.getType(), GeneticVariantOld.Type.SNP);
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class GeneticVariantTest
 	@Test
 	public void getPrimaryVatiantId()
 	{
-		GeneticVariant variant = createGeneticVariant(Arrays.asList("X"));
+		GeneticVariantOld variant = createGeneticVariant(Arrays.asList("X"));
 		assertNotNull(variant.getPrimaryVariantId());
 		assertEquals("X", variant.getPrimaryVariantId());
 
@@ -130,7 +130,7 @@ public class GeneticVariantTest
 	@Test
 	public void getAlternativeVariantIds()
 	{
-		GeneticVariant variant = createGeneticVariant(Arrays.asList("X"));
+		GeneticVariantOld variant = createGeneticVariant(Arrays.asList("X"));
 		assertNotNull(variant.getAlternativeVariantIds());
 		assertTrue(variant.getAlternativeVariantIds().isEmpty());
 
@@ -146,9 +146,9 @@ public class GeneticVariantTest
 		assertEquals(variant.getAlternativeVariantIds().get(1), "Z");
 	}
 
-	private GeneticVariant createGeneticVariant(List<String> ids)
+	private GeneticVariantOld createGeneticVariant(List<String> ids)
 	{
-		return new GeneticVariant(ids, "sequenceName", 1, VariantAlleles.create('A', 'T'), null, null, null, null,
-				null, null, GeneticVariant.Type.SNP);
+		return new GeneticVariantOld(ids, "sequenceName", 1, Alleles.create('A', 'T'), null, null, null, null,
+				null, null, GeneticVariantOld.Type.SNP);
 	}
 }

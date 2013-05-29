@@ -5,14 +5,14 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 import org.molgenis.genotype.VariantQueryResult;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 
 public class TabixQueryResult implements VariantQueryResult
 {
 	private final InputStream inputStream;
-	private final Iterator<GeneticVariant> iterator;
+	private final Iterator<GeneticVariantOld> iterator;
 
-	public TabixQueryResult(InputStream inputStream, Iterator<GeneticVariant> iterator)
+	public TabixQueryResult(InputStream inputStream, Iterator<GeneticVariantOld> iterator)
 	{
 		super();
 		this.inputStream = inputStream;
@@ -26,7 +26,7 @@ public class TabixQueryResult implements VariantQueryResult
 	}
 
 	@Override
-	public Iterator<GeneticVariant> iterator()
+	public Iterator<GeneticVariantOld> iterator()
 	{
 		return iterator;
 	}

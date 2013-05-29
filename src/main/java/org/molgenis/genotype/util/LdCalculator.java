@@ -2,7 +2,7 @@ package org.molgenis.genotype.util;
 
 import java.util.LinkedHashMap;
 
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 
 public class LdCalculator
 {
@@ -19,7 +19,7 @@ public class LdCalculator
 	 * @return LD information
 	 * @throws LdCalculatorException
 	 */
-	public static Ld calculateLd(GeneticVariant variant1, GeneticVariant variant2) throws LdCalculatorException
+	public static Ld calculateLd(GeneticVariantOld variant1, GeneticVariantOld variant2) throws LdCalculatorException
 	{
 
 		if (variant1 == null)

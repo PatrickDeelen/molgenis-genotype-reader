@@ -14,11 +14,11 @@ import java.util.List;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.molgenis.genotype.ResourceTest;
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.genotype.vcf.VcfVariantLineMapper;
@@ -71,13 +71,13 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	public void queryPos() throws IOException
 	{
 		result = query.executeQuery("1", 565286, 6097450);
-		Iterator<GeneticVariant> it = result.iterator();
+		Iterator<GeneticVariantOld> it = result.iterator();
 
 		int i = 0;
 		while (it.hasNext())
 		{
 			i++;
-			GeneticVariant variant = it.next();
+			GeneticVariantOld variant = it.next();
 			assertNotNull(variant);
 			assertEquals(variant.getSequenceName(), "1");
 		}
@@ -90,13 +90,13 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	public void querySeq1() throws IOException
 	{
 		result = query.executeQuery("1");
-		Iterator<GeneticVariant> it = result.iterator();
+		Iterator<GeneticVariantOld> it = result.iterator();
 
 		int i = 0;
 		while (it.hasNext())
 		{
 			i++;
-			GeneticVariant variant = it.next();
+			GeneticVariantOld variant = it.next();
 			assertNotNull(variant);
 			assertEquals(variant.getSequenceName(), "1");
 		}
@@ -107,13 +107,13 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	public void querySeq2() throws IOException
 	{
 		result = query.executeQuery("2");
-		Iterator<GeneticVariant> it = result.iterator();
+		Iterator<GeneticVariantOld> it = result.iterator();
 
 		int i = 0;
 		while (it.hasNext())
 		{
 			i++;
-			GeneticVariant variant = it.next();
+			GeneticVariantOld variant = it.next();
 			assertNotNull(variant);
 			assertEquals(variant.getSequenceName(), "2");
 		}
@@ -124,7 +124,7 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	public void queryStartPos()
 	{
 		result = query.executeQuery("1", 3172273);
-		Iterator<GeneticVariant> variants = result.iterator();
+		Iterator<GeneticVariantOld> variants = result.iterator();
 
 		assertNotNull(variants);
 		assertTrue(variants.hasNext());
@@ -138,7 +138,7 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	}
 
 	@Override
-	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
+	public List<Alleles> getSampleVariants(GeneticVariantOld variant)
 	{
 		return Collections.emptyList();
 	}

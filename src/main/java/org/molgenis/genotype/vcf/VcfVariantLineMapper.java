@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GenericGeneticVariant;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
@@ -33,7 +33,7 @@ public class VcfVariantLineMapper implements VariantLineMapper
 	}
 
 	@Override
-	public GeneticVariant mapLine(String line)
+	public GeneticVariantOld mapLine(String line)
 	{
 		VcfRecord record = new VcfRecord(line, colNames);
 
@@ -69,15 +69,15 @@ public class VcfVariantLineMapper implements VariantLineMapper
 			}
 		}
 
-		GeneticVariant variant;
+		GeneticVariantOld variant;
 		if (Utils.isSnp(alleles))
 		{
-			variant = new SnpGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles), refAllele,
+			variant = new SnpGeneticVariant(ids, sequenceName, startPos, Alleles.create(alleles), refAllele,
 					annotationValues, altDescriptions, altTypes, sampleVariantsProvider);
 		}
 		else
 		{
-			variant = new GenericGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles), refAllele,
+			variant = new GenericGeneticVariant(ids, sequenceName, startPos, Alleles.create(alleles), refAllele,
 					annotationValues, stopPos, altDescriptions, altTypes, sampleVariantsProvider);
 		}
 

@@ -8,15 +8,15 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 public class VariantFilterGenotypeData implements GenotypeData
 {
 
 	private final GenotypeData originalGenotypeData;
-	private final HashSet<GeneticVariant> includeVariants;
-	private final HashSet<GeneticVariant> excludeVariants;
+	private final HashSet<GeneticVariantOld> includeVariants;
+	private final HashSet<GeneticVariantOld> excludeVariants;
 
 	/**
 	 * View of originalGenotypeData with a subset of the genetic variants. Data
@@ -36,8 +36,8 @@ public class VariantFilterGenotypeData implements GenotypeData
 	 * @param excludeVariants
 	 *            list with variants to exclude. Can be null
 	 */
-	public VariantFilterGenotypeData(GenotypeData originalGenotypeData, HashSet<GeneticVariant> includeVariants,
-			HashSet<GeneticVariant> excludeVariants)
+	public VariantFilterGenotypeData(GenotypeData originalGenotypeData, HashSet<GeneticVariantOld> includeVariants,
+			HashSet<GeneticVariantOld> excludeVariants)
 	{
 		super();
 
@@ -87,7 +87,7 @@ public class VariantFilterGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
+	public List<GeneticVariantOld> getVariantsByPos(String seqName, int startPos)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -115,21 +115,21 @@ public class VariantFilterGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public Iterable<GeneticVariant> getVariants()
+	public Iterable<GeneticVariantOld> getVariants()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GeneticVariant getVariantById(String primaryVariantId)
+	public GeneticVariantOld getVariantById(String primaryVariantId)
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GeneticVariant getSnpVariantById(String primaryVariantId)
+	public GeneticVariantOld getSnpVariantById(String primaryVariantId)
 	{
 		// TODO Auto-generated method stub
 		return null;

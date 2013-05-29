@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.molgenis.genotype.DummySampleVariantsProvider;
-import org.molgenis.genotype.VariantAlleles;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.testng.annotations.Test;
@@ -19,17 +19,17 @@ public class LdCalculatorTest
 	public void calculateLd() throws LdCalculatorException
 	{
 
-		VariantAlleles alleles = VariantAlleles.create('A', 'C');
+		Alleles alleles = Alleles.create('A', 'C');
 
-		ArrayList<VariantAlleles> sampleAlleles = new ArrayList<VariantAlleles>();
-		sampleAlleles.add(VariantAlleles.create('A', 'C'));
-		sampleAlleles.add(VariantAlleles.create('A', 'C'));
-		sampleAlleles.add(VariantAlleles.create('C', 'C'));
-		sampleAlleles.add(VariantAlleles.create('A', 'A'));
-		sampleAlleles.add(VariantAlleles.create('A', 'A'));
+		ArrayList<Alleles> sampleAlleles = new ArrayList<Alleles>();
+		sampleAlleles.add(Alleles.create('A', 'C'));
+		sampleAlleles.add(Alleles.create('A', 'C'));
+		sampleAlleles.add(Alleles.create('C', 'C'));
+		sampleAlleles.add(Alleles.create('A', 'A'));
+		sampleAlleles.add(Alleles.create('A', 'A'));
 		SampleVariantsProvider sampleAllelesProvider = new DummySampleVariantsProvider(sampleAlleles);
 
-		GeneticVariant testInstance = new SnpGeneticVariant("rs1", "chr1", 1, alleles, "A", null, null, null,
+		GeneticVariantOld testInstance = new SnpGeneticVariant("rs1", "chr1", 1, alleles, "A", null, null, null,
 				sampleAllelesProvider);
 
 		Ld ld = LdCalculator.calculateLd(testInstance, testInstance);
@@ -42,30 +42,30 @@ public class LdCalculatorTest
 	public void calculateLd2() throws LdCalculatorException
 	{
 
-		VariantAlleles alleles = VariantAlleles.create('A', 'C');
+		Alleles alleles = Alleles.create('A', 'C');
 
-		ArrayList<VariantAlleles> sampleAlleles = new ArrayList<VariantAlleles>();
-		sampleAlleles.add(VariantAlleles.create('A', 'C'));
-		sampleAlleles.add(VariantAlleles.create('A', 'C'));
-		sampleAlleles.add(VariantAlleles.create('C', 'C'));
-		sampleAlleles.add(VariantAlleles.create('A', 'A'));
-		sampleAlleles.add(VariantAlleles.create('A', 'A'));
+		ArrayList<Alleles> sampleAlleles = new ArrayList<Alleles>();
+		sampleAlleles.add(Alleles.create('A', 'C'));
+		sampleAlleles.add(Alleles.create('A', 'C'));
+		sampleAlleles.add(Alleles.create('C', 'C'));
+		sampleAlleles.add(Alleles.create('A', 'A'));
+		sampleAlleles.add(Alleles.create('A', 'A'));
 		SampleVariantsProvider sampleAllelesProvider = new DummySampleVariantsProvider(sampleAlleles);
 
-		GeneticVariant testInstance = new SnpGeneticVariant("rs1", "chr1", 1, alleles, "A", null, null, null,
+		GeneticVariantOld testInstance = new SnpGeneticVariant("rs1", "chr1", 1, alleles, "A", null, null, null,
 				sampleAllelesProvider);
 
-		alleles = VariantAlleles.create('T', 'C');
+		alleles = Alleles.create('T', 'C');
 
-		sampleAlleles = new ArrayList<VariantAlleles>();
-		sampleAlleles.add(VariantAlleles.create('T', 'C'));
-		sampleAlleles.add(VariantAlleles.create('T', 'T'));
-		sampleAlleles.add(VariantAlleles.create('C', 'C'));
-		sampleAlleles.add(VariantAlleles.create('T', 'T'));
-		sampleAlleles.add(VariantAlleles.create('C', 'C'));
+		sampleAlleles = new ArrayList<Alleles>();
+		sampleAlleles.add(Alleles.create('T', 'C'));
+		sampleAlleles.add(Alleles.create('T', 'T'));
+		sampleAlleles.add(Alleles.create('C', 'C'));
+		sampleAlleles.add(Alleles.create('T', 'T'));
+		sampleAlleles.add(Alleles.create('C', 'C'));
 		sampleAllelesProvider = new DummySampleVariantsProvider(sampleAlleles);
 
-		GeneticVariant testInstance2 = new SnpGeneticVariant("rs2", "chr1", 1, alleles, "C", null, null, null,
+		GeneticVariantOld testInstance2 = new SnpGeneticVariant("rs2", "chr1", 1, alleles, "C", null, null, null,
 				sampleAllelesProvider);
 
 		Ld ld = LdCalculator.calculateLd(testInstance, testInstance2);

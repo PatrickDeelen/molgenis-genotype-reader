@@ -12,10 +12,10 @@ import java.util.List;
 import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.util.Utils;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -56,7 +56,7 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		assertEquals(sequence.getName(), "22");
 
 		VariantQueryResult queryResult = sequence.getVariants();
-		List<GeneticVariant> variants;
+		List<GeneticVariantOld> variants;
 		try
 		{
 			variants = Utils.iteratorToList(queryResult.iterator());
@@ -68,12 +68,12 @@ public class PedMapGenotypeDataTest extends ResourceTest
 
 		assertNotNull(variants);
 		assertEquals(variants.size(), 9);
-		GeneticVariant variant = variants.get(0);
+		GeneticVariantOld variant = variants.get(0);
 		assertEquals(variant.getPrimaryVariantId(), "rs11089130");
 		assertEquals(variant.getStartPos(), 14431347);
 
 		assertEquals(variant.getSequenceName(), "22");
-		assertEquals(variant.getType(), GeneticVariant.Type.SNP);
+		assertEquals(variant.getType(), GeneticVariantOld.Type.SNP);
 
 		List<String> alleles = variant.getVariantAlleles().getAlleles();
 		assertNotNull(alleles);
@@ -81,7 +81,7 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		assertTrue(alleles.contains("C"));
 		assertTrue(alleles.contains("G"));
 
-		List<VariantAlleles> sampleVariants = variant.getSampleVariants();
+		List<Alleles> sampleVariants = variant.getSampleVariants();
 		assertNotNull(sampleVariants);
 		assertEquals(sampleVariants.size(), 9);
 		assertNotNull(sampleVariants.get(0).getAllelesAsChars());

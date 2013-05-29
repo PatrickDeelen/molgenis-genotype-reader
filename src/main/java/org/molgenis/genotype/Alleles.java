@@ -8,18 +8,18 @@ import java.util.Map;
 
 import org.molgenis.genotype.util.Utils;
 
-public class VariantAlleles
+public class Alleles
 {
-	private static Map<List<String>, VariantAlleles> cache = new HashMap<List<String>, VariantAlleles>();
-	private static Map<CharArrayWrapper, VariantAlleles> snpCache = new HashMap<CharArrayWrapper, VariantAlleles>();
+	private static Map<List<String>, Alleles> cache = new HashMap<List<String>, Alleles>();
+	private static Map<CharArrayWrapper, Alleles> snpCache = new HashMap<CharArrayWrapper, Alleles>();
 
 	private final List<String> alleles;
 	private final char[] allelesAsChar;
 	private final boolean snp;
-	private VariantAlleles complement;
+	private Alleles complement;
 	private final boolean isAtOrGcSnp;
 
-	private VariantAlleles(List<String> alleles, char[] allelesAsChar, boolean snp)
+	private Alleles(List<String> alleles, char[] allelesAsChar, boolean snp)
 	{
 		this.alleles = Collections.unmodifiableList(alleles);
 		this.allelesAsChar = allelesAsChar;
@@ -29,7 +29,7 @@ public class VariantAlleles
 
 	}
 
-	private VariantAlleles(char[] allelesAsChar)
+	private Alleles(char[] allelesAsChar)
 	{
 
 		this.allelesAsChar = allelesAsChar;
@@ -74,9 +74,9 @@ public class VariantAlleles
 
 	}
 
-	public static VariantAlleles create(List<String> alleles)
+	public static Alleles create(List<String> alleles)
 	{
-		VariantAlleles variantAlleles = cache.get(alleles);
+		Alleles variantAlleles = cache.get(alleles);
 		if (variantAlleles == null)
 		{
 			if (Utils.isSnp(alleles))
@@ -86,12 +86,12 @@ public class VariantAlleles
 				{
 					allelesAsChar[i] = alleles.get(i) == null ? '0' : alleles.get(i).charAt(0);
 				}
-				variantAlleles = new VariantAlleles(alleles, allelesAsChar, true);
+				variantAlleles = new Alleles(alleles, allelesAsChar, true);
 
 			}
 			else
 			{
-				variantAlleles = new VariantAlleles(alleles, null, false);
+				variantAlleles = new Alleles(alleles, null, false);
 			}
 
 			addToCache(variantAlleles);
@@ -102,7 +102,22 @@ public class VariantAlleles
 		return variantAlleles;
 	}
 
-	public static VariantAlleles create(char allele1, char allele2)
+	public static Alleles create(String allele1, String allele2)
+	{
+		ArrayList<String> alleles = new ArrayList<String>(2);
+		alleles.add(allele1);
+		alleles.add(allele2);
+		return create(alleles);
+	}
+
+	public static Alleles create(String allele)
+	{
+		ArrayList<String> alleles = new ArrayList<String>(1);
+		alleles.add(allele);
+		return create(alleles);
+	}
+
+	public static Alleles create(char allele1, char allele2)
 	{
 
 		return create(new char[]
@@ -110,12 +125,20 @@ public class VariantAlleles
 
 	}
 
-	public static VariantAlleles create(char[] alleles)
+	public static Alleles create(char allele)
 	{
-		VariantAlleles variantAlleles = snpCache.get(new CharArrayWrapper(alleles));
+
+		return create(new char[]
+		{ allele });
+
+	}
+
+	public static Alleles create(char[] alleles)
+	{
+		Alleles variantAlleles = snpCache.get(new CharArrayWrapper(alleles));
 		if (variantAlleles == null)
 		{
-			variantAlleles = new VariantAlleles(alleles);
+			variantAlleles = new Alleles(alleles);
 			addToCache(variantAlleles);
 			variantAlleles.addComplement();
 		}
@@ -123,7 +146,7 @@ public class VariantAlleles
 		return variantAlleles;
 	}
 
-	private static void addToCache(VariantAlleles variantAlleles)
+	private static void addToCache(Alleles variantAlleles)
 	{
 		cache.put(variantAlleles.getAlleles(), variantAlleles);
 		if (variantAlleles.isSnp())
@@ -140,7 +163,7 @@ public class VariantAlleles
 	{
 		if (snp)
 		{
-			this.complement = VariantAlleles.create(Utils.swapSnpStrand(allelesAsChar));
+			this.complement = Alleles.create(Utils.swapSnpStrand(allelesAsChar));
 		}
 		else
 		{
@@ -191,7 +214,7 @@ public class VariantAlleles
 	 * 
 	 * @return complement of current variant alleles
 	 */
-	public VariantAlleles getComplement()
+	public Alleles getComplement()
 	{
 
 		if (!isSnp())
@@ -209,7 +232,7 @@ public class VariantAlleles
 	 * @param other
 	 * @return
 	 */
-	public boolean sameAlleles(VariantAlleles other)
+	public boolean sameAlleles(Alleles other)
 	{
 		if (this == other)
 		{

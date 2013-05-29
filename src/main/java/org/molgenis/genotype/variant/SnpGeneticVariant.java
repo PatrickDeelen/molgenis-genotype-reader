@@ -4,32 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Utils;
 
-public class SnpGeneticVariant extends GeneticVariant
+public class SnpGeneticVariant extends GeneticVariantOld
 {
 
-	public SnpGeneticVariant(List<String> ids, String sequenceName, int startPos, VariantAlleles alleles,
+	public SnpGeneticVariant(List<String> ids, String sequenceName, int startPos, Alleles alleles,
 			String refAllele, Map<String, ?> annotationValues, List<String> altDescriptions, List<String> altTypes,
 			SampleVariantsProvider sampleVariantsProvider)
 	{
 		super(ids, sequenceName, startPos, alleles, refAllele, annotationValues, null, altDescriptions, altTypes,
-				sampleVariantsProvider, GeneticVariant.Type.SNP);
+				sampleVariantsProvider, GeneticVariantOld.Type.SNP);
 	}
 
-	public SnpGeneticVariant(String id, String sequenceName, int startPos, VariantAlleles alleles, String refAllele,
+	public SnpGeneticVariant(String id, String sequenceName, int startPos, Alleles alleles, String refAllele,
 			Map<String, ?> annotationValues, List<String> altDescriptions, List<String> altTypes,
 			SampleVariantsProvider sampleVariantsProvider)
 	{
 		super(id, sequenceName, startPos, alleles, refAllele, annotationValues, null, altDescriptions, altTypes,
-				sampleVariantsProvider, GeneticVariant.Type.SNP);
+				sampleVariantsProvider, GeneticVariantOld.Type.SNP);
 	}
 
 	public List<char[]> getSampleSnpVariants()
 	{
 		List<char[]> sampleSnpVariants = new ArrayList<char[]>();
-		for (VariantAlleles variantAlleles : getSampleVariants())
+		for (Alleles variantAlleles : getSampleVariants())
 		{
 			sampleSnpVariants.add(variantAlleles.getAllelesAsChars());
 		}

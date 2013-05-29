@@ -19,14 +19,14 @@ import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.IndexedGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
 import org.molgenis.genotype.variant.CachedSampleVariantProvider;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
@@ -42,7 +42,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	private final VcfReader reader;
 	private Map<String, Annotation> sampleAnnotationsMap;
 	private Map<String, String> altDescriptions;
-	private List<GeneticVariant> variants = new ArrayList<GeneticVariant>(1000000);
+	private List<GeneticVariantOld> variants = new ArrayList<GeneticVariantOld>(1000000);
 	private Map<String, Integer> variantIndexByPrimaryId = new HashMap<String, Integer>(1000000);
 
 	/**
@@ -123,7 +123,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 				VariantQueryResult vqr = sequence.getVariants();
 				try
 				{
-					for (GeneticVariant variant : vqr)
+					for (GeneticVariantOld variant : vqr)
 					{
 						variants.add(variant);
 
@@ -156,7 +156,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
-	public GeneticVariant getVariantById(String primaryVariantId)
+	public GeneticVariantOld getVariantById(String primaryVariantId)
 	{
 		if (primaryVariantId == null) throw new IllegalArgumentException("PrimaryVariantId can not be null");
 
@@ -172,7 +172,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	@Override
 	public SnpGeneticVariant getSnpVariantById(String primaryVariantId)
 	{
-		GeneticVariant variant = getVariantById(primaryVariantId);
+		GeneticVariantOld variant = getVariantById(primaryVariantId);
 		if (variant == null)
 		{
 			return null;
@@ -190,13 +190,13 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
-	public List<GeneticVariant> getVariants()
+	public List<GeneticVariantOld> getVariants()
 	{
 		return variants;
 	}
 
 	@Override
-	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
+	public List<Alleles> getSampleVariants(GeneticVariantOld variant)
 	{
 		try
 		{

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 /**
@@ -60,7 +60,7 @@ public interface GenotypeData
 	 * @param startPos
 	 * @return all variants found at startPos, can be empty if none found
 	 */
-	List<GeneticVariant> getVariantsByPos(String seqName, int startPos);
+	List<GeneticVariantOld> getVariantsByPos(String seqName, int startPos);
 
 	/**
 	 * Get the SNP variant at the specified position. Only one SNP possible per
@@ -88,11 +88,11 @@ public interface GenotypeData
 	 */
 	List<Sample> getSamples();
 
-	Iterable<GeneticVariant> getVariants();
+	Iterable<GeneticVariantOld> getVariants();
 
-	GeneticVariant getVariantById(String primaryVariantId);
+	GeneticVariantOld getVariantById(String primaryVariantId);
 
-	GeneticVariant getSnpVariantById(String primaryVariantId);
+	GeneticVariantOld getSnpVariantById(String primaryVariantId);
 
 	int getVariantCount();
 }

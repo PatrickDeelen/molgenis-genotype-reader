@@ -7,7 +7,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -28,11 +28,11 @@ public class SwappingSampleVariantsProviderTest
 	@Test
 	public void getSampleVariants()
 	{
-		List<VariantAlleles> variantAlleles = Arrays.asList(VariantAlleles.create('A', 'T'),
-				VariantAlleles.create('C', 'G'));
+		List<Alleles> variantAlleles = Arrays.asList(Alleles.create('A', 'T'),
+				Alleles.create('C', 'G'));
 		when(mockSampleVariantsProvider.getSampleVariants(mockSnpGeneticVariant)).thenReturn(variantAlleles);
 
-		List<VariantAlleles> result = swappingSampleVariantsProvider.getSampleVariants(mockSnpGeneticVariant);
+		List<Alleles> result = swappingSampleVariantsProvider.getSampleVariants(mockSnpGeneticVariant);
 		assertEquals(result.size(), 2);
 		assertEquals(result.get(0).getAllelesAsChars(), new char[]
 		{ 'T', 'A' });

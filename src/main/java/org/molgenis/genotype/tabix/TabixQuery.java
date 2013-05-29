@@ -10,11 +10,11 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.GenotypeDataException;
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.tabix.TabixIndex.TabixIterator;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfRecord;
 import org.molgenis.io.vcf.VcfSampleGenotype;
@@ -97,7 +97,7 @@ public class TabixQuery implements VariantQuery
 		return executeQuery(sequence, startPos - 1, startPos);
 	}
 
-	private static class TabixQueryIterator implements Iterator<GeneticVariant>
+	private static class TabixQueryIterator implements Iterator<GeneticVariantOld>
 	{
 		private final TabixIterator tabixIterator;
 		private final VariantLineMapper variantLineMapper;
@@ -117,9 +117,9 @@ public class TabixQuery implements VariantQuery
 		}
 
 		@Override
-		public GeneticVariant next()
+		public GeneticVariantOld next()
 		{
-			GeneticVariant variant = variantLineMapper.mapLine(line);
+			GeneticVariantOld variant = variantLineMapper.mapLine(line);
 
 			try
 			{
@@ -142,7 +142,7 @@ public class TabixQuery implements VariantQuery
 	}
 
 	@Override
-	public List<VariantAlleles> findSamplesForVariant(String sequence, int startPos, VariantAlleles alleles,
+	public List<Alleles> findSamplesForVariant(String sequence, int startPos, Alleles alleles,
 			List<String> columnNames, List<String> sampleNames)
 	{
 		try
@@ -158,13 +158,13 @@ public class TabixQuery implements VariantQuery
 					if (record.getChrom().equalsIgnoreCase(sequence) && (record.getPos() == startPos)
 							&& record.getAlleles().equals(alleles.getAlleles()))
 					{
-						List<VariantAlleles> sampleVariants = new ArrayList<VariantAlleles>(sampleNames.size());
+						List<Alleles> sampleVariants = new ArrayList<Alleles>(sampleNames.size());
 						for (String sampleName : sampleNames)
 						{
 							VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
 							if (geno == null) throw new GenotypeDataException("Missing GT format value for sample ["
 									+ sampleName + "]");
-							sampleVariants.add(VariantAlleles.create(geno.getSamleVariants(alleles.getAlleles())));
+							sampleVariants.add(Alleles.create(geno.getSamleVariants(alleles.getAlleles())));
 						}
 
 						return sampleVariants;

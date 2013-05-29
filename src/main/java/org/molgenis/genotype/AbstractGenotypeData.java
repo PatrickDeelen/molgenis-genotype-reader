@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 public abstract class AbstractGenotypeData implements GenotypeData
@@ -55,11 +55,11 @@ public abstract class AbstractGenotypeData implements GenotypeData
 	@Override
 	public SnpGeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
-		List<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
+		List<GeneticVariantOld> variants = getVariantsByPos(seqName, startPos);
 
-		for (GeneticVariant variant : variants)
+		for (GeneticVariantOld variant : variants)
 		{
-			if (variant.getType() == GeneticVariant.Type.SNP)
+			if (variant.getType() == GeneticVariantOld.Type.SNP)
 			{
 				// only one SNP possible per position. Returning this SNP only
 				return (SnpGeneticVariant) variant;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.util.Utils;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 
 public abstract class IndexedGenotypeData extends AbstractGenotypeData
 {
@@ -16,7 +16,7 @@ public abstract class IndexedGenotypeData extends AbstractGenotypeData
 	}
 
 	@Override
-	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
+	public List<GeneticVariantOld> getVariantsByPos(String seqName, int startPos)
 	{
 		VariantQueryResult result = getIndex().createQuery().executeQuery(seqName, startPos);
 		try

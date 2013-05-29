@@ -2,7 +2,7 @@ package org.molgenis.genotype.variant;
 
 import java.util.List;
 
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 
 /**
  * Loads the sample variants for a variant. Is used to enable lazy loading of
@@ -13,5 +13,5 @@ import org.molgenis.genotype.VariantAlleles;
  */
 public interface SampleVariantsProvider
 {
-	List<VariantAlleles> getSampleVariants(GeneticVariant variant);
+	List<Alleles> getSampleVariants(GeneticVariantOld variant);
 }

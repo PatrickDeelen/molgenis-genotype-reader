@@ -3,7 +3,7 @@ package org.molgenis.genotype;
 import java.io.File;
 
 import org.molgenis.genotype.plink.PedMapGenotypeData;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 public class Main
@@ -28,7 +28,7 @@ public class Main
 			// System.out.println(variants.get(0).getVariantAlleles());
 			// System.out.println(variants.get(0).getSampleVariants().size());
 
-			GeneticVariant var = data.getVariantById("rs9629043");
+			GeneticVariantOld var = data.getVariantById("rs9629043");
 			System.out.println(var.getPrimaryVariantId());
 			System.out.println(var.getStartPos());
 			System.out.println(var.getSampleVariants());

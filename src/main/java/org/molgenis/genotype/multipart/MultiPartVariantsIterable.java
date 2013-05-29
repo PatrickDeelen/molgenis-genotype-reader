@@ -4,9 +4,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.molgenis.genotype.GenotypeData;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 
-public class MultiPartVariantsIterable implements Iterable<GeneticVariant>
+public class MultiPartVariantsIterable implements Iterable<GeneticVariantOld>
 {
 
 	private final Iterable<GenotypeData> datasets;
@@ -19,16 +19,16 @@ public class MultiPartVariantsIterable implements Iterable<GeneticVariant>
 	}
 
 	@Override
-	public Iterator<GeneticVariant> iterator()
+	public Iterator<GeneticVariantOld> iterator()
 	{
 		return new MultiPartVariantIterator(datasets);
 	}
 
-	private class MultiPartVariantIterator implements Iterator<GeneticVariant>
+	private class MultiPartVariantIterator implements Iterator<GeneticVariantOld>
 	{
 
 		private Iterator<GenotypeData> datasetIterator;
-		private Iterator<GeneticVariant> datasetVariantIterator;
+		private Iterator<GeneticVariantOld> datasetVariantIterator;
 		private boolean done = false;
 
 		public MultiPartVariantIterator(Iterable<GenotypeData> datasets)
@@ -71,7 +71,7 @@ public class MultiPartVariantsIterable implements Iterable<GeneticVariant>
 		}
 
 		@Override
-		public GeneticVariant next()
+		public GeneticVariantOld next()
 		{
 			if (hasNext())
 			{

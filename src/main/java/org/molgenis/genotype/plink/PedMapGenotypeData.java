@@ -18,11 +18,11 @@ import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.IndexedGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.tabix.TabixSequence;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.util.plink.datatypes.Biallele;
@@ -43,8 +43,8 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 	private final GenotypeDataIndex dataIndex;
 	private final File pedFile;
 	private Map<Integer, List<Biallele>> sampleAllelesBySnpIndex = new HashMap<Integer, List<Biallele>>();
-	private List<GeneticVariant> snps = new ArrayList<GeneticVariant>(1000000);
-	private Map<String, GeneticVariant> snpById = new HashMap<String, GeneticVariant>(1000000);
+	private List<GeneticVariantOld> snps = new ArrayList<GeneticVariantOld>(1000000);
+	private Map<String, GeneticVariantOld> snpById = new HashMap<String, GeneticVariantOld>(1000000);
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
 
 	public PedMapGenotypeData(File bzipMapFile, File mapIndexFile, File pedFile) throws FileNotFoundException,
@@ -161,7 +161,7 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 				}
 			}
 
-			GeneticVariant snp = new SnpGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles),
+			GeneticVariantOld snp = new SnpGeneticVariant(ids, sequenceName, startPos, Alleles.create(alleles),
 					refAllele, annotationValues, altDescriptions, altTypes, this);
 
 			snps.add(snp);
@@ -221,13 +221,13 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 	}
 
 	@Override
-	public List<GeneticVariant> getVariants()
+	public List<GeneticVariantOld> getVariants()
 	{
 		return snps;
 	}
 
 	@Override
-	public GeneticVariant getVariantById(String primaryVariantId)
+	public GeneticVariantOld getVariantById(String primaryVariantId)
 	{
 		return snpById.get(primaryVariantId);
 	}
@@ -239,7 +239,7 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 	}
 
 	@Override
-	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
+	public List<Alleles> getSampleVariants(GeneticVariantOld variant)
 	{
 		if (variant.getPrimaryVariantId() == null)
 		{
@@ -254,10 +254,10 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 		}
 
 		List<Biallele> bialleles = sampleAllelesBySnpIndex.get(index);
-		List<VariantAlleles> sampleVariants = new ArrayList<VariantAlleles>(bialleles.size());
+		List<Alleles> sampleVariants = new ArrayList<Alleles>(bialleles.size());
 		for (Biallele biallele : bialleles)
 		{
-			sampleVariants.add(VariantAlleles.create(biallele.getAllele1(), biallele.getAllele2()));
+			sampleVariants.add(Alleles.create(biallele.getAllele1(), biallele.getAllele2()));
 		}
 
 		return sampleVariants;

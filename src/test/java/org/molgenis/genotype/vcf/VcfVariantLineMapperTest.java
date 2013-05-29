@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.testng.annotations.Test;
@@ -28,9 +28,9 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 
 		VariantLineMapper mapper = new VcfVariantLineMapper(COL_NAMES, Collections.<Annotation> emptyList(),
 				Collections.<String, String> emptyMap(), this);
-		GeneticVariant variant = mapper.mapLine(line);
+		GeneticVariantOld variant = mapper.mapLine(line);
 		assertNotNull(variant);
-		assertEquals(variant.getType(), GeneticVariant.Type.SNP);
+		assertEquals(variant.getType(), GeneticVariantOld.Type.SNP);
 		assertEquals(variant.getSequenceName(), "1");
 		assertEquals(variant.getStartPos(), 565286);
 		assertEquals(variant.getPrimaryVariantId(), "rs1578391");
@@ -63,7 +63,7 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 
 		VariantLineMapper mapper = new VcfVariantLineMapper(COL_NAMES, Collections.<Annotation> emptyList(),
 				Collections.<String, String> emptyMap(), this);
-		GeneticVariant variant = mapper.mapLine(line);
+		GeneticVariantOld variant = mapper.mapLine(line);
 		assertNotNull(variant);
 
 		assertEquals(variant.getSequenceName(), "1");
@@ -85,7 +85,7 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 	}
 
 	@Override
-	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
+	public List<Alleles> getSampleVariants(GeneticVariantOld variant)
 	{
 		return Collections.emptyList();
 	}
