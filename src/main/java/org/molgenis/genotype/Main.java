@@ -3,7 +3,7 @@ package org.molgenis.genotype;
 import java.io.File;
 
 import org.molgenis.genotype.plink.PedMapGenotypeData;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
+import org.molgenis.genotype.variant.GeneticVariant;
 
 public class Main
 {
@@ -26,7 +26,7 @@ public class Main
 			// System.out.println(variants.get(0).getVariantAlleles());
 			// System.out.println(variants.get(0).getSampleVariants().size());
 
-			SnpGeneticVariant snpvariant = data.getSnpVariantByPos("1", 554636);
+			GeneticVariant snpvariant = data.getSnpVariantByPos("1", 554636);
 			System.out.println(snpvariant.getStartPos());
 			System.out.println(snpvariant.getSampleVariants());
 

@@ -28,7 +28,8 @@ public class SwappingSampleVariantsProviderTest
 	@Test
 	public void getSampleVariants()
 	{
-		List<Alleles> variantAlleles = Arrays.asList(Alleles.create('A', 'T'), Alleles.create('C', 'G'));
+		List<Alleles> variantAlleles = Arrays.asList(Alleles.createBasedOnChars('A', 'T'),
+				Alleles.createBasedOnChars('C', 'G'));
 		when(mockSampleVariantsProvider.getSampleVariants(mockSnpGeneticVariant)).thenReturn(variantAlleles);
 
 		List<Alleles> result = swappingSampleVariantsProvider.getSampleVariants(mockSnpGeneticVariant);

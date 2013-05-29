@@ -18,7 +18,6 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.vcf.VcfGenotypeData;
 
 public class MultiPartGenotypeData implements RandomAccessGenotypeData
@@ -173,7 +172,7 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	}
 
 	@Override
-	public SnpGeneticVariant getSnpVariantByPos(String seqName, int startPos)
+	public GeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
 		if (genotypeDatasets.containsKey(seqName))
 		{

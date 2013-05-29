@@ -12,7 +12,6 @@ import java.util.List;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.testng.annotations.Test;
@@ -42,16 +41,16 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 		assertEquals(ids.size(), 1);
 		assertEquals(ids.get(0), "rs1578391");
 
-		assertEquals(variant.getRefAllele(), "C");
+		assertEquals(variant.getRefAllele().getAlleleAsString(), "C");
 
-		List<String> alleles = variant.getVariantAlleles();
+		List<String> alleles = variant.getVariantAlleles().getAllelesAsString();
 		assertNotNull(alleles);
 		assertEquals(alleles.size(), 2);
 		assertEquals(alleles.get(0), "C");
 		assertEquals(alleles.get(1), "T");
 
-		assertEquals(variant.getRefAllele(), "C");
-		List<String> snpAlleles = variant.getVariantAlleles();
+		assertEquals(variant.getRefAllele().getAlleleAsString(), "C");
+		List<String> snpAlleles = variant.getVariantAlleles().getAllelesAsString();
 		assertNotNull(snpAlleles);
 		assertEquals(snpAlleles.size(), 2);
 		assertEquals(snpAlleles.get(0), "C");
@@ -76,9 +75,9 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 		assertNotNull(ids);
 		assertTrue(ids.isEmpty());
 
-		assertEquals(variant.getRefAllele(), "C");
+		assertEquals(variant.getRefAllele().getAlleleAsString(), "C");
 
-		List<String> alleles = variant.getVariantAlleles();
+		List<String> alleles = variant.getVariantAlleles().getAllelesAsString();
 		assertNotNull(alleles);
 		assertEquals(alleles.size(), 3);
 		assertTrue(alleles.contains("C"));

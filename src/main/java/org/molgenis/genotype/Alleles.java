@@ -3,69 +3,78 @@ package org.molgenis.genotype;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.molgenis.genotype.util.Utils;
-
-public class Alleles
+public class Alleles implements Iterable<Allele>
 {
-	private static Map<List<String>, Alleles> cache = new HashMap<List<String>, Alleles>();
-	private static Map<CharArrayWrapper, Alleles> snpCache = new HashMap<CharArrayWrapper, Alleles>();
+	private static final Map<List<Allele>, Alleles> pool = new HashMap<List<Allele>, Alleles>();
 
-	private final List<String> alleles;
-	private final char[] allelesAsChar;
+	private final List<Allele> alleles;
 	private final boolean snp;
 	private Alleles complement;
 	private final boolean isAtOrGcSnp;
+	private final List<String> allelesAsString;
+	private final char[] allelesAsChar;
 
-	private Alleles(List<String> alleles, char[] allelesAsChar, boolean snp)
+	private Alleles(List<Allele> alleles)
 	{
 		this.alleles = Collections.unmodifiableList(alleles);
-		this.allelesAsChar = allelesAsChar;
-		this.snp = snp;
 
-		this.isAtOrGcSnp = areAlleleCharsAtOrGc(allelesAsChar);
+		boolean isSnp = true;
+		ArrayList<String> allelesAsStringBuilder = new ArrayList<String>(alleles.size());
+		for (Allele allele : alleles)
+		{
+			if (!allele.isSnpAllele())
+			{
+				isSnp = false;
+			}
+			allelesAsStringBuilder.add(allele.getAlleleAsString());
+		}
+		this.allelesAsString = Collections.unmodifiableList(allelesAsStringBuilder);
+
+		this.snp = isSnp;
+		if (snp)
+		{
+			allelesAsChar = new char[alleles.size()];
+			int i = 0;
+			for (Allele allele : alleles)
+			{
+				allelesAsChar[i] = allele.getAlleleAsSnp();
+				++i;
+			}
+		}
+		else
+		{
+			allelesAsChar = null;
+		}
+
+		this.isAtOrGcSnp = areAlleleCharsAtOrGc(alleles);
 
 	}
 
-	private Alleles(char[] allelesAsChar)
+	private static boolean areAlleleCharsAtOrGc(List<Allele> alleles)
 	{
 
-		this.allelesAsChar = allelesAsChar;
-		this.snp = true;
-
-		ArrayList<String> allelesBuilder = new ArrayList<String>();
-		for (char allele : allelesAsChar)
-		{
-			allelesBuilder.add(String.valueOf(allele));
-		}
-		this.alleles = Collections.unmodifiableList(allelesBuilder);
-
-		this.isAtOrGcSnp = areAlleleCharsAtOrGc(allelesAsChar);
-
-	}
-
-	private static boolean areAlleleCharsAtOrGc(char[] allelesAsChar)
-	{
-		if (allelesAsChar == null)
-		{
-			return false;
-		}
-		if (allelesAsChar.length == 0)
+		if (alleles.size() == 0)
 		{
 			return false;
 		}
 
 		boolean onlyAt = true;
 		boolean onlyGc = true;
-		for (char allele : allelesAsChar)
+		for (Allele allele : alleles)
 		{
-			if (allele == 'A' || allele == 'T')
+			if (!allele.isSnpAllele())
+			{
+				return false;
+			}
+			if (allele == Allele.A_ALLELE || allele == Allele.T_ALLELE)
 			{
 				onlyGc = false;
 			}
-			if (allele == 'C' || allele == 'G')
+			if (allele == Allele.C_ALLELE || allele == Allele.G_ALLELE)
 			{
 				onlyAt = false;
 			}
@@ -74,96 +83,80 @@ public class Alleles
 
 	}
 
-	public static Alleles create(List<String> alleles)
+	public static Alleles createAlleles(List<Allele> alleles)
 	{
-		Alleles variantAlleles = cache.get(alleles);
-		if (variantAlleles == null)
+
+		if (pool.containsKey(alleles))
 		{
-			if (Utils.isSnp(alleles))
-			{
-				char[] allelesAsChar = new char[alleles.size()];
-				for (int i = 0; i < alleles.size(); i++)
-				{
-					allelesAsChar[i] = alleles.get(i) == null ? '0' : alleles.get(i).charAt(0);
-				}
-				variantAlleles = new Alleles(alleles, allelesAsChar, true);
+			return pool.get(alleles);
+		}
+		else
+		{
+			Alleles newAlleles = new Alleles(alleles);
+			pool.put(alleles, newAlleles);
+			newAlleles.addComplement();
+			return newAlleles;
+		}
+	}
 
-			}
-			else
-			{
-				variantAlleles = new Alleles(alleles, null, false);
-			}
+	public static Alleles createAlleles(Allele allele1, Allele allele2)
+	{
+		ArrayList<Allele> alleles = new ArrayList<Allele>(2);
+		alleles.add(allele1);
+		alleles.add(allele2);
+		return createAlleles(alleles);
+	}
 
-			addToCache(variantAlleles);
-			variantAlleles.addComplement();
+	public static Alleles createBasedOnString(List<String> stringAlleles)
+	{
+		ArrayList<Allele> alleles = new ArrayList<Allele>(stringAlleles.size());
 
+		for (String stringAllele : stringAlleles)
+		{
+			alleles.add(Allele.create(stringAllele));
 		}
 
-		return variantAlleles;
+		return createAlleles(alleles);
 	}
 
 	public static Alleles create(String allele1, String allele2)
 	{
-		ArrayList<String> alleles = new ArrayList<String>(2);
-		alleles.add(allele1);
-		alleles.add(allele2);
-		return create(alleles);
-	}
 
-	public static Alleles create(String allele)
-	{
-		ArrayList<String> alleles = new ArrayList<String>(1);
-		alleles.add(allele);
-		return create(alleles);
-	}
-
-	public static Alleles create(char allele1, char allele2)
-	{
-
-		return create(new char[]
-		{ allele1, allele2 });
+		return createAlleles(Allele.create(allele1), Allele.create(allele2));
 
 	}
 
-	public static Alleles create(char allele)
+	public static Alleles createBasedOnChars(char allele1, char allele2)
 	{
 
-		return create(new char[]
-		{ allele });
+		return createAlleles(Allele.create(allele1), Allele.create(allele2));
 
 	}
 
-	public static Alleles create(char[] alleles)
+	public static Alleles createBasedOnChars(char[] charAlleles)
 	{
-		Alleles variantAlleles = snpCache.get(new CharArrayWrapper(alleles));
-		if (variantAlleles == null)
+		ArrayList<Allele> alleles = new ArrayList<Allele>(charAlleles.length);
+		for (char charAllele : charAlleles)
 		{
-			variantAlleles = new Alleles(alleles);
-			addToCache(variantAlleles);
-			variantAlleles.addComplement();
+			alleles.add(Allele.create(charAllele));
 		}
-
-		return variantAlleles;
-	}
-
-	private static void addToCache(Alleles variantAlleles)
-	{
-		cache.put(variantAlleles.getAlleles(), variantAlleles);
-		if (variantAlleles.isSnp())
-		{
-			snpCache.put(new CharArrayWrapper(variantAlleles.getAllelesAsChars()), variantAlleles);
-		}
+		return createAlleles(alleles);
 	}
 
 	/**
-	 * Add complement. Not done in constructor to prevent infinite loop. Cache
+	 * Add complement. Not done in constructor to prevent infinite loop. Pool
 	 * must be up to date before this is called
 	 */
 	private void addComplement()
 	{
 		if (snp)
 		{
-			this.complement = Alleles.create(Utils.swapSnpStrand(allelesAsChar));
+			ArrayList<Allele> complementAlleles = new ArrayList<Allele>(alleles.size());
+			for (Allele allele : alleles)
+			{
+				complementAlleles.add(allele.getComplement());
+			}
+			this.complement = Alleles.createAlleles(complementAlleles);
 		}
 		else
 		{
@@ -177,9 +170,14 @@ public class Alleles
 	 * 
 	 * @return
 	 */
-	public List<String> getAlleles()
+	public List<Allele> getAlleles()
 	{
 		return alleles;
+	}
+
+	public List<String> getAllelesAsString()
+	{
+		return allelesAsString;
 	}
 
 	public int getAlleleCount()
@@ -205,7 +203,7 @@ public class Alleles
 	@Override
 	public String toString()
 	{
-		return "VariantAlleles [alleles=" + alleles + ", snp=" + snp + "]";
+		return "VariantAlleles [alleles=" + getAllelesAsString() + ", snp=" + snp + "]";
 	}
 
 	/**
@@ -248,6 +246,12 @@ public class Alleles
 	public boolean isAtOrGcSnp()
 	{
 		return isAtOrGcSnp;
+	}
+
+	@Override
+	public Iterator<Allele> iterator()
+	{
+		return alleles.iterator();
 	}
 
 }

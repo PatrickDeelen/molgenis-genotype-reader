@@ -10,15 +10,13 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.GeneticVariantOld;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 {
 
 	private final GenotypeData originalGenotypeData;
-	private final HashSet<GeneticVariantOld> includeVariants;
-	private final HashSet<GeneticVariantOld> excludeVariants;
+	private final HashSet<GeneticVariant> includeVariants;
+	private final HashSet<GeneticVariant> excludeVariants;
 
 	/**
 	 * View of originalGenotypeData with a subset of the genetic variants. Data
@@ -38,8 +36,8 @@ public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 	 * @param excludeVariants
 	 *            list with variants to exclude. Can be null
 	 */
-	public VariantFilterGenotypeData(GenotypeData originalGenotypeData, HashSet<GeneticVariantOld> includeVariants,
-			HashSet<GeneticVariantOld> excludeVariants)
+	public VariantFilterGenotypeData(GenotypeData originalGenotypeData, HashSet<GeneticVariant> includeVariants,
+			HashSet<GeneticVariant> excludeVariants)
 	{
 		super();
 
@@ -96,13 +94,6 @@ public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 	}
 
 	@Override
-	public SnpGeneticVariant getSnpVariantByPos(String seqName, int startPos)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<Sample> getSamples()
 	{
 		// TODO Auto-generated method stub
@@ -118,6 +109,13 @@ public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 
 	@Override
 	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
 		// TODO Auto-generated method stub
 		return null;

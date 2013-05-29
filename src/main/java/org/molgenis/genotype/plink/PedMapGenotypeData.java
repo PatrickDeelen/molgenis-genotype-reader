@@ -216,7 +216,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		List<Alleles> sampleVariants = new ArrayList<Alleles>(bialleles.size());
 		for (Biallele biallele : bialleles)
 		{
-			sampleVariants.add(Alleles.create(biallele.getAllele1(), biallele.getAllele2()));
+			sampleVariants.add(Alleles.createBasedOnChars(biallele.getAllele1(), biallele.getAllele2()));
 		}
 
 		return sampleVariants;

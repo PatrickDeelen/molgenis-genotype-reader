@@ -1,9 +1,10 @@
 package org.molgenis.genotype.variant;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculatorException;
@@ -18,11 +19,11 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	private final Map<String, ?> annotationValues;
 	private final SampleVariantsProvider sampleVariantsProvider;
 	private final Alleles alleles;
-	private final Alleles refAllele;
+	private final Allele refAllele;
 
 	private ReadOnlyGeneticVariant(GeneticVariantId variantId, int startPos, String sequenceName,
 			Map<String, ?> annotationValues, SampleVariantsProvider sampleVariantsProvider, Alleles alleles,
-			Alleles refAllele)
+			Allele refAllele)
 	{
 		super();
 		this.variantId = variantId;
@@ -38,28 +39,28 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 			SampleVariantsProvider sampleVariantsProvider, char allele1, char allele2)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(snpId), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), null);
+				sampleVariantsProvider, Alleles.createBasedOnChars(allele1, allele2), null);
 	}
 
 	public static GeneticVariant createSnp(String snpId, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, char allele1, char allele2, char refAllele)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(snpId), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), Alleles.create(refAllele));
+				sampleVariantsProvider, Alleles.createBasedOnChars(allele1, allele2), Allele.create(refAllele));
 	}
 
 	public static GeneticVariant createSnp(List<String> snpIds, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, char allele1, char allele2)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(snpIds), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), null);
+				sampleVariantsProvider, Alleles.createBasedOnChars(allele1, allele2), null);
 	}
 
 	public static GeneticVariant createSnp(List<String> snpIds, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, char allele1, char allele2, char refAllele)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(snpIds), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), Alleles.create(refAllele));
+				sampleVariantsProvider, Alleles.createBasedOnChars(allele1, allele2), Allele.create(refAllele));
 	}
 
 	public static GeneticVariant createVariant(String variantId, int pos, String sequenceName,
@@ -73,7 +74,7 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 			SampleVariantsProvider sampleVariantsProvider, String allele1, String allele2, String refAllele)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), Alleles.create(refAllele));
+				sampleVariantsProvider, Alleles.create(allele1, allele2), Allele.create(refAllele));
 	}
 
 	public static GeneticVariant createVariant(List<String> variantIds, int pos, String sequenceName,
@@ -87,35 +88,35 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 			SampleVariantsProvider sampleVariantsProvider, String allele1, String allele2, String refAllele)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), Alleles.create(refAllele));
+				sampleVariantsProvider, Alleles.create(allele1, allele2), Allele.create(refAllele));
 	}
 
 	public static GeneticVariant createVariant(String variantId, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, List<String> alleles)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(alleles), null);
+				sampleVariantsProvider, Alleles.createBasedOnString(alleles), null);
 	}
 
 	public static GeneticVariant createVariant(String variantId, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, List<String> alleles, String refAllele)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(alleles), Alleles.create(refAllele));
+				sampleVariantsProvider, Alleles.createBasedOnString(alleles), Allele.create(refAllele));
 	}
 
 	public static GeneticVariant createVariant(List<String> variantIds, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, List<String> alleles)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(alleles), null);
+				sampleVariantsProvider, Alleles.createBasedOnString(alleles), null);
 	}
 
 	public static GeneticVariant createVariant(List<String> variantIds, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, List<String> alleles, String refAllele)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(alleles), Alleles.create(refAllele));
+				sampleVariantsProvider, Alleles.createBasedOnString(alleles), Allele.create(refAllele));
 	}
 
 	@Override
@@ -155,52 +156,43 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	}
 
 	@Override
-	public ArrayList<String> getVariantAlleles()
+	public Alleles getVariantAlleles()
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public char[] getVariantSnpAlleles() throws NotASnpException
-	{
-		// TODO Auto-generated method stub
-		return null;
+		return alleles;
 	}
 
 	@Override
 	public int getAlleleCount()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return alleles.getAlleleCount();
 	}
 
 	@Override
-	public String getRefAllele()
+	public Allele getRefAllele()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return refAllele;
 	}
 
 	@Override
 	public char getSnpRefAllele() throws NotASnpException
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (!isSnp())
+		{
+			throw new NotASnpException(this);
+		}
+		return refAllele.getAlleleAsSnp();
 	}
 
 	@Override
 	public List<Alleles> getSampleVariants()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableList(sampleVariantsProvider.getSampleVariants(this));
 	}
 
 	@Override
 	public Map<String, ?> getAnnotationValues()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableMap(annotationValues);
 	}
 
 	@Override
@@ -211,7 +203,7 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	}
 
 	@Override
-	public String getMinorAllele()
+	public Allele getMinorAllele()
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -232,7 +224,7 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	}
 
 	@Override
-	public Ld calculateLd(GeneticVariantOld other) throws LdCalculatorException
+	public Ld calculateLd(GeneticVariant other) throws LdCalculatorException
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -254,6 +246,13 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 
 	@Override
 	public SampleVariantsProvider getSampleVariantsProvider()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public byte[] getSampleCalledDosage()
 	{
 		// TODO Auto-generated method stub
 		return null;

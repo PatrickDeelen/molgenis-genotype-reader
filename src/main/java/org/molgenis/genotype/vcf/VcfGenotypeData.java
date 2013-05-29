@@ -129,7 +129,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		try
 		{
 			return index.createQuery().findSamplesForVariant(variant.getSequenceName(), variant.getStartPos(),
-					variant.getVariantAlleles(), reader.getColNames(), reader.getSampleNames());
+					variant.getVariantAlleles().getAllelesAsString(), reader.getColNames(), reader.getSampleNames());
 		}
 		catch (IOException e)
 		{

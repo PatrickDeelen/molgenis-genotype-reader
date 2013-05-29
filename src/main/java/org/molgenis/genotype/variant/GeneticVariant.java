@@ -1,9 +1,9 @@
 package org.molgenis.genotype.variant;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculatorException;
@@ -61,17 +61,7 @@ public interface GeneticVariant
 	 * 
 	 * @return
 	 */
-	public ArrayList<String> getVariantAlleles();
-
-	/**
-	 * Get all possible SNP alleles (including the reference) The first value is
-	 * the reference value if it is set
-	 * 
-	 * @return
-	 * @throws NotASnpException
-	 *             if not a SNP
-	 */
-	public char[] getVariantSnpAlleles() throws NotASnpException;
+	public Alleles getVariantAlleles();
 
 	/**
 	 * Get the total allele count
@@ -85,7 +75,7 @@ public interface GeneticVariant
 	 * 
 	 * @return String
 	 */
-	public String getRefAllele();
+	public Allele getRefAllele();
 
 	/**
 	 * get the SNP ref allele
@@ -123,7 +113,7 @@ public interface GeneticVariant
 	 * 
 	 * @return the minor allele
 	 */
-	public String getMinorAllele();
+	public Allele getMinorAllele();
 
 	/**
 	 * Is this variant a SNP
@@ -146,7 +136,7 @@ public interface GeneticVariant
 	 * @return
 	 * @throws LdCalculatorException
 	 */
-	public Ld calculateLd(GeneticVariantOld other) throws LdCalculatorException;
+	public Ld calculateLd(GeneticVariant other) throws LdCalculatorException;
 
 	/**
 	 * Test if biallelic
@@ -161,6 +151,13 @@ public interface GeneticVariant
 	 * @return dosage values
 	 */
 	public float[] getSampleDosages();
+
+	/**
+	 * Dosage values of 0, 1 or 2
+	 * 
+	 * @return
+	 */
+	public byte[] getSampleCalledDosage();
 
 	/**
 	 * Get the sample variant provider used by this variant

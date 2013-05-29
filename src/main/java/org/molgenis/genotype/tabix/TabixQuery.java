@@ -164,7 +164,7 @@ public class TabixQuery implements VariantQuery
 							VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
 							if (geno == null) throw new GenotypeDataException("Missing GT format value for sample ["
 									+ sampleName + "]");
-							sampleVariants.add(Alleles.create(geno.getSamleVariants(alleles)));
+							sampleVariants.add(Alleles.createBasedOnString(geno.getSamleVariants(alleles)));
 						}
 
 						return sampleVariants;

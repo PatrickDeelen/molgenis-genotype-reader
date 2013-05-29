@@ -63,7 +63,7 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		// TODO fix test below
 		// assertEquals(variant.getType(), GeneticVariantOld.Type.SNP);
 
-		List<String> alleles = variant.getVariantAlleles();
+		List<String> alleles = variant.getVariantAlleles().getAllelesAsString();
 		assertNotNull(alleles);
 		assertEquals(alleles.size(), 2);
 		assertTrue(alleles.contains("C"));
