@@ -1,6 +1,7 @@
 package org.molgenis.genotype.vcf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,13 +49,15 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	 * VCF genotype reader with default cache of 100
 	 * 
 	 * @param bzipVcfFile
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
-	public VcfGenotypeData(File bzipVcfFile)
+	public VcfGenotypeData(File bzipVcfFile) throws FileNotFoundException, IOException
 	{
 		this(bzipVcfFile, 100);
 	}
 
-	public VcfGenotypeData(File bzipVcfFile, int cacheSize)
+	public VcfGenotypeData(File bzipVcfFile, int cacheSize) throws FileNotFoundException, IOException
 	{
 		this(bzipVcfFile, new File(bzipVcfFile.getAbsolutePath() + ".tbi"), cacheSize);
 	}
@@ -64,14 +67,38 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	 * 
 	 * @param bzipVcfFile
 	 * @param tabixIndexFile
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
-	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile)
+	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile) throws FileNotFoundException, IOException
 	{
 		this(bzipVcfFile, tabixIndexFile, 100);
 	}
 
-	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile, int cacheSize)
+	public VcfGenotypeData(File bzipVcfFile, File tabixIndexFile, int cacheSize) throws FileNotFoundException,
+			IOException
 	{
+
+		if (!bzipVcfFile.isFile())
+		{
+			throw new FileNotFoundException("VCF file not found at " + bzipVcfFile.getAbsolutePath());
+		}
+
+		if (!bzipVcfFile.canRead())
+		{
+			throw new IOException("VCF file not found at " + bzipVcfFile.getAbsolutePath());
+		}
+
+		if (!tabixIndexFile.isFile())
+		{
+			throw new FileNotFoundException("VCF index file not found at " + tabixIndexFile.getAbsolutePath());
+		}
+
+		if (!tabixIndexFile.canRead())
+		{
+			throw new IOException("VCF index file not found at " + tabixIndexFile.getAbsolutePath());
+		}
+
 		try
 		{
 			reader = new VcfReader(new BlockCompressedInputStream(bzipVcfFile));

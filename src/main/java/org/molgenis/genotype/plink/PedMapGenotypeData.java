@@ -1,6 +1,7 @@
 package org.molgenis.genotype.plink;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,8 +47,40 @@ public class PedMapGenotypeData extends IndexedGenotypeData implements SampleVar
 	private Map<String, GeneticVariant> snpById = new HashMap<String, GeneticVariant>(1000000);
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
 
-	public PedMapGenotypeData(File bzipMapFile, File mapIndexFile, File pedFile)
+	public PedMapGenotypeData(File bzipMapFile, File mapIndexFile, File pedFile) throws FileNotFoundException,
+			IOException
 	{
+
+		if (!bzipMapFile.isFile())
+		{
+			throw new FileNotFoundException("MAP file not found at " + bzipMapFile.getAbsolutePath());
+		}
+
+		if (!bzipMapFile.canRead())
+		{
+			throw new IOException("MAP file not found at " + bzipMapFile.getAbsolutePath());
+		}
+
+		if (!mapIndexFile.isFile())
+		{
+			throw new FileNotFoundException("MAP index file not found at " + mapIndexFile.getAbsolutePath());
+		}
+
+		if (!mapIndexFile.canRead())
+		{
+			throw new IOException("MAP index file not found at " + mapIndexFile.getAbsolutePath());
+		}
+
+		if (!pedFile.isFile())
+		{
+			throw new FileNotFoundException("PED file not found at " + pedFile.getAbsolutePath());
+		}
+
+		if (!pedFile.canRead())
+		{
+			throw new IOException("PED file not found at " + pedFile.getAbsolutePath());
+		}
+
 		this.pedFile = pedFile;
 
 		MapFileReader mapFileReader = null;

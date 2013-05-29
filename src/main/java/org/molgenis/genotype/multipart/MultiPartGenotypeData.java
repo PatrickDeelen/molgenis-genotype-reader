@@ -93,7 +93,7 @@ public class MultiPartGenotypeData implements GenotypeData
 	 * @throws Exception
 	 *             If multiple files for one chr found
 	 */
-	public MultiPartGenotypeData createFromVcfFolder(File vcfFolder, int cacheSize) throws IOException,
+	public static MultiPartGenotypeData createFromVcfFolder(File vcfFolder, int cacheSize) throws IOException,
 			IncompetibleMultiPartGenotypeDataException
 	{
 
