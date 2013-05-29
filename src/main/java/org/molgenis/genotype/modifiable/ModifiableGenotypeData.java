@@ -1,7 +1,7 @@
 package org.molgenis.genotype.modifiable;
 
-import org.molgenis.genotype.GenotypeData;
 import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.IllegalReferenceAlleleException;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
@@ -13,7 +13,7 @@ import org.molgenis.genotype.variant.id.GeneticVariantId;
  * @author Patrick Deelen
  * 
  */
-public interface ModifiableGenotypeData extends GenotypeData
+public interface ModifiableGenotypeData extends RandomAccessGenotypeData
 {
 
 	/**

@@ -6,25 +6,25 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.molgenis.genotype.GenotypeData;
+import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
-import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.variant.GeneticVariantOld;
+import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.vcf.VcfGenotypeData;
 
-public class MultiPartGenotypeData implements GenotypeData
+public class MultiPartGenotypeData implements RandomAccessGenotypeData
 {
 
 	private List<Sample> samples = null;
-	private int variantCount = 0;
 	private static final Pattern VCF_PATTERN = Pattern.compile("vcf.gz$", Pattern.CASE_INSENSITIVE);
 
 	/**
@@ -33,20 +33,19 @@ public class MultiPartGenotypeData implements GenotypeData
 	 * 
 	 * seqName, GenotypeData
 	 */
-	private LinkedHashMap<String, GenotypeData> genotypeDatasets = new LinkedHashMap<String, GenotypeData>();
+	private LinkedHashMap<String, RandomAccessGenotypeData> genotypeDatasets = new LinkedHashMap<String, RandomAccessGenotypeData>();
+	private Set<RandomAccessGenotypeData> genotypeDataCollection;
 
-	HashSet<GenotypeData> genotypeDataCollection;
-
-	public MultiPartGenotypeData(Collection<GenotypeData> genotypeDataCollection)
+	public MultiPartGenotypeData(Collection<RandomAccessGenotypeData> genotypeDataCollection)
 			throws IncompetibleMultiPartGenotypeDataException
 	{
-		this(new HashSet<GenotypeData>(genotypeDataCollection));
+		this(new HashSet<RandomAccessGenotypeData>(genotypeDataCollection));
 	}
 
-	public MultiPartGenotypeData(HashSet<GenotypeData> genotypeDataCollection)
+	public MultiPartGenotypeData(HashSet<RandomAccessGenotypeData> genotypeDataCollection)
 			throws IncompetibleMultiPartGenotypeDataException
 	{
-		for (GenotypeData genotypeData : genotypeDataCollection)
+		for (RandomAccessGenotypeData genotypeData : genotypeDataCollection)
 		{
 			if (samples != null)
 			{
@@ -70,8 +69,6 @@ public class MultiPartGenotypeData implements GenotypeData
 				}
 				genotypeDatasets.put(seqName, genotypeData);
 			}
-
-			variantCount += genotypeData.getVariantCount();
 
 		}
 
@@ -97,7 +94,7 @@ public class MultiPartGenotypeData implements GenotypeData
 			IncompetibleMultiPartGenotypeDataException
 	{
 
-		HashSet<GenotypeData> genotypeDataSets = new HashSet<GenotypeData>();
+		Set<RandomAccessGenotypeData> genotypeDataSets = new HashSet<RandomAccessGenotypeData>();
 
 		if (!vcfFolder.isDirectory())
 		{
@@ -163,7 +160,7 @@ public class MultiPartGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public List<GeneticVariantOld> getVariantsByPos(String seqName, int startPos)
+	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
 		if (genotypeDatasets.containsKey(seqName))
 		{
@@ -189,61 +186,21 @@ public class MultiPartGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public VariantQueryResult getSeqVariants(String seqName)
-	{
-		if (genotypeDatasets.containsKey(seqName))
-		{
-			return genotypeDatasets.get(seqName).getSeqVariants(seqName);
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	@Override
 	public List<Sample> getSamples()
 	{
 		return Collections.unmodifiableList(samples);
 	}
 
 	@Override
-	public Iterable<GeneticVariantOld> getVariants()
+	public Iterator<GeneticVariant> iterator()
 	{
-		return new MultiPartVariantsIterable(genotypeDataCollection);
+		return new MultiPartVariantsIterable(genotypeDataCollection).iterator();
 	}
 
 	@Override
-	public GeneticVariantOld getVariantById(String primaryVariantId)
+	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		for (GenotypeData genotypeData : genotypeDatasets.values())
-		{
-			GeneticVariantOld variant = genotypeData.getVariantById(primaryVariantId);
-			if (variant != null)
-			{
-				return variant;
-			}
-		}
+		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public GeneticVariantOld getSnpVariantById(String primaryVariantId)
-	{
-		for (GenotypeData genotypeData : genotypeDatasets.values())
-		{
-			GeneticVariantOld variant = genotypeData.getSnpVariantById(primaryVariantId);
-			if (variant != null)
-			{
-				return variant;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public int getVariantCount()
-	{
-		return variantCount;
 	}
 }

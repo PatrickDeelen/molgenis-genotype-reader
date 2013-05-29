@@ -14,22 +14,21 @@ import org.testng.annotations.Test;
 public class SwappingSampleVariantsProviderTest
 {
 	private SampleVariantsProvider mockSampleVariantsProvider;
-	private SnpGeneticVariant mockSnpGeneticVariant;
+	private GeneticVariant mockSnpGeneticVariant;
 	private SwappingSampleVariantsProvider swappingSampleVariantsProvider;
 
 	@BeforeMethod
 	public void beforeMethod()
 	{
 		mockSampleVariantsProvider = mock(SampleVariantsProvider.class);
-		mockSnpGeneticVariant = mock(SnpGeneticVariant.class);
+		mockSnpGeneticVariant = mock(GeneticVariant.class);
 		swappingSampleVariantsProvider = new SwappingSampleVariantsProvider(mockSampleVariantsProvider);
 	}
 
 	@Test
 	public void getSampleVariants()
 	{
-		List<Alleles> variantAlleles = Arrays.asList(Alleles.create('A', 'T'),
-				Alleles.create('C', 'G'));
+		List<Alleles> variantAlleles = Arrays.asList(Alleles.create('A', 'T'), Alleles.create('C', 'G'));
 		when(mockSampleVariantsProvider.getSampleVariants(mockSnpGeneticVariant)).thenReturn(variantAlleles);
 
 		List<Alleles> result = swappingSampleVariantsProvider.getSampleVariants(mockSnpGeneticVariant);

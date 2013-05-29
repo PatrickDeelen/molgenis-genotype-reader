@@ -90,6 +90,34 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 				sampleVariantsProvider, Alleles.create(allele1, allele2), Alleles.create(refAllele));
 	}
 
+	public static GeneticVariant createVariant(String variantId, int pos, String sequenceName,
+			SampleVariantsProvider sampleVariantsProvider, List<String> alleles)
+	{
+		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), pos, sequenceName, null,
+				sampleVariantsProvider, Alleles.create(alleles), null);
+	}
+
+	public static GeneticVariant createVariant(String variantId, int pos, String sequenceName,
+			SampleVariantsProvider sampleVariantsProvider, List<String> alleles, String refAllele)
+	{
+		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), pos, sequenceName, null,
+				sampleVariantsProvider, Alleles.create(alleles), Alleles.create(refAllele));
+	}
+
+	public static GeneticVariant createVariant(List<String> variantIds, int pos, String sequenceName,
+			SampleVariantsProvider sampleVariantsProvider, List<String> alleles)
+	{
+		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName, null,
+				sampleVariantsProvider, Alleles.create(alleles), null);
+	}
+
+	public static GeneticVariant createVariant(List<String> variantIds, int pos, String sequenceName,
+			SampleVariantsProvider sampleVariantsProvider, List<String> alleles, String refAllele)
+	{
+		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName, null,
+				sampleVariantsProvider, Alleles.create(alleles), Alleles.create(refAllele));
+	}
+
 	@Override
 	public String getPrimaryVariantId()
 	{

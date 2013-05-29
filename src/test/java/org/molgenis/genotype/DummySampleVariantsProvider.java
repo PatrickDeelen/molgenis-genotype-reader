@@ -2,7 +2,7 @@ package org.molgenis.genotype;
 
 import java.util.List;
 
-import org.molgenis.genotype.variant.GeneticVariantOld;
+import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 
 public class DummySampleVariantsProvider implements SampleVariantsProvider
@@ -17,7 +17,7 @@ public class DummySampleVariantsProvider implements SampleVariantsProvider
 	}
 
 	@Override
-	public List<Alleles> getSampleVariants(GeneticVariantOld variant)
+	public List<Alleles> getSampleVariants(GeneticVariant variant)
 	{
 		return variantAlleles;
 	}

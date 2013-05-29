@@ -14,7 +14,7 @@ public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 	}
 
 	@Override
-	public List<Alleles> getSampleVariants(GeneticVariantOld variant)
+	public List<Alleles> getSampleVariants(GeneticVariant variant)
 	{
 		List<Alleles> alleles = sampleVariantsProvider.getSampleVariants(variant);
 		for (int i = 0; i < alleles.size(); i++)

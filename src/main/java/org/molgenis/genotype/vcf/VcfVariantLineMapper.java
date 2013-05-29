@@ -5,13 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.util.Utils;
-import org.molgenis.genotype.variant.GenericGeneticVariant;
-import org.molgenis.genotype.variant.GeneticVariantOld;
+import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfRecord;
 
@@ -33,13 +30,14 @@ public class VcfVariantLineMapper implements VariantLineMapper
 	}
 
 	@Override
-	public GeneticVariantOld mapLine(String line)
+	public GeneticVariant mapLine(String line)
 	{
+		System.out.println(line);
 		VcfRecord record = new VcfRecord(line, colNames);
 
 		List<String> ids = record.getId();
 		String sequenceName = record.getChrom();
-		Integer startPos = record.getPos();
+		int startPos = record.getPos();
 		List<String> alleles = record.getAlleles();
 		String refAllele = record.getRef();
 
@@ -69,17 +67,8 @@ public class VcfVariantLineMapper implements VariantLineMapper
 			}
 		}
 
-		GeneticVariantOld variant;
-		if (Utils.isSnp(alleles))
-		{
-			variant = new SnpGeneticVariant(ids, sequenceName, startPos, Alleles.create(alleles), refAllele,
-					annotationValues, altDescriptions, altTypes, sampleVariantsProvider);
-		}
-		else
-		{
-			variant = new GenericGeneticVariant(ids, sequenceName, startPos, Alleles.create(alleles), refAllele,
-					annotationValues, stopPos, altDescriptions, altTypes, sampleVariantsProvider);
-		}
+		GeneticVariant variant = ReadOnlyGeneticVariant.createVariant(ids, startPos, sequenceName,
+				sampleVariantsProvider, alleles, refAllele);
 
 		return variant;
 	}

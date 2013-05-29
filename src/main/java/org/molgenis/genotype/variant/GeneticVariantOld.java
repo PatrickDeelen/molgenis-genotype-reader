@@ -37,9 +37,9 @@ public class GeneticVariantOld
 	private float minorAlleleFrequency = 0;
 	private final GeneticVariantOld.Type type;
 
-	public GeneticVariantOld(List<String> ids, String sequenceName, int startPos, Alleles alleles,
-			String refAllele, Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions,
-			List<String> altTypes, SampleVariantsProvider sampleVariantsProvider, GeneticVariantOld.Type type)
+	public GeneticVariantOld(List<String> ids, String sequenceName, int startPos, Alleles alleles, String refAllele,
+			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes,
+			SampleVariantsProvider sampleVariantsProvider, GeneticVariantOld.Type type)
 	{
 
 		this.variantId = GeneticVariantId.createVariantId(ids);
@@ -180,7 +180,9 @@ public class GeneticVariantOld
 	 */
 	public List<Alleles> getSampleVariants()
 	{
-		return Collections.unmodifiableList(sampleVariantsProvider.getSampleVariants(this));
+		return null;
+		// return
+		// Collections.unmodifiableList(sampleVariantsProvider.getSampleVariants(this));
 	}
 
 	/**

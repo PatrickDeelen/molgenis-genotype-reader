@@ -16,16 +16,16 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 {
 
 	private final SampleVariantsProvider sampleVariantProvider;
-	private final Cache<GeneticVariantOld, List<Alleles>> cache;
+	private final Cache<GeneticVariant, List<Alleles>> cache;
 
 	public CachedSampleVariantProvider(SampleVariantsProvider sampleVariantProvider, int cacheSize)
 	{
 		this.sampleVariantProvider = sampleVariantProvider;
-		this.cache = new Cache<GeneticVariantOld, List<Alleles>>(cacheSize);
+		this.cache = new Cache<GeneticVariant, List<Alleles>>(cacheSize);
 	}
 
 	@Override
-	public List<Alleles> getSampleVariants(GeneticVariantOld variant)
+	public List<Alleles> getSampleVariants(GeneticVariant variant)
 	{
 		if (cache.containsKey(variant))
 		{

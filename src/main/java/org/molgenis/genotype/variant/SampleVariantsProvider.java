@@ -13,5 +13,5 @@ import org.molgenis.genotype.Alleles;
  */
 public interface SampleVariantsProvider
 {
-	List<Alleles> getSampleVariants(GeneticVariantOld variant);
+	List<Alleles> getSampleVariants(GeneticVariant variant);
 }

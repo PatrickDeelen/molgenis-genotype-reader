@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.molgenis.genotype.ResourceTest;
-import org.molgenis.genotype.variant.GeneticVariantOld;
+import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -22,7 +22,7 @@ public class TabixIndexTest extends ResourceTest
 	{
 		index = new TabixIndex(getTestVcfGzTbi(), getTestVcfGz(), new VariantLineMapper()
 		{
-			public GeneticVariantOld mapLine(String line)
+			public GeneticVariant mapLine(String line)
 			{
 				return null;
 			}

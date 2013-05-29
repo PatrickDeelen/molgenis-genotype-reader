@@ -1,17 +1,19 @@
 package org.molgenis.genotype.variantFilter;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.molgenis.genotype.GenotypeData;
+import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
-import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.GeneticVariantOld;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 
-public class VariantFilterGenotypeData implements GenotypeData
+public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 {
 
 	private final GenotypeData originalGenotypeData;
@@ -87,7 +89,7 @@ public class VariantFilterGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public List<GeneticVariantOld> getVariantsByPos(String seqName, int startPos)
+	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -101,13 +103,6 @@ public class VariantFilterGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public VariantQueryResult getSeqVariants(String seqName)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<Sample> getSamples()
 	{
 		// TODO Auto-generated method stub
@@ -115,31 +110,17 @@ public class VariantFilterGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public Iterable<GeneticVariantOld> getVariants()
+	public Iterator<GeneticVariant> iterator()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GeneticVariantOld getVariantById(String primaryVariantId)
+	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public GeneticVariantOld getSnpVariantById(String primaryVariantId)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getVariantCount()
-	{
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }
