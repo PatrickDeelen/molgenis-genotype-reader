@@ -3,15 +3,15 @@ package org.molgenis.genotype.multipart;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.molgenis.genotype.GenotypeData;
+import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sequence;
 
 public class MultiPartSequencesIterable implements Iterable<Sequence>
 {
 
-	private final Iterable<GenotypeData> datasets;
+	private final Iterable<RandomAccessGenotypeData> datasets;
 
-	public MultiPartSequencesIterable(Iterable<GenotypeData> collection)
+	public MultiPartSequencesIterable(Iterable<RandomAccessGenotypeData> collection)
 	{
 		super();
 		this.datasets = collection;
@@ -27,11 +27,11 @@ public class MultiPartSequencesIterable implements Iterable<Sequence>
 	private class MultiPartSequencesIterator implements Iterator<Sequence>
 	{
 
-		private Iterator<GenotypeData> datasetIterator;
+		private Iterator<RandomAccessGenotypeData> datasetIterator;
 		private Iterator<Sequence> datasetSequenceIterator;
 		private boolean done = false;
 
-		public MultiPartSequencesIterator(Iterable<GenotypeData> datasets)
+		public MultiPartSequencesIterator(Iterable<RandomAccessGenotypeData> datasets)
 		{
 			super();
 			this.datasetIterator = datasets.iterator();

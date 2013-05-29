@@ -6,7 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
 
-public abstract class IndexedGenotypeData extends AbstractGenotypeData
+public abstract class IndexedGenotypeData extends AbstractRandomAccessGenotypeData
 {
 
 	@Override

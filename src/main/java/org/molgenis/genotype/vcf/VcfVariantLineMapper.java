@@ -35,6 +35,7 @@ public class VcfVariantLineMapper implements VariantLineMapper
 	@Override
 	public GeneticVariant mapLine(String line)
 	{
+		System.out.println(line);
 		VcfRecord record = new VcfRecord(line, colNames);
 
 		List<String> ids = record.getId();

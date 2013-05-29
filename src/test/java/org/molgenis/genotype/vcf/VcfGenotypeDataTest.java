@@ -10,11 +10,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.VariantAlleles;
-import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.util.Utils;
@@ -72,16 +70,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertNotNull(sequence);
 		assertEquals(sequence.getName(), "2");
 
-		VariantQueryResult queryResult = sequence.getVariants();
-		List<GeneticVariant> variants;
-		try
-		{
-			variants = Utils.iteratorToList(queryResult.iterator());
-		}
-		finally
-		{
-			queryResult.close();
-		}
+		List<GeneticVariant> variants = Utils.iteratorToList(sequence.iterator());
 
 		assertNotNull(variants);
 		assertEquals(variants.size(), 1);
@@ -125,36 +114,12 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertTrue(genotypeData.getVariantsByPos("bogus", 8).isEmpty());
 	}
 
-	@Test
-	public void testSeqVariants() throws IOException
+	// @Test
+	public void testgetSequenceGeneticVariants() throws IOException
 	{
-		VariantQueryResult queryResult = genotypeData.getSeqVariants("1");
-		try
-		{
-			List<GeneticVariant> variants = Utils.iteratorToList(queryResult.iterator());
-			assertEquals(variants.size(), 6);
-		}
-		finally
-		{
-			queryResult.close();
-		}
-
-		queryResult = genotypeData.getSeqVariants("2");
-		try
-		{
-			List<GeneticVariant> variants = Utils.iteratorToList(queryResult.iterator());
-			assertEquals(variants.size(), 1);
-		}
-		finally
-		{
-			queryResult.close();
-		}
-	}
-
-	@Test(expectedExceptions = GenotypeDataException.class)
-	public void testGetSeqVariantUnknown()
-	{
-		genotypeData.getSeqVariants("x");
+		System.out.println("----------");
+		List<GeneticVariant> variants = Utils.iteratorToList(genotypeData.getSequenceGeneticVariants("1"));
+		assertEquals(variants.size(), 6);
 	}
 
 	@Test
@@ -230,13 +195,4 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getAltDescriptions().get(0), "Deletion");
 	}
 
-	@Test
-	public void testGetVariantById()
-	{
-		GeneticVariant variant = genotypeData.getVariantById("rs1295089");
-		assertNotNull(variant);
-		assertEquals(variant.getPrimaryVariantId(), "rs1295089");
-		assertEquals(variant.getStartPos(), 6097450);
-		assertNull(genotypeData.getVariantById("bogus"));
-	}
 }

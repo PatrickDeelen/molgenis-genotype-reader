@@ -3,7 +3,6 @@ package org.molgenis.genotype;
 import java.io.File;
 
 import org.molgenis.genotype.plink.PedMapGenotypeData;
-import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 public class Main
@@ -17,27 +16,15 @@ public class Main
 		try
 		{
 			File pedFile = new File("/Users/erwin/Documents/data/plink/hapmap.ped");
-			File mapFile = new File("/Users/erwin/Documents/data/plink/hapmap.map.gz");
-			File indexFile = new File("/Users/erwin/Documents/data/plink/hapmap.map.gz.tbi");
+			File mapFile = new File("/Users/erwin/Documents/data/plink/hapmap.map");
 
-			GenotypeData data = new PedMapGenotypeData(mapFile, indexFile, pedFile);
+			RandomAccessGenotypeData data = new PedMapGenotypeData(pedFile, mapFile);
 			System.out.println("Sequences:" + data.getSequences());
 			// List<GeneticVariant> variants = data.getVariants();
 			// System.out.println("Variant count = " + variants.size());
 			// System.out.println(variants.get(0).getPrimaryVariantId());
 			// System.out.println(variants.get(0).getVariantAlleles());
 			// System.out.println(variants.get(0).getSampleVariants().size());
-
-			GeneticVariant var = data.getVariantById("rs9629043");
-			System.out.println(var.getPrimaryVariantId());
-			System.out.println(var.getStartPos());
-			System.out.println(var.getSampleVariants());
-			System.out.println(var.getSequenceName());
-
-			long t0 = System.currentTimeMillis();
-			System.out.println(var.getMinorAllele() + ":" + var.getMinorAlleleFrequency());
-			long t = System.currentTimeMillis() - t0;
-			System.out.println("t = " + t);
 
 			SnpGeneticVariant snpvariant = data.getSnpVariantByPos("1", 554636);
 			System.out.println(snpvariant.getStartPos());

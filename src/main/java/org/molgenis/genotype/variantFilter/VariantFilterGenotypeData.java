@@ -1,17 +1,18 @@
 package org.molgenis.genotype.variantFilter;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.molgenis.genotype.GenotypeData;
+import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
-import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SnpGeneticVariant;
 
-public class VariantFilterGenotypeData implements GenotypeData
+public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 {
 
 	private final GenotypeData originalGenotypeData;
@@ -19,20 +20,18 @@ public class VariantFilterGenotypeData implements GenotypeData
 	private final HashSet<GeneticVariant> excludeVariants;
 
 	/**
-	 * View of originalGenotypeData with a subset of the genetic variants. Data
-	 * is not copied. Modifications in the original data are reflected here
+	 * View of originalGenotypeData with a subset of the genetic variants. Data is not copied. Modifications in the
+	 * original data are reflected here
 	 * 
-	 * If both an include list as an exclude list is specified the exclude list
-	 * takes presidency. i.e. other words all variants in the exclude list are
-	 * removed from the include list. Only variants remaining in the include
-	 * list will be visible via this view.
+	 * If both an include list as an exclude list is specified the exclude list takes presidency. i.e. other words all
+	 * variants in the exclude list are removed from the include list. Only variants remaining in the include list will
+	 * be visible via this view.
 	 * 
 	 * Either include or exclude must other than null.
 	 * 
 	 * @param originalGenotypeData
 	 * @param includeVariants
-	 *            list with variants to include. If null all but the excluded
-	 *            variants are selected
+	 *            list with variants to include. If null all but the excluded variants are selected
 	 * @param excludeVariants
 	 *            list with variants to exclude. Can be null
 	 */
@@ -101,13 +100,6 @@ public class VariantFilterGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public VariantQueryResult getSeqVariants(String seqName)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<Sample> getSamples()
 	{
 		// TODO Auto-generated method stub
@@ -115,31 +107,17 @@ public class VariantFilterGenotypeData implements GenotypeData
 	}
 
 	@Override
-	public Iterable<GeneticVariant> getVariants()
+	public Iterator<GeneticVariant> iterator()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GeneticVariant getVariantById(String primaryVariantId)
+	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public GeneticVariant getSnpVariantById(String primaryVariantId)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getVariantCount()
-	{
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }
