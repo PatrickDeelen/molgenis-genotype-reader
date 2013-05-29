@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-public class VariantAllelesTest
+public class AllelesTest
 {
 	@Test
 	public void getAlleles()
@@ -118,5 +118,41 @@ public class VariantAllelesTest
 
 		variantAlleles = Alleles.createBasedOnString(Arrays.asList("G", "C", "T"));
 		assertEquals(variantAlleles.isAtOrGcSnp(), false);
+	}
+
+	@Test
+	public void testPooling()
+	{
+
+		Alleles alleles1 = Alleles.createBasedOnChars('A', 'T');
+		Alleles alleles2 = Alleles.create("A", "T");
+		Alleles alleles3 = Alleles.createBasedOnChars('T', 'A');
+		Alleles alleles4 = Alleles.create("A", "TTTT");
+		Alleles alleles5 = Alleles.create("TTTT", "C");
+		Alleles alleles6 = Alleles.create("TTT", "C");
+
+		assertEquals(alleles1 == alleles2, true);
+		assertEquals(alleles1.getAllelesAsString() == alleles2.getAllelesAsString(), true);
+		assertEquals(alleles1.getAllelesAsString() == alleles3.getAllelesAsString(), false);
+
+		assertEquals(alleles1.getAllelesAsChars() == alleles2.getAllelesAsChars(), true);
+		assertEquals(alleles1.getAllelesAsChars() == alleles3.getAllelesAsChars(), false);
+
+		assertEquals(alleles1.getAllelesAsString() == alleles3.getAllelesAsString(), false);
+		assertEquals(alleles1.getAllelesAsString() == alleles4.getAllelesAsString(), false);
+
+		assertEquals(alleles1.getAlleles() == alleles2.getAlleles(), true);
+		assertEquals(alleles2.getAlleles() == alleles3.getAlleles(), false);
+
+		assertEquals(alleles1.getAlleles().get(0) == alleles2.getAlleles().get(0), true);
+		assertEquals(alleles1.getAlleles().get(1) == alleles2.getAlleles().get(1), true);
+		assertEquals(alleles1.getAlleles().get(1) == alleles3.getAlleles().get(0), true);
+
+		assertEquals(alleles4.getAlleles().get(1) == alleles5.getAlleles().get(0), true);
+		assertEquals(alleles6.getAlleles().get(0) == alleles5.getAlleles().get(0), false);
+
+		assertEquals(alleles4.getAllelesAsString().get(1) == alleles5.getAllelesAsString().get(0), true);
+		assertEquals(alleles6.getAllelesAsString().get(0) == alleles5.getAllelesAsString().get(0), false);
+
 	}
 }
