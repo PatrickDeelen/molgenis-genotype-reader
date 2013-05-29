@@ -11,8 +11,6 @@ import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
-import org.molgenis.genotype.variant.id.ListGeneticVariantId;
-import org.molgenis.genotype.variant.id.SingleGeneticVariantId;
 
 /**
  * @author Patrick Deelen
@@ -43,18 +41,8 @@ public class GeneticVariant
 			String refAllele, Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions,
 			List<String> altTypes, SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
 	{
-		if ((ids == null) || ids.isEmpty())
-		{
-			this.variantId = GeneticVariantId.getEmptyGeneticVariantId();
-		}
-		else if (ids.size() == 1)
-		{
-			this.variantId = new SingleGeneticVariantId(ids.get(0));
-		}
-		else
-		{
-			this.variantId = new ListGeneticVariantId(ids);
-		}
+
+		this.variantId = GeneticVariantId.createVariantId(ids);
 
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
@@ -72,14 +60,8 @@ public class GeneticVariant
 			Map<String, ?> annotationValues, Integer stopPos, List<String> altDescriptions, List<String> altTypes,
 			SampleVariantsProvider sampleVariantsProvider, GeneticVariant.Type type)
 	{
-		if (id == null)
-		{
-			this.variantId = GeneticVariantId.getEmptyGeneticVariantId();
-		}
-		else
-		{
-			this.variantId = new SingleGeneticVariantId(id);
-		}
+
+		this.variantId = GeneticVariantId.createVariantId(id);
 
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
