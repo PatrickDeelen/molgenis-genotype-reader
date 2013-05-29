@@ -10,7 +10,7 @@ public class SingleGeneticVariantId extends GeneticVariantId
 
 	private final String variantId;
 
-	public SingleGeneticVariantId(String variantId)
+	protected SingleGeneticVariantId(String variantId)
 	{
 		super();
 		this.variantId = variantId;

@@ -10,7 +10,7 @@ public class ListGeneticVariantId extends GeneticVariantId
 
 	private final List<String> variantIds;
 
-	public ListGeneticVariantId(List<String> variantIds)
+	protected ListGeneticVariantId(List<String> variantIds)
 	{
 		super();
 
@@ -22,7 +22,7 @@ public class ListGeneticVariantId extends GeneticVariantId
 		this.variantIds = variantIds;
 	}
 
-	public ListGeneticVariantId(String primairyId, List<String> alternativeIds)
+	protected ListGeneticVariantId(String primairyId, List<String> alternativeIds)
 	{
 
 		if (alternativeIds == null)
