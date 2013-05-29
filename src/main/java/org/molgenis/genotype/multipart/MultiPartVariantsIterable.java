@@ -3,15 +3,15 @@ package org.molgenis.genotype.multipart;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.molgenis.genotype.GenotypeData;
+import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.variant.GeneticVariant;
 
 public class MultiPartVariantsIterable implements Iterable<GeneticVariant>
 {
 
-	private final Iterable<GenotypeData> datasets;
+	private final Iterable<RandomAccessGenotypeData> datasets;
 
-	public MultiPartVariantsIterable(Iterable<GenotypeData> collection)
+	public MultiPartVariantsIterable(Iterable<RandomAccessGenotypeData> collection)
 	{
 		super();
 		this.datasets = collection;
@@ -27,17 +27,17 @@ public class MultiPartVariantsIterable implements Iterable<GeneticVariant>
 	private class MultiPartVariantIterator implements Iterator<GeneticVariant>
 	{
 
-		private Iterator<GenotypeData> datasetIterator;
+		private Iterator<RandomAccessGenotypeData> datasetIterator;
 		private Iterator<GeneticVariant> datasetVariantIterator;
 		private boolean done = false;
 
-		public MultiPartVariantIterator(Iterable<GenotypeData> datasets)
+		public MultiPartVariantIterator(Iterable<RandomAccessGenotypeData> datasets)
 		{
 			super();
 			this.datasetIterator = datasets.iterator();
 			if (datasetIterator.hasNext())
 			{
-				this.datasetVariantIterator = datasetIterator.next().getVariants().iterator();
+				this.datasetVariantIterator = datasetIterator.next().iterator();
 			}
 			else
 			{
@@ -58,7 +58,7 @@ public class MultiPartVariantsIterable implements Iterable<GeneticVariant>
 			{
 				if (datasetIterator.hasNext())
 				{
-					datasetVariantIterator = datasetIterator.next().getVariants().iterator();
+					datasetVariantIterator = datasetIterator.next().iterator();
 				}
 				else
 				{

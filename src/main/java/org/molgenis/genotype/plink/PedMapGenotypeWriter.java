@@ -57,11 +57,9 @@ public class PedMapGenotypeWriter
 		try
 		{
 			writer = new MapFileWriter(mapFile);
-
-			int total = genotypeData.getVariantCount();
 			int count = 0;
 
-			for (GeneticVariant variant : genotypeData.getVariants())
+			for (GeneticVariant variant : genotypeData)
 			{
 				if (variant.getType() != Type.SNP)
 				{
@@ -72,7 +70,7 @@ public class PedMapGenotypeWriter
 						variant.getStartPos());
 				writer.write(mapEntry);
 				count++;
-				LOG.info("Written " + count + "/" + total + " snps");
+				LOG.info("Written " + count + " snps");
 			}
 
 		}
@@ -98,8 +96,7 @@ public class PedMapGenotypeWriter
 				Sample sample = samples.get(i);
 
 				PedEntry pedEntry = new PedEntry(getFamilyId(sample), sample.getId(), getFather(sample),
-						getMother(sample), getSex(sample), getPhenotype(sample), new BialleleIterator(
-								genotypeData.getVariants(), i));
+						getMother(sample), getSex(sample), getPhenotype(sample), new BialleleIterator(genotypeData, i));
 
 				writer.write(pedEntry);
 

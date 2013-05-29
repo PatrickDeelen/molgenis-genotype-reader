@@ -41,8 +41,7 @@ public enum GenotypedDataReaderFormats
 		switch (this)
 		{
 			case PED_MAP:
-				return new PedMapGenotypeData(new File(path + "map.gz"), new File(path + "map.gz.tbi"), new File(path
-						+ "ped"));
+				return new PedMapGenotypeData(new File(path + "ped"), new File(path + "map"));
 			case VCF:
 				return new VcfGenotypeData(new File(path), cacheSize);
 			case VCF_FOLDER:

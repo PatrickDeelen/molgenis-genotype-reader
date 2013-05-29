@@ -20,14 +20,9 @@ public class ResourceTest
 		return getTestResourceFile("/test.vcf.gz.tbi");
 	}
 
-	protected File getTestMapGz() throws URISyntaxException
+	protected File getTestMap() throws URISyntaxException
 	{
-		return getTestResourceFile("/test.map.gz");
-	}
-
-	protected File getTestMapGzTbi() throws URISyntaxException
-	{
-		return getTestResourceFile("/test.map.gz.tbi");
+		return getTestResourceFile("/test.map");
 	}
 
 	protected File getTestPed() throws URISyntaxException

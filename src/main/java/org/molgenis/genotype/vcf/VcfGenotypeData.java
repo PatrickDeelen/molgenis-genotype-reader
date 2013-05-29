@@ -6,29 +6,30 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.IndexedGenotypeData;
+import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
+import org.molgenis.genotype.SimpleSequence;
 import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
-import org.molgenis.genotype.tabix.TabixSequence;
 import org.molgenis.genotype.variant.CachedSampleVariantProvider;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfAlt;
 import org.molgenis.io.vcf.VcfContig;
@@ -37,13 +38,10 @@ import org.molgenis.io.vcf.VcfReader;
 
 public class VcfGenotypeData extends IndexedGenotypeData implements SampleVariantsProvider
 {
-	private static final Logger LOG = Logger.getLogger(VcfGenotypeData.class);
 	private final GenotypeDataIndex index;
 	private final VcfReader reader;
 	private Map<String, Annotation> sampleAnnotationsMap;
 	private Map<String, String> altDescriptions;
-	private List<GeneticVariant> variants = new ArrayList<GeneticVariant>(1000000);
-	private Map<String, Integer> variantIndexByPrimaryId = new HashMap<String, Integer>(1000000);
 
 	/**
 	 * VCF genotype reader with default cache of 100
@@ -117,82 +115,11 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 				IOUtils.closeQuietly(reader);
 			}
 
-			int index = 0;
-			for (Sequence sequence : getSequences())
-			{
-				VariantQueryResult vqr = sequence.getVariants();
-				try
-				{
-					for (GeneticVariant variant : vqr)
-					{
-						variants.add(variant);
-
-						if (variant.getPrimaryVariantId() != null)
-						{
-							variantIndexByPrimaryId.put(variant.getPrimaryVariantId(), index);
-						}
-
-						if ((++index % 1000) == 0)
-						{
-							LOG.info("Loaded [" + index + "] variants");
-						}
-					}
-				}
-				catch (Exception e)
-				{
-					throw new GenotypeDataException("Exception caching variants", e);
-				}
-				finally
-				{
-					IOUtils.closeQuietly(vqr);
-				}
-			}
-
 		}
 		catch (IOException e)
 		{
 			throw new GenotypeDataException(e);
 		}
-	}
-
-	@Override
-	public GeneticVariant getVariantById(String primaryVariantId)
-	{
-		if (primaryVariantId == null) throw new IllegalArgumentException("PrimaryVariantId can not be null");
-
-		Integer index = variantIndexByPrimaryId.get(primaryVariantId);
-		if (index != null)
-		{
-			return variants.get(index);
-		}
-
-		return null;
-	}
-
-	@Override
-	public SnpGeneticVariant getSnpVariantById(String primaryVariantId)
-	{
-		GeneticVariant variant = getVariantById(primaryVariantId);
-		if (variant == null)
-		{
-			return null;
-		}
-		else if (variant.isSnp())
-		{
-
-			return (SnpGeneticVariant) variant;
-
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	@Override
-	public List<GeneticVariant> getVariants()
-	{
-		return variants;
 	}
 
 	@Override
@@ -236,7 +163,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		List<Sequence> sequences = new ArrayList<Sequence>(seqNames.size());
 		for (String seqName : seqNames)
 		{
-			sequences.add(new TabixSequence(seqName, seqLengths.get(seqName), index));
+			sequences.add(new SimpleSequence(seqName, seqLengths.get(seqName), this));
 		}
 
 		return sequences;
@@ -304,9 +231,66 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
-	public int getVariantCount()
+	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		return variants.size();
+		VariantQueryResult result = index.createQuery().executeQuery(seqName);
+		try
+		{
+			return result.iterator();
+		}
+		finally
+		{
+			IOUtils.closeQuietly(result);
+		}
 	}
 
+	@Override
+	public Iterator<GeneticVariant> iterator()
+	{
+		return new GeneticVariantsIterator(this);
+	}
+
+	private static class GeneticVariantsIterator implements Iterator<GeneticVariant>
+	{
+		private Iterator<String> seqNames;
+		private Iterator<GeneticVariant> seqGeneticVariants;
+		private RandomAccessGenotypeData randomAccessGenotypeData;
+
+		public GeneticVariantsIterator(RandomAccessGenotypeData randomAccessGenotypeData)
+		{
+			seqNames = randomAccessGenotypeData.getSeqNames().iterator();
+			seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next());
+			this.randomAccessGenotypeData = randomAccessGenotypeData;
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return seqGeneticVariants.hasNext() || seqNames.hasNext();
+		}
+
+		@Override
+		public GeneticVariant next()
+		{
+			if (seqGeneticVariants.hasNext())
+			{
+				return seqGeneticVariants.next();
+			}
+
+			if (seqNames.hasNext())
+			{
+				seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next());
+				return seqGeneticVariants.next();
+			}
+
+			throw new NoSuchElementException();
+		}
+
+		@Override
+		public void remove()
+		{
+			throw new UnsupportedOperationException();
+		}
+
+	}
 }
