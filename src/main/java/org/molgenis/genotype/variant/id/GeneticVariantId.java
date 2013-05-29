@@ -7,6 +7,8 @@ public abstract class GeneticVariantId implements Iterable<String>
 
 	public static final String DEFAULT_ID_SEPARATOR = ";";
 
+	private static final BlankGeneticVariantId blankGeneticVariantId = new BlankGeneticVariantId();
+
 	/**
 	 * Get the Id as string
 	 * 
@@ -128,7 +130,7 @@ public abstract class GeneticVariantId implements Iterable<String>
 
 	public static GeneticVariantId getEmptyGeneticVariantId()
 	{
-		return new BlankGeneticVariantId();
+		return blankGeneticVariantId;
 	}
 
 }
