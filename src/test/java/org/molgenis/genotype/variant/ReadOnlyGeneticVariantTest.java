@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.DummySampleVariantsProvider;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class GeneticVariantTest
+public class ReadOnlyGeneticVariantTest
 {
 	private GeneticVariant testInstance;
 
@@ -55,22 +56,19 @@ public class GeneticVariantTest
 	{
 		byte[] expected =
 		{ 1, 1, 0, 2, 2 };
-		// TODO
-		// assertEquals(testInstance.getSampleCalledDosage(), expected);
+		assertEquals(testInstance.getSampleCalledDosage(), expected);
 	}
 
 	@Test
 	public void getMinorAllele()
 	{
-		// TODO
-		// assertEquals(testInstance.getMinorAllele(), "C");
+		assertEquals(testInstance.getMinorAllele(), Allele.C_ALLELE);
 	}
 
 	@Test
 	public void getMinorAlleleFrequency()
 	{
-		// TODO
-		// assertEquals(testInstance.getMinorAlleleFrequency(), 0.4f);
+		assertEquals(testInstance.getMinorAlleleFrequency(), 0.4d, 0.00001);
 	}
 
 	@Test
@@ -101,7 +99,7 @@ public class GeneticVariantTest
 	@Test
 	public void isSnp()
 	{
-		// assertEquals(testInstance.isSnp(), true);
+		assertEquals(testInstance.isSnp(), true);
 	}
 
 	@Test
@@ -142,5 +140,28 @@ public class GeneticVariantTest
 	private GeneticVariant createGeneticVariant(List<String> ids)
 	{
 		return ReadOnlyGeneticVariant.createSnp(ids, 1, "chr1", null, 'A', 'C');
+	}
+
+	@Test
+	public void isAtOrGcSnp()
+	{
+		assertEquals(testInstance.isAtOrGcSnp(), false);
+
+		GeneticVariant testInstance2 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'G', 'C');
+		GeneticVariant testInstance3 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'C', 'G');
+		GeneticVariant testInstance4 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'A', 'T');
+		GeneticVariant testInstance5 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'T', 'A');
+		GeneticVariant testInstance6 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'C', 'A');
+		GeneticVariant testInstance7 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'G', 'A');
+		GeneticVariant testInstance8 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'G', 'T');
+
+		assertEquals(testInstance2.isAtOrGcSnp(), true);
+		assertEquals(testInstance3.isAtOrGcSnp(), true);
+		assertEquals(testInstance4.isAtOrGcSnp(), true);
+		assertEquals(testInstance5.isAtOrGcSnp(), true);
+		assertEquals(testInstance6.isAtOrGcSnp(), false);
+		assertEquals(testInstance7.isAtOrGcSnp(), false);
+		assertEquals(testInstance8.isAtOrGcSnp(), false);
+
 	}
 }

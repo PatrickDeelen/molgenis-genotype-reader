@@ -125,11 +125,11 @@ public class AllelesTest
 	{
 
 		Alleles alleles1 = Alleles.createBasedOnChars('A', 'T');
-		Alleles alleles2 = Alleles.create("A", "T");
+		Alleles alleles2 = Alleles.createBasedOnString("A", "T");
 		Alleles alleles3 = Alleles.createBasedOnChars('T', 'A');
-		Alleles alleles4 = Alleles.create("A", "TTTT");
-		Alleles alleles5 = Alleles.create("TTTT", "C");
-		Alleles alleles6 = Alleles.create("TTT", "C");
+		Alleles alleles4 = Alleles.createBasedOnString("A", "TTTT");
+		Alleles alleles5 = Alleles.createBasedOnString("TTTT", "C");
+		Alleles alleles6 = Alleles.createBasedOnString("TTT", "C");
 
 		assertEquals(alleles1 == alleles2, true);
 		assertEquals(alleles1.getAllelesAsString() == alleles2.getAllelesAsString(), true);
