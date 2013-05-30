@@ -254,4 +254,9 @@ public class Alleles implements Iterable<Allele>
 		return alleles.iterator();
 	}
 
+	public Allele get(int alleleIndex)
+	{
+		return alleles.get(alleleIndex);
+	}
+
 }

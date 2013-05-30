@@ -29,6 +29,9 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 			Allele refAllele)
 	{
 		super();
+
+		// TODO check is ref allele is indeed first in alleles list.
+
 		this.variantId = variantId;
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;

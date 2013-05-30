@@ -60,8 +60,7 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getStartPos(), 14431347);
 
 		assertEquals(variant.getSequenceName(), "22");
-		// TODO fix test below
-		// assertEquals(variant.getType(), GeneticVariantOld.Type.SNP);
+		assertEquals(variant.isSnp(), true);
 
 		List<String> alleles = variant.getVariantAlleles().getAllelesAsString();
 		assertNotNull(alleles);

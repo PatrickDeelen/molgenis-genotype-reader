@@ -92,8 +92,7 @@ public class ReadOnlyGeneticVariantTest
 	@Test
 	public void isBiallelic()
 	{
-		// TODO
-		// assertEquals(testInstance.isBiallelic(), true);
+		assertEquals(testInstance.isBiallelic(), true);
 	}
 
 	@Test
