@@ -24,8 +24,6 @@ public class ReadOnlyGeneticVariantTest
 	public void setUp()
 	{
 
-		Alleles alleles = Alleles.createBasedOnChars('A', 'C');
-
 		ArrayList<Alleles> sampleAlleles = new ArrayList<Alleles>();
 		sampleAlleles.add(Alleles.createBasedOnChars('A', 'C'));
 		sampleAlleles.add(Alleles.createBasedOnChars('A', 'C'));
@@ -168,6 +166,23 @@ public class ReadOnlyGeneticVariantTest
 	@Test(expectedExceptions = GenotypeDataException.class)
 	public void checkRefIsPartOfAlleles()
 	{
-		testInstance = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'A', 'C', 'T');
+		@SuppressWarnings("unused")
+		GeneticVariant testInstance2 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'A', 'C', 'T');
+	}
+
+	public void testMoveRefToFirstOfAlleles()
+	{
+		ArrayList<String> alleles = new ArrayList<String>(3);
+		alleles.add("A");
+		alleles.add("C");
+		alleles.add("T");
+		GeneticVariant testInstance2 = testInstance = ReadOnlyGeneticVariant.createVariant("rs1", 1, "chr1", null,
+				alleles, "T");
+
+		ArrayList<String> allelesExpectedOrder = new ArrayList<String>(3);
+		alleles.add("T");
+		alleles.add("A");
+		alleles.add("C");
+		assertEquals(testInstance2.getVariantAlleles().getAllelesAsString(), allelesExpectedOrder);
 	}
 }

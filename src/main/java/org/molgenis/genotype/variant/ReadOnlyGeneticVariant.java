@@ -1,5 +1,6 @@
 package org.molgenis.genotype.variant;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,14 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 						+ ") is not a found in supplied alleles " + alleles.getAllelesAsString()
 						+ " for variant with ID: " + variantId.getPrimairyId() + " at: " + sequenceName + ":"
 						+ startPos);
+			}
+			if (alleles.get(0) != refAllele)
+			{
+				// ref allele is not first in alleles. We need to change this
+				ArrayList<Allele> allelesWithoutRef = new ArrayList<Allele>(alleles.getAlleles());
+				allelesWithoutRef.remove(refAllele);
+				allelesWithoutRef.add(0, refAllele);
+				alleles = Alleles.createAlleles(allelesWithoutRef);
 			}
 		}
 
