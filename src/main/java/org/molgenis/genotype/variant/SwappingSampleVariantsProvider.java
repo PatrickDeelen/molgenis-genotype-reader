@@ -25,4 +25,10 @@ public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 		return alleles;
 	}
 
+	@Override
+	public int cacheSize()
+	{
+		return 0;
+	}
+
 }

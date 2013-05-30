@@ -267,4 +267,10 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 
 		return variants.iterator();
 	}
+
+	@Override
+	public int cacheSize()
+	{
+		return 0;
+	}
 }
