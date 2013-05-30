@@ -116,10 +116,9 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertTrue(genotypeData.getVariantsByPos("bogus", 8).isEmpty());
 	}
 
-	// @Test
+	@Test
 	public void testgetSequenceGeneticVariants() throws IOException
 	{
-		System.out.println("----------");
 		List<GeneticVariant> variants = Utils.iteratorToList(genotypeData.getSequenceGeneticVariants("1"));
 		assertEquals(variants.size(), 6);
 	}
