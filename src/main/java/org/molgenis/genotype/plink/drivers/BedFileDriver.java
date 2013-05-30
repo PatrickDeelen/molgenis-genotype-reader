@@ -70,6 +70,7 @@ public class BedFileDriver
 			else if (bmode == 0) // assumed... bit code 00000000
 			{
 				// System.out.println("mode 0: individual-major");
+				throw new Exception("BED file individual-major mode not yet supported!");
 			}
 			else
 			{

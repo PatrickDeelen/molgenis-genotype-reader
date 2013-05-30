@@ -8,6 +8,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * This test looks like the PED driver test except there is no allele information.
+ * @author jvelde
+ *
+ */
 public class FamFileDriverTest extends AbstractResourceTest
 {
 	private FamFileDriver famfd;
@@ -21,25 +26,22 @@ public class FamFileDriverTest extends AbstractResourceTest
 	@Test
 	public void FAM_construct() throws Exception
 	{
-		assertEquals(6, famfd.getNrOfElements());
+		assertEquals(9, famfd.getNrOfElements());
 	}
 
 	@Test
 	public void FAM_getEntries() throws Exception
-	{
-		assertEquals(1, famfd.getEntries(0, 1).size());
-		assertEquals(1, famfd.getEntries(1, 2).size());
-		assertEquals(2, famfd.getEntries(0, 2).size());
-		assertEquals(6, famfd.getEntries(0, 6).size());
-
-		assertEquals("1", famfd.getEntries(0, 1).get(0).getFamily());
-		assertEquals("2", famfd.getEntries(0, 2).get(1).getFamily());
-
-		assertEquals("5", famfd.getEntries(3, 5).get(1).getFamily());
-		assertEquals("6", famfd.getEntries(0, 6).get(5).getFamily());
-
+	{		
+		assertEquals("F1044", famfd.getAllEntries().get(2).getFamily());
+		assertEquals("3", famfd.getAllEntries().get(2).getFather());
+		assertEquals("0", famfd.getAllEntries().get(2).getMother());
 		assertEquals(1.0, famfd.getAllEntries().get(2).getPhenotype());
-		assertEquals(2.0, famfd.getAllEntries().get(3).getPhenotype());
+		assertEquals("1044", famfd.getAllEntries().get(2).getIndividual());
+		assertEquals(2, famfd.getAllEntries().get(2).getSex());
+		assertEquals("F1044", famfd.getEntries(2, 3).get(0).getFamily());
+		assertEquals("F1044", famfd.getEntries(0, 3).get(2).getFamily());
+		assertEquals("F1045", famfd.getEntries(2, 4).get(1).getFamily());
+		assertEquals(1.0, famfd.getEntries(2, 4).get(1).getPhenotype());
 	}
 
 	@AfterClass

@@ -29,4 +29,19 @@ public class ResourceTest
 	{
 		return getTestResourceFile("/test.ped");
 	}
+	
+	protected File getTestBed() throws URISyntaxException
+	{
+		return getTestResourceFile("/test.bed");
+	}
+	
+	protected File getTestBim() throws URISyntaxException
+	{
+		return getTestResourceFile("/test.bim");
+	}
+	
+	protected File getTestFam() throws URISyntaxException
+	{
+		return getTestResourceFile("/test.fam");
+	}
 }

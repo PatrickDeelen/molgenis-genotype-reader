@@ -5,6 +5,38 @@ import static org.testng.AssertJUnit.assertEquals;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * Looks like the PED driver test, except gets the alleles only, and in binary encoding
+ * 
+ * PLEASE NOTE THAT:
+ * The driver DOES NOT know about the padding bits, because the BED file alone does
+ * not know about the amount of individuals or SNPs. Therefore, although the test file
+ * contains 90 SNP elements, the BED driver will return 120. If you want to retrieve 
+ * ONLY the REAL genotypes, an additional layer of logic is needed to leave out the
+ * elements that are padding and not real data.
+ * 
+ * HOWEVER: the elements are retrieved in the 'correct' order: in every byte, read
+ * from 'right to left' starting at byte nr. 4 (the first 3 are reserved, see plink docs)
+ * 
+ * ALSO NOTE: this file is "SNP-major" oriented, meaning:
+ * it lists ALL individuals for 1 SNP, then moves on to the next SNP, and so on
+ * 
+ * see: http://pngu.mgh.harvard.edu/~purcell/plink/binary.shtml
+ * 
+ * binary dump of the test file:
+ * 
+	0000000: 01101100 00011011 00000001 11001011 10111111 00000010  l.....
+	0000006: 11111011 11111111 00000011 11111111 11111111 00000011  ......
+	000000c: 11111111 11111111 00000011 11111011 11111011 00000010  ......
+	0000012: 11111111 10111111 00000011 11111011 11111111 00000011  ......
+	0000018: 11111111 11111111 00000011 11111111 11111111 00000010  ......
+	000001e: 11111111 11111111 00000011                             ...
+ * 
+ * NOTE: the bytes with '000000' as first 6 values have the padding
+ * 
+ * @author jvelde
+ *
+ */
 public class BedFileDriverTest extends AbstractResourceTest
 {
 	private BedFileDriver bedfd;
@@ -19,27 +51,33 @@ public class BedFileDriverTest extends AbstractResourceTest
 	public void BED_construct() throws Exception
 	{
 		assertEquals(1, bedfd.getMode());
-		assertEquals(16, bedfd.getNrOfElements());
+		assertEquals(120, bedfd.getNrOfElements());
 	}
 
 	@Test
 	public void BED_getElement() throws Exception
 	{
-		assertEquals("00", bedfd.getElement(0));
+		//the first SNP
+		assertEquals("11", bedfd.getElement(0));
 		assertEquals("01", bedfd.getElement(1));
-		assertEquals("11", bedfd.getElement(2));
-		assertEquals("01", bedfd.getElement(3));
+		assertEquals("00", bedfd.getElement(2));
+		assertEquals("11", bedfd.getElement(3));
 		assertEquals("11", bedfd.getElement(4));
 		assertEquals("11", bedfd.getElement(5));
-		assertEquals("00", bedfd.getElement(6));
-		assertEquals("00", bedfd.getElement(7));
+		assertEquals("11", bedfd.getElement(6));
+		assertEquals("01", bedfd.getElement(7));
 		assertEquals("01", bedfd.getElement(8));
-		assertEquals("01", bedfd.getElement(9));
+		
+		//padding bits
+		assertEquals("00", bedfd.getElement(9));
 		assertEquals("00", bedfd.getElement(10));
-		assertEquals("11", bedfd.getElement(11));
-		assertEquals("01", bedfd.getElement(12));
-		assertEquals("11", bedfd.getElement(13));
-		assertEquals("00", bedfd.getElement(14));
-		assertEquals("00", bedfd.getElement(15));
+		assertEquals("00", bedfd.getElement(11));
+		
+		//the second SNP
+		assertEquals("11", bedfd.getElement(12));
+		assertEquals("01", bedfd.getElement(13));
+		assertEquals("11", bedfd.getElement(14));
+		assertEquals("11", bedfd.getElement(15));
+
 	}
 }
