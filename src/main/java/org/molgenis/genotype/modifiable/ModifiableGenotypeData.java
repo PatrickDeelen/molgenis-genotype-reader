@@ -76,31 +76,16 @@ public interface ModifiableGenotypeData extends RandomAccessGenotypeData
 	void swapGeneticVariant(GeneticVariant geneticVariant);
 
 	/**
-	 * Update the sample variant provider
-	 * 
-	 * @param geneticVariant
-	 *            the original genetic variant
-	 * @param newSampleVariantProvider
-	 *            the new sample variant provider
-	 */
-	void updateSamplVariantsProvider(GeneticVariant geneticVariant, SampleVariantsProvider newSampleVariantProvider);
-
-	/**
-	 * Update the reference allele
+	 * Updates the reference allele. Also changes the order of the alleles to
+	 * make reference allele first
 	 * 
 	 * @param geneticVariant
 	 *            the original genetic variant
 	 * @param newRefAllele
+	 * @throws GenotypeModificationException
+	 *             if reference allele is not one of the variant alleles
 	 */
-	void updateRefAllele(GeneticVariant geneticVariant, Allele newRefAllele);
-
-	/**
-	 * Update the alleles
-	 * 
-	 * @param geneticVariant
-	 * @param newAlleles
-	 */
-	void updateAlleles(GeneticVariant geneticVariant, Alleles newAlleles);
+	void updateRefAllele(GeneticVariant geneticVariant, Allele newRefAllele) throws GenotypeModificationException;
 
 	/**
 	 * Get the updated alleles
