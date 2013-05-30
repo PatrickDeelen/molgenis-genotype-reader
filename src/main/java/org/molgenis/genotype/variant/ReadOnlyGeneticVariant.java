@@ -1,11 +1,13 @@
 package org.molgenis.genotype.variant;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
@@ -18,7 +20,7 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	private final GeneticVariantId variantId;
 	private final int startPos;
 	private final String sequenceName;
-	private final Map<String, ?> annotationValues;
+	private Map<String, ?> annotationValues = null;
 	private final SampleVariantsProvider sampleVariantsProvider;
 	private final Alleles alleles;
 	private final Allele refAllele;
@@ -32,10 +34,28 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 
 		// TODO check is ref allele is indeed first in alleles list.
 
+		if (refAllele != null)
+		{
+			if (!alleles.contains(refAllele))
+			{
+				throw new GenotypeDataException("Supplied ref allele (" + refAllele
+						+ ") is not a found in supplied alleles " + alleles.getAllelesAsString()
+						+ " for variant with ID: " + variantId.getPrimairyId() + " at: " + sequenceName + ":"
+						+ startPos);
+			}
+			if (alleles.get(0) != refAllele)
+			{
+				// ref allele is not first in alleles. We need to change this
+				ArrayList<Allele> allelesWithoutRef = new ArrayList<Allele>(alleles.getAlleles());
+				allelesWithoutRef.remove(refAllele);
+				allelesWithoutRef.add(0, refAllele);
+				alleles = Alleles.createAlleles(allelesWithoutRef);
+			}
+		}
+
 		this.variantId = variantId;
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
-		this.annotationValues = annotationValues;
 		this.sampleVariantsProvider = sampleVariantsProvider;
 		this.alleles = alleles;
 		this.refAllele = refAllele;
@@ -298,5 +318,14 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 
 		return dosages;
 
+	}
+
+	/**
+	 * @param annotationValues
+	 *            the annotationValues to set
+	 */
+	public void setAnnotationValues(Map<String, ?> annotationValues)
+	{
+		this.annotationValues = annotationValues;
 	}
 }

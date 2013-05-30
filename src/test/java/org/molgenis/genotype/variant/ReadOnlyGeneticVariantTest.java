@@ -12,6 +12,7 @@ import java.util.List;
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.DummySampleVariantsProvider;
+import org.molgenis.genotype.GenotypeDataException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -22,8 +23,6 @@ public class ReadOnlyGeneticVariantTest
 	@BeforeClass
 	public void setUp()
 	{
-
-		Alleles alleles = Alleles.createBasedOnChars('A', 'C');
 
 		ArrayList<Alleles> sampleAlleles = new ArrayList<Alleles>();
 		sampleAlleles.add(Alleles.createBasedOnChars('A', 'C'));
@@ -162,5 +161,28 @@ public class ReadOnlyGeneticVariantTest
 		assertEquals(testInstance7.isAtOrGcSnp(), false);
 		assertEquals(testInstance8.isAtOrGcSnp(), false);
 
+	}
+
+	@Test(expectedExceptions = GenotypeDataException.class)
+	public void checkRefIsPartOfAlleles()
+	{
+		@SuppressWarnings("unused")
+		GeneticVariant testInstance2 = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'A', 'C', 'T');
+	}
+
+	public void testMoveRefToFirstOfAlleles()
+	{
+		ArrayList<String> alleles = new ArrayList<String>(3);
+		alleles.add("A");
+		alleles.add("C");
+		alleles.add("T");
+		GeneticVariant testInstance2 = testInstance = ReadOnlyGeneticVariant.createVariant("rs1", 1, "chr1", null,
+				alleles, "T");
+
+		ArrayList<String> allelesExpectedOrder = new ArrayList<String>(3);
+		alleles.add("T");
+		alleles.add("A");
+		alleles.add("C");
+		assertEquals(testInstance2.getVariantAlleles().getAllelesAsString(), allelesExpectedOrder);
 	}
 }
