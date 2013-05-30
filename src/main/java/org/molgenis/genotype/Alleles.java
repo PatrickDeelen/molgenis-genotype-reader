@@ -261,14 +261,7 @@ public class Alleles implements Iterable<Allele>
 
 	public boolean contains(Allele queryAllele)
 	{
-		for (Allele allele : alleles)
-		{
-			if (allele == queryAllele)
-			{
-				return true;
-			}
-		}
-		return false;
+		return (alleles.contains(queryAllele));
 	}
 
 }
