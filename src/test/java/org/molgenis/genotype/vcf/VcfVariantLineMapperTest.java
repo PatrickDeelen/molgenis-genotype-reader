@@ -90,4 +90,10 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 	{
 		return Collections.emptyList();
 	}
+
+	@Override
+	public int cacheSize()
+	{
+		return 0;
+	}
 }
