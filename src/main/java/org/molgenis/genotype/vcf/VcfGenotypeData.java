@@ -23,7 +23,6 @@ import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
-import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
@@ -234,15 +233,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	@Override
 	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		VariantQueryResult result = index.createQuery().executeQuery(seqName);
-		try
-		{
-			return result.iterator();
-		}
-		finally
-		{
-			IOUtils.closeQuietly(result);
-		}
+		return index.createQuery().executeQuery(seqName).iterator();
 	}
 
 	@Override
