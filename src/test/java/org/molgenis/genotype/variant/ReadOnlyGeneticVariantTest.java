@@ -12,6 +12,7 @@ import java.util.List;
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.DummySampleVariantsProvider;
+import org.molgenis.genotype.GenotypeDataException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -162,5 +163,11 @@ public class ReadOnlyGeneticVariantTest
 		assertEquals(testInstance7.isAtOrGcSnp(), false);
 		assertEquals(testInstance8.isAtOrGcSnp(), false);
 
+	}
+
+	@Test(expectedExceptions = GenotypeDataException.class)
+	public void checkRefIsPartOfAlleles()
+	{
+		testInstance = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", null, 'A', 'C', 'T');
 	}
 }

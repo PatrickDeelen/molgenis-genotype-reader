@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
@@ -31,6 +32,17 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 		super();
 
 		// TODO check is ref allele is indeed first in alleles list.
+
+		if (refAllele != null)
+		{
+			if (!alleles.contains(refAllele))
+			{
+				throw new GenotypeDataException("Supplied ref allele (" + refAllele
+						+ ") is not a found in supplied alleles " + alleles.getAllelesAsString()
+						+ " for variant with ID: " + variantId.getPrimairyId() + " at: " + sequenceName + ":"
+						+ startPos);
+			}
+		}
 
 		this.variantId = variantId;
 		this.startPos = startPos;
