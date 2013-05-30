@@ -200,16 +200,6 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	}
 
 	@Override
-	public char getSnpRefAllele() throws NotASnpException
-	{
-		if (!isSnp())
-		{
-			throw new NotASnpException(this);
-		}
-		return refAllele.getAlleleAsSnp();
-	}
-
-	@Override
 	public List<Alleles> getSampleVariants()
 	{
 		return Collections.unmodifiableList(sampleVariantsProvider.getSampleVariants(this));
