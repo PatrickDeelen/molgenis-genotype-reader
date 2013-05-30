@@ -7,7 +7,9 @@ import java.util.Map;
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Ld;
+import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
+import org.molgenis.genotype.util.MafResult;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
 
 public class ReadOnlyGeneticVariant implements GeneticVariant
@@ -20,12 +22,16 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	private final SampleVariantsProvider sampleVariantsProvider;
 	private final Alleles alleles;
 	private final Allele refAllele;
+	private MafResult mafResult = null;
 
 	private ReadOnlyGeneticVariant(GeneticVariantId variantId, int startPos, String sequenceName,
 			Map<String, ?> annotationValues, SampleVariantsProvider sampleVariantsProvider, Alleles alleles,
 			Allele refAllele)
 	{
 		super();
+
+		// TODO check is ref allele is indeed first in alleles list.
+
 		this.variantId = variantId;
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
@@ -67,28 +73,28 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 			SampleVariantsProvider sampleVariantsProvider, String allele1, String allele2)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), null);
+				sampleVariantsProvider, Alleles.createBasedOnString(allele1, allele2), null);
 	}
 
 	public static GeneticVariant createVariant(String variantId, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, String allele1, String allele2, String refAllele)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), Allele.create(refAllele));
+				sampleVariantsProvider, Alleles.createBasedOnString(allele1, allele2), Allele.create(refAllele));
 	}
 
 	public static GeneticVariant createVariant(List<String> variantIds, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, String allele1, String allele2)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), null);
+				sampleVariantsProvider, Alleles.createBasedOnString(allele1, allele2), null);
 	}
 
 	public static GeneticVariant createVariant(List<String> variantIds, int pos, String sequenceName,
 			SampleVariantsProvider sampleVariantsProvider, String allele1, String allele2, String refAllele)
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName, null,
-				sampleVariantsProvider, Alleles.create(allele1, allele2), Allele.create(refAllele));
+				sampleVariantsProvider, Alleles.createBasedOnString(allele1, allele2), Allele.create(refAllele));
 	}
 
 	public static GeneticVariant createVariant(String variantId, int pos, String sequenceName,
@@ -196,66 +202,101 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	}
 
 	@Override
-	public float getMinorAlleleFrequency()
+	public double getMinorAlleleFrequency()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (mafResult == null)
+		{
+			mafResult = MafCalculator.calculateMaf(alleles, refAllele, getSampleVariants());
+		}
+		return mafResult.getFreq();
 	}
 
 	@Override
 	public Allele getMinorAllele()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if (mafResult == null)
+		{
+			mafResult = MafCalculator.calculateMaf(alleles, refAllele, getSampleVariants());
+		}
+		return mafResult.getMinorAllele();
 	}
 
 	@Override
 	public boolean isSnp()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return alleles.isSnp();
 	}
 
 	@Override
 	public boolean isAtOrGcSnp()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return alleles.isAtOrGcSnp();
 	}
 
 	@Override
 	public Ld calculateLd(GeneticVariant other) throws LdCalculatorException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return LdCalculator.calculateLd(this, other);
 	}
 
 	@Override
 	public boolean isBiallelic()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return alleles.getAlleleCount() == 2;
 	}
 
 	@Override
 	public float[] getSampleDosages()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		byte[] calledDosage = getSampleCalledDosage();
+		float[] dosage = new float[calledDosage.length];
+
+		for (int i = 0; i < calledDosage.length; ++i)
+		{
+			dosage[i] = calledDosage[i];
+		}
+
+		return dosage;
 	}
 
 	@Override
 	public SampleVariantsProvider getSampleVariantsProvider()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sampleVariantsProvider;
 	}
 
 	@Override
 	public byte[] getSampleCalledDosage()
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+		Allele dosageRef = refAllele == null ? alleles.getAlleles().get(0) : refAllele;
+
+		List<Alleles> sampleVariants = getSampleVariants();
+
+		byte[] dosages = new byte[getSampleVariants().size()];
+
+		for (int i = 0; i < dosages.length; ++i)
+		{
+			Alleles sampleVariant = sampleVariants.get(i);
+			boolean missing = false;
+			byte dosage = 0;
+
+			for (Allele allele : sampleVariant)
+			{
+				if (allele == null)
+				{
+					missing = true;
+				}
+				else if (allele == dosageRef)
+				{
+					++dosage;
+				}
+			}
+
+			dosages[i] = missing ? -1 : dosage;
+		}
+
+		return dosages;
+
+	}
 }

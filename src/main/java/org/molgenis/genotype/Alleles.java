@@ -119,7 +119,7 @@ public class Alleles implements Iterable<Allele>
 		return createAlleles(alleles);
 	}
 
-	public static Alleles create(String allele1, String allele2)
+	public static Alleles createBasedOnString(String allele1, String allele2)
 	{
 
 		return createAlleles(Allele.create(allele1), Allele.create(allele2));
@@ -252,6 +252,11 @@ public class Alleles implements Iterable<Allele>
 	public Iterator<Allele> iterator()
 	{
 		return alleles.iterator();
+	}
+
+	public Allele get(int alleleIndex)
+	{
+		return alleles.get(alleleIndex);
 	}
 
 }

@@ -106,7 +106,7 @@ public interface GeneticVariant
 	 * 
 	 * @return the minor allele frequency
 	 */
-	public float getMinorAlleleFrequency();
+	public double getMinorAlleleFrequency();
 
 	/**
 	 * Get the minor allele
