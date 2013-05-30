@@ -20,14 +20,14 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.plink.datatypes.Biallele;
+import org.molgenis.genotype.plink.datatypes.MapEntry;
+import org.molgenis.genotype.plink.datatypes.PedEntry;
+import org.molgenis.genotype.plink.drivers.PedFileDriver;
+import org.molgenis.genotype.plink.readers.MapFileReader;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
-import org.molgenis.util.plink.datatypes.Biallele;
-import org.molgenis.util.plink.datatypes.MapEntry;
-import org.molgenis.util.plink.datatypes.PedEntry;
-import org.molgenis.util.plink.drivers.PedFileDriver;
-import org.molgenis.util.plink.readers.MapFileReader;
 
 public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData implements SampleVariantsProvider
 {

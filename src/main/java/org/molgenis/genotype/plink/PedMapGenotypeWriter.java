@@ -10,13 +10,13 @@ import org.apache.log4j.Logger;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeData;
 import org.molgenis.genotype.Sample;
+import org.molgenis.genotype.plink.datatypes.Biallele;
+import org.molgenis.genotype.plink.datatypes.MapEntry;
+import org.molgenis.genotype.plink.datatypes.PedEntry;
+import org.molgenis.genotype.plink.writers.MapFileWriter;
+import org.molgenis.genotype.plink.writers.PedFileWriter;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.NotASnpException;
-import org.molgenis.util.plink.datatypes.Biallele;
-import org.molgenis.util.plink.datatypes.MapEntry;
-import org.molgenis.util.plink.datatypes.PedEntry;
-import org.molgenis.util.plink.writers.MapFileWriter;
-import org.molgenis.util.plink.writers.PedFileWriter;
 
 public class PedMapGenotypeWriter
 {
