@@ -18,7 +18,7 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	private final GeneticVariantId variantId;
 	private final int startPos;
 	private final String sequenceName;
-	private final Map<String, ?> annotationValues;
+	private Map<String, ?> annotationValues = null;
 	private final SampleVariantsProvider sampleVariantsProvider;
 	private final Alleles alleles;
 	private final Allele refAllele;
@@ -35,7 +35,6 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 		this.variantId = variantId;
 		this.startPos = startPos;
 		this.sequenceName = sequenceName;
-		this.annotationValues = annotationValues;
 		this.sampleVariantsProvider = sampleVariantsProvider;
 		this.alleles = alleles;
 		this.refAllele = refAllele;
@@ -298,5 +297,14 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 
 		return dosages;
 
+	}
+
+	/**
+	 * @param annotationValues
+	 *            the annotationValues to set
+	 */
+	public void setAnnotationValues(Map<String, ?> annotationValues)
+	{
+		this.annotationValues = annotationValues;
 	}
 }
