@@ -30,8 +30,7 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 				Collections.<String, String> emptyMap(), this);
 		GeneticVariant variant = mapper.mapLine(line);
 		assertNotNull(variant);
-		// TODO fix this test
-		// assertEquals(variant.getType(), GeneticVariantOld.Type.SNP);
+		assertEquals(variant.isSnp(), true);
 		assertEquals(variant.getSequenceName(), "1");
 		assertEquals(variant.getStartPos(), 565286);
 		assertEquals(variant.getPrimaryVariantId(), "rs1578391");
