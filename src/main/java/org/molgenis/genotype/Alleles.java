@@ -259,4 +259,16 @@ public class Alleles implements Iterable<Allele>
 		return alleles.get(alleleIndex);
 	}
 
+	public boolean contains(Allele queryAllele)
+	{
+		for (Allele allele : alleles)
+		{
+			if (allele == queryAllele)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

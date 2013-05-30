@@ -155,4 +155,14 @@ public class AllelesTest
 		assertEquals(alleles6.getAllelesAsString().get(0) == alleles5.getAllelesAsString().get(0), false);
 
 	}
+
+	@Test
+	public void contains()
+	{
+		Alleles alleles = Alleles.createBasedOnString(Arrays.asList("A", "T"));
+		assertEquals(alleles.contains(Allele.A_ALLELE), true);
+		assertEquals(alleles.contains(Allele.T_ALLELE), true);
+		assertEquals(alleles.contains(Allele.C_ALLELE), false);
+		assertEquals(alleles.contains(Allele.create("AA")), false);
+	}
 }
