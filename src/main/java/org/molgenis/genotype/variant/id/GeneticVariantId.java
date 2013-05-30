@@ -128,11 +128,22 @@ public abstract class GeneticVariantId implements Iterable<String>
 	@Override
 	public abstract int hashCode();
 
+	/**
+	 * Get empty variant ID
+	 * 
+	 * @return
+	 */
 	public static GeneticVariantId createVariantId()
 	{
 		return blankGeneticVariantId;
 	}
 
+	/**
+	 * Create variant ID with only primary ID
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public static GeneticVariantId createVariantId(String id)
 	{
 		if (id == null)
@@ -142,6 +153,13 @@ public abstract class GeneticVariantId implements Iterable<String>
 		return new SingleGeneticVariantId(id);
 	}
 
+	/**
+	 * Create variant ID with multiple IDs. First will be primary. If list is
+	 * empty or null empty variant ID will be returned.
+	 * 
+	 * @param ids
+	 * @return
+	 */
 	public static GeneticVariantId createVariantId(List<String> ids)
 	{
 		if (ids == null || ids.size() == 0)
@@ -155,6 +173,30 @@ public abstract class GeneticVariantId implements Iterable<String>
 		else
 		{
 			return new ListGeneticVariantId(ids);
+		}
+	}
+
+	/**
+	 * Create variant ID with multiple IDs. If primary ID is null empty variant
+	 * will be created.
+	 * 
+	 * @param primaryId
+	 * @param alternativeIds
+	 * @return
+	 */
+	public static GeneticVariantId createVariantId(String primaryId, List<String> alternativeIds)
+	{
+		if (primaryId == null)
+		{
+			return createVariantId(alternativeIds);
+		}
+		else if (alternativeIds == null || alternativeIds.size() == 0)
+		{
+			return new SingleGeneticVariantId(primaryId);
+		}
+		else
+		{
+			return new ListGeneticVariantId(primaryId, alternativeIds);
 		}
 	}
 

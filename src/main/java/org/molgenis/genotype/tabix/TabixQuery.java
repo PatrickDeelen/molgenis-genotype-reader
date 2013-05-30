@@ -9,8 +9,8 @@ import java.util.List;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeDataException;
-import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.tabix.TabixIndex.TabixIterator;
@@ -142,7 +142,7 @@ public class TabixQuery implements VariantQuery
 	}
 
 	@Override
-	public List<VariantAlleles> findSamplesForVariant(String sequence, int startPos, VariantAlleles alleles,
+	public List<Alleles> findSamplesForVariant(String sequence, int startPos, List<String> alleles,
 			List<String> columnNames, List<String> sampleNames)
 	{
 		try
@@ -156,15 +156,15 @@ public class TabixQuery implements VariantQuery
 				{
 					VcfRecord record = new VcfRecord(line, columnNames);
 					if (record.getChrom().equalsIgnoreCase(sequence) && (record.getPos() == startPos)
-							&& record.getAlleles().equals(alleles.getAlleles()))
+							&& record.getAlleles().equals(alleles))
 					{
-						List<VariantAlleles> sampleVariants = new ArrayList<VariantAlleles>(sampleNames.size());
+						List<Alleles> sampleVariants = new ArrayList<Alleles>(sampleNames.size());
 						for (String sampleName : sampleNames)
 						{
 							VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
 							if (geno == null) throw new GenotypeDataException("Missing GT format value for sample ["
 									+ sampleName + "]");
-							sampleVariants.add(VariantAlleles.create(geno.getSamleVariants(alleles.getAlleles())));
+							sampleVariants.add(Alleles.createBasedOnString(geno.getSamleVariants(alleles)));
 						}
 
 						return sampleVariants;

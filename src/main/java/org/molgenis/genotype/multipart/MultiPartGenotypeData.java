@@ -18,7 +18,6 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.genotype.vcf.VcfGenotypeData;
 
 public class MultiPartGenotypeData implements RandomAccessGenotypeData
@@ -28,7 +27,8 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	private static final Pattern VCF_PATTERN = Pattern.compile("vcf.gz$", Pattern.CASE_INSENSITIVE);
 
 	/**
-	 * Can map multiple times to same genotype dataset if a genotype dataset contains multiple sequences
+	 * Can map multiple times to same genotype dataset if a genotype dataset
+	 * contains multiple sequences
 	 * 
 	 * seqName, GenotypeData
 	 */
@@ -75,8 +75,9 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	}
 
 	/**
-	 * Folder with VCF files. Matches all vcf.gz (case insensitive). Can only handle one file per chr. vcf.gz.tbi should
-	 * be present. All files must have the same samples in the same order.
+	 * Folder with VCF files. Matches all vcf.gz (case insensitive). Can only
+	 * handle one file per chr. vcf.gz.tbi should be present. All files must
+	 * have the same samples in the same order.
 	 * 
 	 * @param vcfFolder
 	 *            folder with vcf files
@@ -171,7 +172,7 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	}
 
 	@Override
-	public SnpGeneticVariant getSnpVariantByPos(String seqName, int startPos)
+	public GeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
 		if (genotypeDatasets.containsKey(seqName))
 		{

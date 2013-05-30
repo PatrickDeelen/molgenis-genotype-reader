@@ -31,6 +31,7 @@ public interface GenotypeData extends Iterable<GeneticVariant>
 	Annotation getVariantAnnotation(String annotationId);
 
 	/**
+	 * 
 	 * Get all samples
 	 * 
 	 * @return

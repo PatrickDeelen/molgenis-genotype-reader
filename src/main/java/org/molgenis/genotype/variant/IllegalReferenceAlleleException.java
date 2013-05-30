@@ -1,8 +1,8 @@
 package org.molgenis.genotype.variant;
 
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 
-public class IllegalReferenceAllele extends Exception
+public class IllegalReferenceAlleleException extends Exception
 {
 
 	/**
@@ -11,11 +11,11 @@ public class IllegalReferenceAllele extends Exception
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
-	private IllegalReferenceAllele()
+	private IllegalReferenceAlleleException()
 	{
 	}
 
-	public IllegalReferenceAllele(VariantAlleles variantAlleles)
+	public IllegalReferenceAlleleException(Alleles variantAlleles)
 	{
 		super("Illigal reference allele. Only 1 allele can be ref but found " + variantAlleles.getAlleleCount()
 				+ " alleles");

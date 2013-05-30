@@ -15,14 +15,14 @@ import java.util.TreeMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.molgenis.genotype.AbstractRandomAccessGenotypeData;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
-import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 import org.molgenis.util.plink.datatypes.Biallele;
 import org.molgenis.util.plink.datatypes.MapEntry;
 import org.molgenis.util.plink.datatypes.PedEntry;
@@ -40,6 +40,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 
 	private final File pedFile;
 	private Map<Integer, List<Biallele>> sampleAllelesBySnpIndex = new HashMap<Integer, List<Biallele>>();
+
 	private List<GeneticVariant> snps = new ArrayList<GeneticVariant>(1000000);
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
 	private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
@@ -105,10 +106,9 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		int index = 0;
 		for (MapEntry entry : reader)
 		{
-			List<String> ids = Collections.singletonList(entry.getSNP());
+			String id = entry.getSNP();
 			String sequenceName = entry.getChromosome();
 			int startPos = (int) entry.getBpPos();
-			String refAllele = null;// Unknown for ped/map
 			Map<String, ?> annotationValues = Collections.emptyMap();
 			List<String> altDescriptions = Collections.emptyList();
 			List<String> altTypes = Collections.emptyList();
@@ -130,8 +130,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 				}
 			}
 
-			GeneticVariant snp = new SnpGeneticVariant(ids, sequenceName, startPos, VariantAlleles.create(alleles),
-					refAllele, annotationValues, altDescriptions, altTypes, this);
+			GeneticVariant snp = ReadOnlyGeneticVariant.createVariant(id, startPos, sequenceName, this, alleles);
 
 			snps.add(snp);
 			snpIndexById.put(snp.getPrimaryVariantId(), index);
@@ -198,7 +197,8 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	}
 
 	@Override
-	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
+	public List<Alleles> getSampleVariants(GeneticVariant variant)
+
 	{
 		if (variant.getPrimaryVariantId() == null)
 		{
@@ -213,10 +213,10 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		}
 
 		List<Biallele> bialleles = sampleAllelesBySnpIndex.get(index);
-		List<VariantAlleles> sampleVariants = new ArrayList<VariantAlleles>(bialleles.size());
+		List<Alleles> sampleVariants = new ArrayList<Alleles>(bialleles.size());
 		for (Biallele biallele : bialleles)
 		{
-			sampleVariants.add(VariantAlleles.create(biallele.getAllele1(), biallele.getAllele2()));
+			sampleVariants.add(Alleles.createBasedOnChars(biallele.getAllele1(), biallele.getAllele2()));
 		}
 
 		return sampleVariants;

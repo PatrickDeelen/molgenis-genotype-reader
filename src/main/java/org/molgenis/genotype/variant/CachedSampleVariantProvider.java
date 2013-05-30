@@ -2,7 +2,7 @@ package org.molgenis.genotype.variant;
 
 import java.util.List;
 
-import org.molgenis.genotype.VariantAlleles;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Cache;
 
 /**
@@ -16,16 +16,16 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 {
 
 	private final SampleVariantsProvider sampleVariantProvider;
-	private final Cache<GeneticVariant, List<VariantAlleles>> cache;
+	private final Cache<GeneticVariant, List<Alleles>> cache;
 
 	public CachedSampleVariantProvider(SampleVariantsProvider sampleVariantProvider, int cacheSize)
 	{
 		this.sampleVariantProvider = sampleVariantProvider;
-		this.cache = new Cache<GeneticVariant, List<VariantAlleles>>(cacheSize);
+		this.cache = new Cache<GeneticVariant, List<Alleles>>(cacheSize);
 	}
 
 	@Override
-	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
+	public List<Alleles> getSampleVariants(GeneticVariant variant)
 	{
 		if (cache.containsKey(variant))
 		{
@@ -33,7 +33,7 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 		}
 		else
 		{
-			List<VariantAlleles> variantAlleles = sampleVariantProvider.getSampleVariants(variant);
+			List<Alleles> variantAlleles = sampleVariantProvider.getSampleVariants(variant);
 			cache.put(variant, variantAlleles);
 			return variantAlleles;
 		}

@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.IndexedGenotypeData;
@@ -22,7 +23,6 @@ import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
-import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
@@ -123,12 +123,13 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
-	public List<VariantAlleles> getSampleVariants(GeneticVariant variant)
+	public List<Alleles> getSampleVariants(GeneticVariant variant)
+
 	{
 		try
 		{
 			return index.createQuery().findSamplesForVariant(variant.getSequenceName(), variant.getStartPos(),
-					variant.getVariantAlleles(), reader.getColNames(), reader.getSampleNames());
+					variant.getVariantAlleles().getAllelesAsString(), reader.getColNames(), reader.getSampleNames());
 		}
 		catch (IOException e)
 		{

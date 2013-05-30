@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SnpGeneticVariant;
 
 public interface RandomAccessGenotypeData extends GenotypeData
 {
@@ -40,13 +39,14 @@ public interface RandomAccessGenotypeData extends GenotypeData
 	List<GeneticVariant> getVariantsByPos(String seqName, int startPos);
 
 	/**
-	 * Get the SNP variant at the specified position. Only one SNP possible per position.
+	 * Get the SNP variant at the specified position. Only one SNP possible per
+	 * position.
 	 * 
 	 * @param seqName
 	 * @param startPos
 	 * @return The SNP found at this startPos, will be null if not present
 	 */
-	SnpGeneticVariant getSnpVariantByPos(String seqName, int startPos);
+	GeneticVariant getSnpVariantByPos(String seqName, int startPos);
 
 	Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName);
 

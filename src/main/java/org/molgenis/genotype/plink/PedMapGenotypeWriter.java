@@ -7,12 +7,11 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeData;
-import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.Sample;
-import org.molgenis.genotype.VariantAlleles;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.GeneticVariant.Type;
+import org.molgenis.genotype.variant.NotASnpException;
 import org.molgenis.util.plink.datatypes.Biallele;
 import org.molgenis.util.plink.datatypes.MapEntry;
 import org.molgenis.util.plink.datatypes.PedEntry;
@@ -38,19 +37,19 @@ public class PedMapGenotypeWriter
 		this.phenoSampleAnnotionId = phenoSampleAnnotionId;
 	}
 
-	public void write(String basePath) throws IOException
+	public void write(String basePath) throws IOException, NotASnpException
 	{
 		write(new File(basePath + ".ped"), new File(basePath + ".map"));
 	}
 
-	public void write(File pedFile, File mapFile) throws IOException
+	public void write(File pedFile, File mapFile) throws IOException, NotASnpException
 	{
 		writeMapFile(mapFile);
 		writePedFile(pedFile);
 	}
 
 	@SuppressWarnings("resource")
-	private void writeMapFile(File mapFile) throws IOException
+	private void writeMapFile(File mapFile) throws IOException, NotASnpException
 	{
 		LOG.info("Going to create [" + mapFile + "]");
 		MapFileWriter writer = null;
@@ -61,9 +60,9 @@ public class PedMapGenotypeWriter
 
 			for (GeneticVariant variant : genotypeData)
 			{
-				if (variant.getType() != Type.SNP)
+				if (variant.isSnp())
 				{
-					throw new GenotypeDataException("Variant [" + variant.getPrimaryVariantId() + "] is not a snp");
+					throw new NotASnpException(variant);
 				}
 
 				MapEntry mapEntry = new MapEntry(variant.getSequenceName(), variant.getPrimaryVariantId(), 0,
@@ -195,9 +194,9 @@ public class PedMapGenotypeWriter
 		private Iterator<GeneticVariant> variantsIterator;
 		private int sampleIndex;
 
-		public BialleleIterator(Iterable<GeneticVariant> variants, int sampleIndex)
+		public BialleleIterator(GenotypeData genotypeData, int sampleIndex)
 		{
-			this.variantsIterator = variants.iterator();
+			this.variantsIterator = genotypeData.iterator();
 			this.sampleIndex = sampleIndex;
 		}
 
@@ -211,7 +210,7 @@ public class PedMapGenotypeWriter
 		public Biallele next()
 		{
 			GeneticVariant variant = variantsIterator.next();
-			VariantAlleles variantAlleles = variant.getSampleVariants().get(sampleIndex);
+			Alleles variantAlleles = variant.getSampleVariants().get(sampleIndex);
 			char[] alleles = variantAlleles.getAllelesAsChars();
 
 			return Biallele.create(alleles[0], alleles[1]);
