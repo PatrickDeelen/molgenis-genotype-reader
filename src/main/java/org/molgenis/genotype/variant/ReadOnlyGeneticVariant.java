@@ -32,8 +32,6 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	{
 		super();
 
-		// TODO check is ref allele is indeed first in alleles list.
-
 		if (refAllele != null)
 		{
 			if (!alleles.contains(refAllele))
