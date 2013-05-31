@@ -109,9 +109,6 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			String id = entry.getSNP();
 			String sequenceName = entry.getChromosome();
 			int startPos = (int) entry.getBpPos();
-			Map<String, ?> annotationValues = Collections.emptyMap();
-			List<String> altDescriptions = Collections.emptyList();
-			List<String> altTypes = Collections.emptyList();
 
 			List<Biallele> sampleAlleles = sampleAllelesBySnpIndex.get(index);
 			List<String> alleles = new ArrayList<String>(2);
@@ -257,7 +254,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
 		List<GeneticVariant> variants = snpBySequence.get(seqName);
 		if (seqName == null)
@@ -265,7 +262,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			throw new IllegalArgumentException("Unknown sequence [" + seqName + "]");
 		}
 
-		return variants.iterator();
+		return variants;
 	}
 
 	@Override

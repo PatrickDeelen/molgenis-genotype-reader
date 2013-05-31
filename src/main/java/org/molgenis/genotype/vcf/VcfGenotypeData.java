@@ -6,11 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
@@ -19,7 +17,6 @@ import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.GenotypeDataIndex;
 import org.molgenis.genotype.IndexedGenotypeData;
-import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
@@ -231,64 +228,9 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
-	{
-		return index.createQuery().executeQuery(seqName).iterator();
-	}
-
-	@Override
-	public Iterator<GeneticVariant> iterator()
-	{
-		return new GeneticVariantsIterator(this);
-	}
-
-	private static class GeneticVariantsIterator implements Iterator<GeneticVariant>
-	{
-		private Iterator<String> seqNames;
-		private Iterator<GeneticVariant> seqGeneticVariants;
-		private RandomAccessGenotypeData randomAccessGenotypeData;
-
-		public GeneticVariantsIterator(RandomAccessGenotypeData randomAccessGenotypeData)
-		{
-			seqNames = randomAccessGenotypeData.getSeqNames().iterator();
-			seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next());
-			this.randomAccessGenotypeData = randomAccessGenotypeData;
-		}
-
-		@Override
-		public boolean hasNext()
-		{
-			return seqGeneticVariants.hasNext() || seqNames.hasNext();
-		}
-
-		@Override
-		public GeneticVariant next()
-		{
-			if (seqGeneticVariants.hasNext())
-			{
-				return seqGeneticVariants.next();
-			}
-
-			if (seqNames.hasNext())
-			{
-				seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next());
-				return seqGeneticVariants.next();
-			}
-
-			throw new NoSuchElementException();
-		}
-
-		@Override
-		public void remove()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-	}
-
-	@Override
 	public int cacheSize()
 	{
 		return 0;
 	}
+
 }

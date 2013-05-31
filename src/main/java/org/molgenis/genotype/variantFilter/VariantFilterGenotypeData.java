@@ -108,7 +108,7 @@ public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
 		// TODO Auto-generated method stub
 		return null;
