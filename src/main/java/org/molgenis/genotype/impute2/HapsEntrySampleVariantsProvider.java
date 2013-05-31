@@ -57,4 +57,10 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 
 		throw new IllegalArgumentException("[" + sample + "] is an invalid value for a haps sample value");
 	}
+
+	@Override
+	public int cacheSize()
+	{
+		return 0;
+	}
 }

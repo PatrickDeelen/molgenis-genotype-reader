@@ -2,6 +2,7 @@ package org.molgenis.genotype.impute2;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -72,6 +73,52 @@ public class Impute2GenotypeDataTest extends ResourceTest
 
 		Map<String, ?> annotations = sample.getAnnotations();
 		assertEquals(annotations.size(), 7);
+		assertEquals((Double) annotations.get("missing"), 0.007d, 0.0001);
+		assertEquals(annotations.get("cov_1"), 1);
+		assertEquals(annotations.get("cov_2"), 2);
+		assertEquals((Double) annotations.get("cov_3"), 0.0019d, 0.00001);
+		assertEquals((Double) annotations.get("cov_4"), -0.008d, 0.0001);
+		assertEquals((Double) annotations.get("pheno1"), 1.233d, 0.0001);
+		assertEquals(annotations.get("bin1"), true);
+	}
 
+	@Test
+	public void getSequenceByName()
+	{
+		assertNotNull(genotypeData.getSequenceByName("7"));
+		assertNull(genotypeData.getSequenceByName("bogus"));
+	}
+
+	@Test
+	public void getSequenceGeneticVariants()
+	{
+		Iterator<GeneticVariant> it = genotypeData.getSequenceGeneticVariants("7");
+		List<GeneticVariant> variants = Utils.iteratorToList(it);
+		assertEquals(variants.size(), 3);
+
+		GeneticVariant var = variants.get(0);
+		assertEquals(var.getPrimaryVariantId(), "SNP1");
+		assertEquals(var.getSequenceName(), "7");
+		assertEquals(var.getStartPos(), 123);
+		assertEquals(var.getVariantAlleles(), Alleles.createBasedOnChars('A', 'G'));
+		assertEquals(
+				var.getSampleVariants(),
+				Arrays.asList(Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'A'),
+						Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'G')));
+	}
+
+	@Test
+	public void getSnpVariantByPos()
+	{
+		GeneticVariant var = genotypeData.getSnpVariantByPos("7", 789);
+		assertNotNull(var);
+		assertEquals(var.getPrimaryVariantId(), "SNP3");
+		assertEquals(var.getSequenceName(), "7");
+		assertEquals(var.getStartPos(), 789);
+		assertEquals(var.getVariantAlleles(), Alleles.createBasedOnChars('A', 'T'));
+		assertEquals(
+				var.getSampleVariants(),
+				Arrays.asList(Alleles.createBasedOnChars('A', 'T'), Alleles.createBasedOnChars('T', 'A'),
+						Alleles.createBasedOnChars('T', 'T'), Alleles.createBasedOnChars('T', 'T')));
 	}
 }

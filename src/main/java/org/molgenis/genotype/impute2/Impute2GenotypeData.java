@@ -37,6 +37,23 @@ public class Impute2GenotypeData extends IndexedGenotypeData
 
 	public Impute2GenotypeData(File bzipHapsFile, File tabixIndexFile, File sampleFile) throws IOException
 	{
+		if (bzipHapsFile == null) throw new IllegalArgumentException("bzipHapsFile is null");
+		if (!bzipHapsFile.isFile()) throw new FileNotFoundException("bzipHapsFile file not found at "
+				+ bzipHapsFile.getAbsolutePath());
+		if (!bzipHapsFile.canRead()) throw new IOException("bzipHapsFile file not found at "
+				+ bzipHapsFile.getAbsolutePath());
+
+		if (tabixIndexFile == null) throw new IllegalArgumentException("tabixIndexFile is null");
+		if (!tabixIndexFile.isFile()) throw new FileNotFoundException("tabixIndexFile file not found at "
+				+ tabixIndexFile.getAbsolutePath());
+		if (!tabixIndexFile.canRead()) throw new IOException("tabixIndexFile file not found at "
+				+ tabixIndexFile.getAbsolutePath());
+
+		if (sampleFile == null) throw new IllegalArgumentException("sampleFile is null");
+		if (!sampleFile.isFile()) throw new FileNotFoundException("sampleFile file not found at "
+				+ sampleFile.getAbsolutePath());
+		if (!sampleFile.canRead()) throw new IOException("sampleFile file not found at " + sampleFile.getAbsolutePath());
+
 		index = new TabixIndex(tabixIndexFile, bzipHapsFile, new Impute2VariantLineMapper());
 		this.sampleFile = sampleFile;
 	}
@@ -75,33 +92,40 @@ public class Impute2GenotypeData extends IndexedGenotypeData
 					dataTypes = tuple;
 					firstRow = false;
 				}
-
-				String familyId = tuple.getString(0);
-				String sampleId = tuple.getString(1);
-
-				Map<String, Object> annotations = new HashMap<String, Object>();
-				for (int i = 2; i < tuple.getNrCols(); i++)
+				else
 				{
-					if (dataTypes.getString(i).equalsIgnoreCase("D"))
+
+					String familyId = tuple.getString(0);
+					String sampleId = tuple.getString(1);
+					double missing = tuple.getDouble(2);
+
+					Map<String, Object> annotations = new HashMap<String, Object>();
+					annotations.put("missing", missing);
+
+					for (int i = 3; i < tuple.getNrCols(); i++)
 					{
-						annotations.put(colNames.get(i), tuple.getInt(i));
+						if (dataTypes.getString(i).equalsIgnoreCase("D"))
+						{
+							annotations.put(colNames.get(i), tuple.getInt(i));
+						}
+						else if (dataTypes.getString(i).equalsIgnoreCase("C")
+								|| dataTypes.getString(i).equalsIgnoreCase("P"))
+						{
+							annotations.put(colNames.get(i), tuple.getDouble(i));
+						}
+						else if (dataTypes.getString(i).equalsIgnoreCase("B"))
+						{
+							annotations.put(colNames.get(i), tuple.getBoolean(i));
+						}
+						else
+						{
+							annotations.put(colNames.get(i), tuple.getString(i));
+						}
 					}
-					else if (dataTypes.getString(i).equalsIgnoreCase("C")
-							|| dataTypes.getString(i).equalsIgnoreCase("P"))
-					{
-						annotations.put(colNames.get(i), tuple.getDouble(i));
-					}
-					else if (dataTypes.getString(i).equalsIgnoreCase("B"))
-					{
-						annotations.put(colNames.get(i), tuple.getBoolean(i));
-					}
-					else
-					{
-						annotations.put(colNames.get(i), tuple.getString(i));
-					}
+
+					samples.add(new Sample(sampleId, familyId, annotations));
 				}
 
-				samples.add(new Sample(sampleId, familyId, annotations));
 			}
 
 		}
