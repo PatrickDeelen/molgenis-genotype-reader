@@ -1,7 +1,5 @@
 package org.molgenis.genotype;
 
-import java.util.List;
-
 import org.molgenis.genotype.variant.GeneticVariant;
 
 public abstract class AbstractRandomAccessGenotypeData extends AbstractGenotypeData implements RandomAccessGenotypeData
@@ -23,7 +21,7 @@ public abstract class AbstractRandomAccessGenotypeData extends AbstractGenotypeD
 	@Override
 	public GeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
-		List<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
+		Iterable<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
 
 		for (GeneticVariant variant : variants)
 		{

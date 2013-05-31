@@ -231,9 +231,9 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		return index.createQuery().executeQuery(seqName).iterator();
+		return index.createQuery().executeQuery(seqName);
 	}
 
 	@Override
@@ -251,7 +251,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		public GeneticVariantsIterator(RandomAccessGenotypeData randomAccessGenotypeData)
 		{
 			seqNames = randomAccessGenotypeData.getSeqNames().iterator();
-			seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next());
+			seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next()).iterator();
 			this.randomAccessGenotypeData = randomAccessGenotypeData;
 		}
 
@@ -271,7 +271,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 
 			if (seqNames.hasNext())
 			{
-				seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next());
+				seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next()).iterator();
 				return seqGeneticVariants.next();
 			}
 

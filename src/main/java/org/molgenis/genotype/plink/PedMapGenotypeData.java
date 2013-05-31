@@ -257,7 +257,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
 		List<GeneticVariant> variants = snpBySequence.get(seqName);
 		if (seqName == null)
@@ -265,7 +265,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			throw new IllegalArgumentException("Unknown sequence [" + seqName + "]");
 		}
 
-		return variants.iterator();
+		return variants;
 	}
 
 	@Override

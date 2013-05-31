@@ -28,7 +28,7 @@ public class SimpleSequence implements Sequence
 	@Override
 	public Iterator<GeneticVariant> iterator()
 	{
-		return genotypeData.getSequenceGeneticVariants(name);
+		return genotypeData.getSequenceGeneticVariants(name).iterator();
 	}
 
 	@Override
