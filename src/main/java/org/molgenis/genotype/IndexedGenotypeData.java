@@ -29,5 +29,11 @@ public abstract class IndexedGenotypeData extends AbstractRandomAccessGenotypeDa
 		}
 	}
 
+	@Override
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	{
+		return getIndex().createQuery().executeQuery(seqName);
+	}
+
 	protected abstract GenotypeDataIndex getIndex();
 }

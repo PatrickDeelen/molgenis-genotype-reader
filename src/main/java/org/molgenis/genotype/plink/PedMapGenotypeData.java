@@ -109,9 +109,6 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			String id = entry.getSNP();
 			String sequenceName = entry.getChromosome();
 			int startPos = (int) entry.getBpPos();
-			Map<String, ?> annotationValues = Collections.emptyMap();
-			List<String> altDescriptions = Collections.emptyList();
-			List<String> altTypes = Collections.emptyList();
 
 			List<Biallele> sampleAlleles = sampleAllelesBySnpIndex.get(index);
 			List<String> alleles = new ArrayList<String>(2);

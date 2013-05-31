@@ -1,5 +1,8 @@
 package org.molgenis.genotype;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.molgenis.genotype.variant.GeneticVariant;
 
 public abstract class AbstractRandomAccessGenotypeData extends AbstractGenotypeData implements RandomAccessGenotypeData
@@ -33,6 +36,56 @@ public abstract class AbstractRandomAccessGenotypeData extends AbstractGenotypeD
 		}
 
 		return null;
+
+	}
+
+	@Override
+	public Iterator<GeneticVariant> iterator()
+	{
+		return new GeneticVariantsIterator(this);
+	}
+
+	private static class GeneticVariantsIterator implements Iterator<GeneticVariant>
+	{
+		private Iterator<String> seqNames;
+		private Iterator<GeneticVariant> seqGeneticVariants;
+		private RandomAccessGenotypeData randomAccessGenotypeData;
+
+		public GeneticVariantsIterator(RandomAccessGenotypeData randomAccessGenotypeData)
+		{
+			seqNames = randomAccessGenotypeData.getSeqNames().iterator();
+			seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next()).iterator();
+			this.randomAccessGenotypeData = randomAccessGenotypeData;
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return seqGeneticVariants.hasNext() || seqNames.hasNext();
+		}
+
+		@Override
+		public GeneticVariant next()
+		{
+			if (seqGeneticVariants.hasNext())
+			{
+				return seqGeneticVariants.next();
+			}
+
+			if (seqNames.hasNext())
+			{
+				seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next()).iterator();
+				return seqGeneticVariants.next();
+			}
+
+			throw new NoSuchElementException();
+		}
+
+		@Override
+		public void remove()
+		{
+			throw new UnsupportedOperationException();
+		}
 
 	}
 }
