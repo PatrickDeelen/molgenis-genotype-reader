@@ -92,7 +92,7 @@ public class Impute2GenotypeDataTest extends ResourceTest
 	@Test
 	public void getSequenceGeneticVariants()
 	{
-		Iterator<GeneticVariant> it = genotypeData.getSequenceGeneticVariants("7");
+		Iterator<GeneticVariant> it = genotypeData.getSequenceGeneticVariants("7").iterator();
 		List<GeneticVariant> variants = Utils.iteratorToList(it);
 		assertEquals(variants.size(), 3);
 

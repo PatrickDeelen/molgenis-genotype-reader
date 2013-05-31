@@ -159,7 +159,7 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	}
 
 	@Override
-	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
+	public Iterable<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
 		if (genotypeDatasets.containsKey(seqName))
 		{
@@ -197,9 +197,15 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if (genotypeDatasets.containsKey(seqName))
+		{
+			return genotypeDatasets.get(seqName).getSequenceGeneticVariants(seqName);
+		}
+		else
+		{
+			return Collections.emptyList();
+		}
 	}
 }

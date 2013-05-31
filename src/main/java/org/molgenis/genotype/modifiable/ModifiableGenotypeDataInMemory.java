@@ -59,7 +59,7 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	}
 
 	@Override
-	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
+	public Iterable<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -73,7 +73,7 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -96,8 +96,7 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public List<Sample> getSamples()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.getSamples();
 	}
 
 	@Override
@@ -108,42 +107,66 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	}
 
 	@Override
-	public GeneticVariantId getUpdatedId(GeneticVariant geneticVariant)
+	public synchronized GeneticVariantId getUpdatedId(GeneticVariant geneticVariant)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return idUpdates.get(geneticVariant);
 	}
 
 	@Override
-	public Allele getUpdatedRef(GeneticVariant geneticVariant)
+	public synchronized Allele getUpdatedRef(GeneticVariant geneticVariant)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return refAlleleUpdate.get(geneticVariant);
 	}
 
 	@Override
-	public SampleVariantsProvider getUpdatedSampleVariantProvider(GeneticVariant geneticVariant)
+	public synchronized SampleVariantsProvider getUpdatedSampleVariantProvider(GeneticVariant geneticVariant)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return variantProviderUpdates.get(geneticVariant);
 	}
 
 	@Override
-	public void updateVariantId(GeneticVariant geneticVariant, GeneticVariantId newGeneticVariantId)
+	public synchronized void updateVariantId(GeneticVariant geneticVariant, GeneticVariantId newGeneticVariantId)
 	{
-		// TODO Auto-generated method stub
+		if (geneticVariant.getVariantId().equals(newGeneticVariantId))
+		{
+			idUpdates.remove(geneticVariant);
+			return;
+		}
+		idUpdates.put(geneticVariant, newGeneticVariantId);
+	}
+
+	@Override
+	public synchronized void updateVariantPrimaryId(GeneticVariant geneticVariant, String newPrimaryId)
+	{
+
+		if (idUpdates.containsKey(geneticVariant))
+		{
+			if (idUpdates.get(geneticVariant).getPrimairyId().equals(newPrimaryId))
+			{
+				return;
+			}
+		}
+		else if (geneticVariant.getPrimaryVariantId().equals(newPrimaryId))
+		{
+			return;
+		}
+
+		GeneticVariantId oldId = geneticVariant.getVariantId();
+		String oldPrimairyId = oldId.getPrimairyId();
+
+		// Create alternative alleles based on old alternatives
+		ArrayList<String> newAlternativeAlleles = new ArrayList<String>(oldId.getAlternativeIds());
+		// Remove new primary if it is one of the old alternative
+		newAlternativeAlleles.remove(newPrimaryId);
+		// add the old primary ID to the alternative ID list
+		newAlternativeAlleles.add(oldPrimairyId);
+
+		updateVariantId(geneticVariant, GeneticVariantId.createVariantId(newPrimaryId, newAlternativeAlleles));
 
 	}
 
 	@Override
-	public void updateVariantId(GeneticVariant geneticVariant, String newPrimairyId)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void swapGeneticVariant(GeneticVariant geneticVariant)
+	public synchronized void swapGeneticVariant(GeneticVariant geneticVariant)
 	{
 		Alleles variantAlleles = getUpdatedAlleles(geneticVariant);
 		if (variantAlleles == null)
@@ -176,23 +199,20 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 			swappingSampleVariantProviders.put(sampleVariantProvider, swappingSampleVariantsProvider);
 		}
 
-		// TODO is this correct???
-		synchronized (this)
-		{
-			allelesUpdate.put(geneticVariant, variantAlleles.getComplement());
-			refAlleleUpdate.put(geneticVariant, refAllele.getComplement());
-			variantProviderUpdates.put(geneticVariant, swappingSampleVariantsProvider);
-		}
+		allelesUpdate.put(geneticVariant, variantAlleles.getComplement());
+		refAlleleUpdate.put(geneticVariant, refAllele.getComplement());
+		variantProviderUpdates.put(geneticVariant, swappingSampleVariantsProvider);
 
 	}
 
 	@Override
-	public void updateRefAllele(GeneticVariant geneticVariant, Allele newRefAllele)
+	public synchronized void updateRefAllele(GeneticVariant geneticVariant, Allele newRefAllele)
 	{
 
 		// If no update do nothing expect if there was already a previous
 		// update. Reverting back is complicated because that would require
-		// recoding the alleles. Might undo intentional changes
+		// recoding the alleles. Might undo intentional changes in ordering of
+		// alternative alleles
 		if (geneticVariant.getRefAllele() == newRefAllele && !refAlleleUpdate.containsKey(geneticVariant))
 		{
 			return;
@@ -206,7 +226,7 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 
 		if (!variantAlleles.contains(newRefAllele))
 		{
-			throw new GenotypeDataException("Can not update to refernece allele (" + newRefAllele
+			throw new GenotypeDataException("Can not update to reference allele (" + newRefAllele
 					+ ") is not a found in supplied alleles " + variantAlleles.getAllelesAsString()
 					+ " for variant with ID: " + geneticVariant.getPrimaryVariantId() + " at: "
 					+ geneticVariant.getSequenceName() + ":" + geneticVariant.getStartPos());
@@ -218,20 +238,15 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 		allelesWithoutRef.remove(newRefAllele);
 		allelesWithoutRef.add(0, newRefAllele);
 
-		// TODO is this correct???
-		synchronized (this)
-		{
-			allelesUpdate.put(geneticVariant, Alleles.createAlleles(allelesWithoutRef));
-			refAlleleUpdate.put(geneticVariant, newRefAllele);
-		}
+		allelesUpdate.put(geneticVariant, Alleles.createAlleles(allelesWithoutRef));
+		refAlleleUpdate.put(geneticVariant, newRefAllele);
 
 	}
 
 	@Override
-	public Alleles getUpdatedAlleles(GeneticVariant geneticVariant)
+	public synchronized Alleles getUpdatedAlleles(GeneticVariant geneticVariant)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return allelesUpdate.get(geneticVariant);
 	}
 
 }

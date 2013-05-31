@@ -1,6 +1,5 @@
 package org.molgenis.genotype;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -31,9 +30,9 @@ public abstract class IndexedGenotypeData extends AbstractRandomAccessGenotypeDa
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		return getIndex().createQuery().executeQuery(seqName).iterator();
+		return getIndex().createQuery().executeQuery(seqName);
 	}
 
 	protected abstract GenotypeDataIndex getIndex();
