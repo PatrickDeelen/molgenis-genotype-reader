@@ -96,4 +96,38 @@ public interface ModifiableGenotypeData extends RandomAccessGenotypeData
 	 */
 	Alleles getUpdatedAlleles(GeneticVariant geneticVariant);
 
+	/**
+	 * Get all modifiable variants from a sequence
+	 * 
+	 * @param seqName
+	 * @return
+	 */
+	Iterable<ModifiableGeneticVariant> getModifiableSequenceGeneticVariants(String seqName);
+
+	/**
+	 * Get the modifiable variants at the specified position
+	 * 
+	 * @param seqName
+	 * @param startPos
+	 * @return all variants found at startPos, can be empty if none found
+	 */
+	Iterable<ModifiableGeneticVariant> getModifiableVariantsByPos(String seqName, int startPos);
+
+	/**
+	 * Get the modifiable SNP variant at the specified position. Only one SNP
+	 * possible per position.
+	 * 
+	 * @param seqName
+	 * @param startPos
+	 * @return The SNP found at this startPos, will be null if not present
+	 */
+	ModifiableGeneticVariant getModifiableSnpVariantByPos(String seqName, int startPos);
+
+	/**
+	 * Get all modifiable variants
+	 * 
+	 * @return
+	 */
+	Iterable<ModifiableGeneticVariant> getModifiableGeneticVariants();
+
 }

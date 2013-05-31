@@ -55,42 +55,37 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Sequence getSequenceByName(String name)
 	{
-		throw new UnsupportedOperationException();
+		return sourceGenotypeData.getSequenceByName(name);
 	}
 
 	@Override
 	public Iterable<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.getVariantsByPos(seqName, startPos);
 	}
 
 	@Override
 	public GeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.getSnpVariantByPos(seqName, startPos);
 	}
 
 	@Override
 	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.getSequenceGeneticVariants(seqName);
 	}
 
 	@Override
 	public List<Annotation> getVariantAnnotations()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.getVariantAnnotations();
 	}
 
 	@Override
 	public Annotation getVariantAnnotation(String annotationId)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.getVariantAnnotation(annotationId);
 	}
 
 	@Override
@@ -102,8 +97,7 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterator<GeneticVariant> iterator()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.iterator();
 	}
 
 	@Override
@@ -247,6 +241,32 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	public synchronized Alleles getUpdatedAlleles(GeneticVariant geneticVariant)
 	{
 		return allelesUpdate.get(geneticVariant);
+	}
+
+	@Override
+	public Iterable<ModifiableGeneticVariant> getModifiableSequenceGeneticVariants(String seqName)
+	{
+		Iterator<GeneticVariant> originalIterator = sourceGenotypeData.getSequenceGeneticVariants(seqName).iterator();
+		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(originalIterator, this);
+	}
+
+	@Override
+	public Iterable<ModifiableGeneticVariant> getModifiableVariantsByPos(String seqName, int startPos)
+	{
+		Iterator<GeneticVariant> originalIterator = sourceGenotypeData.getVariantsByPos(seqName, startPos).iterator();
+		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(originalIterator, this);
+	}
+
+	@Override
+	public ModifiableGeneticVariant getModifiableSnpVariantByPos(String seqName, int startPos)
+	{
+		return new ModifiableGeneticVariant(sourceGenotypeData.getSnpVariantByPos(seqName, startPos), this);
+	}
+
+	@Override
+	public Iterable<ModifiableGeneticVariant> getModifiableGeneticVariants()
+	{
+		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(this.iterator(), this);
 	}
 
 }
