@@ -60,10 +60,10 @@ public interface ModifiableGenotypeData extends RandomAccessGenotypeData
 	 * 
 	 * @param geneticVariant
 	 *            the original genetic variant
-	 * @param newPrimairyId
+	 * @param newPrimaryId
 	 *            the new primary ID
 	 */
-	void updateVariantId(GeneticVariant geneticVariant, String newPrimairyId);
+	void updateVariantPrimaryId(GeneticVariant geneticVariant, String newPrimaryId);
 
 	/**
 	 * Updates the the sample variant provider and the ref allele. The sample
