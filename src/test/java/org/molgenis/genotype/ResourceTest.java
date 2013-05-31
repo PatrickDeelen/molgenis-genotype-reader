@@ -29,4 +29,19 @@ public class ResourceTest
 	{
 		return getTestResourceFile("/test.ped");
 	}
+
+	protected File getTestImpute2Gz() throws URISyntaxException
+	{
+		return getTestResourceFile("/test.haps.tab.gz");
+	}
+
+	protected File getTestImpute2GzTbi() throws URISyntaxException
+	{
+		return getTestResourceFile("/test.haps.tab.gz.tbi");
+	}
+
+	protected File getTestImpute2Sample() throws URISyntaxException
+	{
+		return getTestResourceFile("/test.sample");
+	}
 }

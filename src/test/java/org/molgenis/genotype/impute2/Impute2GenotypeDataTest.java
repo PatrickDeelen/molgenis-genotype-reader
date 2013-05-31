@@ -1,0 +1,77 @@
+package org.molgenis.genotype.impute2;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.molgenis.genotype.Allele;
+import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.ResourceTest;
+import org.molgenis.genotype.Sample;
+import org.molgenis.genotype.util.Utils;
+import org.molgenis.genotype.variant.GeneticVariant;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+public class Impute2GenotypeDataTest extends ResourceTest
+{
+	private Impute2GenotypeData genotypeData;
+
+	@BeforeClass
+	public void beforeClass() throws IOException, URISyntaxException
+	{
+		genotypeData = new Impute2GenotypeData(getTestImpute2Gz(), getTestImpute2GzTbi(), getTestImpute2Sample());
+	}
+
+	@Test
+	public void getSeqNames()
+	{
+		List<String> seqNames = genotypeData.getSeqNames();
+		assertNotNull(seqNames);
+		assertEquals(seqNames, Arrays.asList("7", "8"));
+	}
+
+	@Test
+	public void iterator()
+	{
+		Iterator<GeneticVariant> it = genotypeData.iterator();
+		assertNotNull(it);
+
+		GeneticVariant var = it.next();
+		assertNotNull(var);
+		assertEquals(var.getPrimaryVariantId(), "SNP1");
+		assertEquals(var.getSequenceName(), "7");
+		assertEquals(var.getStartPos(), 123);
+		assertEquals(var.getAlleleCount(), 2);
+		assertEquals(var.getAllIds(), Arrays.asList("SNP1"));
+		assertEquals(var.getVariantAlleles(), Alleles.createBasedOnChars('A', 'G'));
+		assertEquals(
+				var.getSampleVariants(),
+				Arrays.asList(Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'A'),
+						Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'G')));
+		assertEquals(var.getMinorAllele(), Allele.G_ALLELE);
+		assertEquals(var.getMinorAlleleFrequency(), 0.375, 0.001);
+		assertEquals(Utils.iteratorToList(genotypeData.iterator()).size(), 4);
+	}
+
+	@Test
+	public void getSamples()
+	{
+		List<Sample> samples = genotypeData.getSamples();
+		assertEquals(samples.size(), 4);
+
+		Sample sample = samples.get(0);
+		assertEquals(sample.getId(), "1");
+		assertEquals(sample.getFamilyId(), "1");
+
+		Map<String, ?> annotations = sample.getAnnotations();
+		assertEquals(annotations.size(), 7);
+
+	}
+}
