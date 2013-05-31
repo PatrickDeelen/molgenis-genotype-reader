@@ -14,4 +14,6 @@ import org.molgenis.genotype.Alleles;
 public interface SampleVariantsProvider
 {
 	List<Alleles> getSampleVariants(GeneticVariant variant);
+
+	int cacheSize();
 }

@@ -78,15 +78,6 @@ public interface GeneticVariant
 	public Allele getRefAllele();
 
 	/**
-	 * get the SNP ref allele
-	 * 
-	 * @return
-	 * @throws NotASnpException
-	 *             if not a SNP
-	 */
-	public char getSnpRefAllele() throws NotASnpException;
-
-	/**
 	 * Returns list sample variants. The list of variants can contain null !!!!
 	 * if unknown
 	 */

@@ -22,4 +22,10 @@ public class DummySampleVariantsProvider implements SampleVariantsProvider
 		return variantAlleles;
 	}
 
+	@Override
+	public int cacheSize()
+	{
+		return 0;
+	}
+
 }

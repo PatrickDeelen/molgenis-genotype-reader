@@ -154,23 +154,19 @@ public class LdCalculator
 		}
 		double dPrime = Math.abs(d / dMax);
 
-		// sometimes dPrime sligthly larger then 1. Fixing this:
+		// sometimes dPrime slightly larger then 1. Fixing this:
 		dPrime = Math.min(1, dPrime);
 
-		String variant1Alt = variant1.getRefAllele().equals(variant1.getVariantAlleles().getAlleles().get(0)) ? variant1
-				.getVariantAlleles().getAlleles().get(1).getAlleleAsString() : variant1.getVariantAlleles().getAlleles()
-				.get(0).getAlleleAsString();
-		String variant1Ref = variant1.getRefAllele().getAlleleAsString();
-		String variant2Alt = variant2.getRefAllele().equals(variant2.getVariantAlleles().getAlleles().get(0)) ? variant2
-				.getVariantAlleles().getAlleles().get(1).getAlleleAsString() : variant2.getVariantAlleles().getAlleles()
-				.get(0).getAlleleAsString();
-		String variant2Ref = variant2.getRefAllele().getAlleleAsString();
+		String variant1Alt = variant1.getVariantAlleles().get(1).getAlleleAsString();
+		String variant1Ref = variant1.getVariantAlleles().get(0).getAlleleAsString();
+		String variant2Alt = variant2.getVariantAlleles().get(1).getAlleleAsString();
+		String variant2Ref = variant2.getVariantAlleles().get(0).getAlleleAsString();
 
 		LinkedHashMap<String, Double> haplotypesFreq = new LinkedHashMap<String, Double>(4);
 		haplotypesFreq.put(variant1Alt + variant2Alt, h11);
 		haplotypesFreq.put(variant1Alt + variant2Ref, h12);
 		haplotypesFreq.put(variant1Ref + variant2Alt, h21);
-		haplotypesFreq.put(variant1Ref + variant2Ref, h21);
+		haplotypesFreq.put(variant1Ref + variant2Ref, h22);
 
 		return new Ld(variant1, variant2, rSquared, dPrime, haplotypesFreq);
 

@@ -1,6 +1,8 @@
 package org.molgenis.genotype.variant;
 
-public class NotASnpException extends Exception
+import org.molgenis.genotype.GenotypeDataException;
+
+public class NotASnpException extends GenotypeDataException
 {
 
 	/**

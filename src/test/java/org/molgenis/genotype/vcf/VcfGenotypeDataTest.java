@@ -78,8 +78,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getStartPos(), 7569187);
 		assertEquals(variant.getRefAllele().getAlleleAsString(), "G");
 		assertEquals(variant.getSequenceName(), "2");
-		// TODO fix this test
-		// assertEquals(variant.getType(), GeneticVariantOld.Type.SNP);
+		assertEquals(variant.isSnp(), true);
 
 		List<String> alleles = variant.getVariantAlleles().getAllelesAsString();
 		assertNotNull(alleles);
@@ -93,9 +92,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertNotNull(sampleVariants.get(0).getAlleles());
 		assertEquals(sampleVariants.get(0).getAlleles().size(), 2);
 		assertEquals(sampleVariants.get(0).getAlleles().get(0).getAlleleAsString(), "C");
-		// TODO why test same twice. Is this a bug?
-		// assertEquals(sampleVariants.get(0).getAlleles().get(0).getAlleleAsString(),
-		// "C");
+		assertEquals(sampleVariants.get(0).getAlleles().get(1).getAlleleAsString(), "C");
 	}
 
 	@Test
@@ -127,9 +124,8 @@ public class VcfGenotypeDataTest extends ResourceTest
 	public void testSnpVariants()
 	{
 		GeneticVariant snpGeneticVariant = genotypeData.getSnpVariantByPos("1", 3172273);
-		// assertNotNull(snpGeneticVariant);
-		// TODO fix this test
-		// assertEquals(snpGeneticVariant.getType(), GeneticVariant.Type.SNP);
+		assertNotNull(snpGeneticVariant);
+		assertEquals(snpGeneticVariant.isSnp(), true);
 	}
 
 	@Test

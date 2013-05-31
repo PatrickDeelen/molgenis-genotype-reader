@@ -142,4 +142,10 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	{
 		return Collections.emptyList();
 	}
+
+	@Override
+	public int cacheSize()
+	{
+		return 0;
+	}
 }
