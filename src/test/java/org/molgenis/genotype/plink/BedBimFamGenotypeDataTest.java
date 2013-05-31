@@ -27,7 +27,7 @@ public class BedBimFamGenotypeDataTest extends ResourceTest
 	private BedBimFamGenotypeData genotypeData;
 
 	@BeforeClass
-	public void beforeClass() throws IOException, URISyntaxException
+	public void beforeClass() throws Exception
 	{
 		genotypeData = new BedBimFamGenotypeData(getTestBed(), getTestBim(), getTestFam());
 	}
