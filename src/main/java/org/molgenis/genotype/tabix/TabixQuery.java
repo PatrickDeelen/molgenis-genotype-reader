@@ -50,8 +50,7 @@ public class TabixQuery implements VariantQuery
 	}
 
 	/**
-	 * Get a subset of the data, returns the raw data lines from the gziped data
-	 * file
+	 * Get a subset of the data, returns the raw data lines from the gziped data file
 	 * 
 	 * @param sequence
 	 * @param startPos
@@ -141,6 +140,7 @@ public class TabixQuery implements VariantQuery
 
 	}
 
+	// TODO remove this, is vcf specific
 	@Override
 	public List<Alleles> findSamplesForVariant(String sequence, int startPos, List<String> alleles,
 			List<String> columnNames, List<String> sampleNames)
