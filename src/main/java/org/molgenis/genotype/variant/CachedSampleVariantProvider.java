@@ -17,11 +17,13 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 
 	private final SampleVariantsProvider sampleVariantProvider;
 	private final Cache<GeneticVariant, List<Alleles>> cache;
+	private final int cacheSize;
 
 	public CachedSampleVariantProvider(SampleVariantsProvider sampleVariantProvider, int cacheSize)
 	{
 		this.sampleVariantProvider = sampleVariantProvider;
 		this.cache = new Cache<GeneticVariant, List<Alleles>>(cacheSize);
+		this.cacheSize = cacheSize;
 	}
 
 	@Override
@@ -39,4 +41,9 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 		}
 	}
 
+	@Override
+	public int cacheSize()
+	{
+		return cacheSize;
+	}
 }

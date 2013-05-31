@@ -285,4 +285,10 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		}
 
 	}
+
+	@Override
+	public int cacheSize()
+	{
+		return 0;
+	}
 }
