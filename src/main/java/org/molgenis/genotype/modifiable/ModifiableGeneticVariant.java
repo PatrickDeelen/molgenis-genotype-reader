@@ -50,7 +50,7 @@ public class ModifiableGeneticVariant implements GeneticVariant
 	@Override
 	public GeneticVariantId getVariantId()
 	{
-		GeneticVariantId variantId = modifiableGenotypeData.getUpdatedId(originalVariant);
+		GeneticVariantId variantId = modifiableGenotypeData.getUpdatedId(this);
 		if (variantId != null)
 		{
 			return variantId;
@@ -76,7 +76,7 @@ public class ModifiableGeneticVariant implements GeneticVariant
 	@Override
 	public Alleles getVariantAlleles()
 	{
-		Alleles alleles = modifiableGenotypeData.getUpdatedAlleles(originalVariant);
+		Alleles alleles = modifiableGenotypeData.getUpdatedAlleles(this);
 		if (alleles != null)
 		{
 			return alleles;
@@ -96,7 +96,7 @@ public class ModifiableGeneticVariant implements GeneticVariant
 	@Override
 	public Allele getRefAllele()
 	{
-		Allele refAllele = modifiableGenotypeData.getUpdatedRef(originalVariant);
+		Allele refAllele = modifiableGenotypeData.getUpdatedRef(this);
 		if (refAllele != null)
 		{
 			return refAllele;
@@ -180,8 +180,7 @@ public class ModifiableGeneticVariant implements GeneticVariant
 	@Override
 	public SampleVariantsProvider getSampleVariantsProvider()
 	{
-		SampleVariantsProvider sampleVariantProvider = modifiableGenotypeData
-				.getUpdatedSampleVariantProvider(originalVariant);
+		SampleVariantsProvider sampleVariantProvider = modifiableGenotypeData.getUpdatedSampleVariantProvider(this);
 		if (sampleVariantProvider != null)
 		{
 			return sampleVariantProvider;
@@ -200,4 +199,33 @@ public class ModifiableGeneticVariant implements GeneticVariant
 		return originalVariant;
 	}
 
+	public void updateRefAllele(Allele newRefAllele)
+	{
+		modifiableGenotypeData.updateRefAllele(this, newRefAllele);
+	}
+
+	public void updateRefAllele(String newRefAllele)
+	{
+		updateRefAllele(Allele.create(newRefAllele));
+	}
+
+	public void updateRefAllele(char newRefAllele)
+	{
+		updateRefAllele(Allele.create(newRefAllele));
+	}
+
+	public void updatePrimaryId(String newPrimaryId)
+	{
+		modifiableGenotypeData.updateVariantPrimaryId(this, newPrimaryId);
+	}
+
+	public void updateId(GeneticVariantId newVariantId)
+	{
+		modifiableGenotypeData.updateVariantId(this, newVariantId);
+	}
+
+	public void swap()
+	{
+		modifiableGenotypeData.swapGeneticVariant(this);
+	}
 }
