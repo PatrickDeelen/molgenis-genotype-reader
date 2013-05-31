@@ -18,6 +18,7 @@ public class ModifiableGeneticVariant implements GeneticVariant
 {
 
 	private final GeneticVariant originalVariant;
+
 	private final ModifiableGenotypeData modifiableGenotypeData;
 	private MafResult mafResult = null;
 
@@ -189,6 +190,14 @@ public class ModifiableGeneticVariant implements GeneticVariant
 		{
 			return originalVariant.getSampleVariantsProvider();
 		}
+	}
+
+	/**
+	 * @return the originalVariant
+	 */
+	protected GeneticVariant getOriginalVariant()
+	{
+		return originalVariant;
 	}
 
 }
