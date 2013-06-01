@@ -166,15 +166,55 @@ public class ModifiableGeneticVariant implements GeneticVariant
 	@Override
 	public float[] getSampleDosages()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// TODO duplicate from read only variant. Should be provided by sample
+		// genotype provider
+
+		byte[] calledDosage = getSampleCalledDosage();
+		float[] dosage = new float[calledDosage.length];
+
+		for (int i = 0; i < calledDosage.length; ++i)
+		{
+			dosage[i] = calledDosage[i];
+		}
+
+		return dosage;
+
 	}
 
 	@Override
 	public byte[] getSampleCalledDosage()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// TODO duplicate from read only variant. Should be provided by sample
+		// genotype provider
+
+		Allele dosageRef = getRefAllele() == null ? getVariantAlleles().get(0) : getRefAllele();
+
+		List<Alleles> sampleVariants = getSampleVariants();
+
+		byte[] dosages = new byte[getSampleVariants().size()];
+
+		for (int i = 0; i < dosages.length; ++i)
+		{
+			Alleles sampleVariant = sampleVariants.get(i);
+			boolean missing = false;
+			byte dosage = 0;
+
+			for (Allele allele : sampleVariant)
+			{
+				if (allele == null)
+				{
+					missing = true;
+				}
+				else if (allele == dosageRef)
+				{
+					++dosage;
+				}
+			}
+
+			dosages[i] = missing ? -1 : dosage;
+		}
+
+		return dosages;
 	}
 
 	@Override
