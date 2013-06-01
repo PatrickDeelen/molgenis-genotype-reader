@@ -8,7 +8,7 @@ import org.molgenis.genotype.multipart.MultiPartGenotypeData;
 import org.molgenis.genotype.plink.PedMapGenotypeData;
 import org.molgenis.genotype.vcf.VcfGenotypeData;
 
-public enum GenotypedDataReaderFormats
+public enum RandomAccessGenotypedDataReaderFormats
 {
 
 	PED_MAP("PED / MAP file", "plink PED MAP files gziped with tabix index."), VCF("VCF file",
@@ -18,7 +18,7 @@ public enum GenotypedDataReaderFormats
 	private final String name;
 	private final String description;
 
-	GenotypedDataReaderFormats(String name, String description)
+	RandomAccessGenotypedDataReaderFormats(String name, String description)
 	{
 		this.name = name;
 		this.description = description;
@@ -34,7 +34,7 @@ public enum GenotypedDataReaderFormats
 		return description;
 	}
 
-	public GenotypeData createGenotypeData(String path, int cacheSize) throws IOException,
+	public RandomAccessGenotypeData createGenotypeData(String path, int cacheSize) throws IOException,
 			IncompetibleMultiPartGenotypeDataException
 	{
 
