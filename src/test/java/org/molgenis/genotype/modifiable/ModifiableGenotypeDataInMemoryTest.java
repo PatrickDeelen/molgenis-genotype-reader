@@ -95,8 +95,12 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 	@Test
 	public void getSequenceGeneticVariants()
 	{
-		assertEquals(modifiableGenotypeData.getSequenceGeneticVariants("22"),
-				originalGenotypeData.getSequenceGeneticVariants("22"));
+		Iterator<GeneticVariant> originalGeneticVariants = originalGenotypeData.getSequenceGeneticVariants("22")
+				.iterator();
+		Iterator<GeneticVariant> modifiableGeneticVariants = modifiableGenotypeData.getSequenceGeneticVariants("22")
+				.iterator();
+
+		assertEqualsVariantIterators(originalGeneticVariants, modifiableGeneticVariants);
 	}
 
 	@Test
@@ -108,17 +112,22 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 	@Test
 	public void getSnpVariantByPos()
 	{
-		// Make sure not to use this variant to test updating otherwise this
-		// might fail depending on the run order of the tests
-		assertEquals(modifiableGenotypeData.getSnpVariantByPos("22", 14433624),
-				originalGenotypeData.getSnpVariantByPos("22", 14433624));
+		GeneticVariant original = originalGenotypeData.getSnpVariantByPos("22", 14433624);
+		GeneticVariant modifiable = modifiableGenotypeData.getSnpVariantByPos("22", 14433624);
+
+		assertEquals(modifiable.getSequenceName(), original.getSequenceName());
+		assertEquals(modifiable.getStartPos(), original.getStartPos());
 	}
 
 	@Test
 	public void getVariantsByPos()
 	{
-		assertEquals(modifiableGenotypeData.getVariantsByPos("22", 14433624),
-				originalGenotypeData.getVariantsByPos("22", 14433624));
+		Iterator<GeneticVariant> originalGeneticVariants = originalGenotypeData.getVariantsByPos("22", 14433624)
+				.iterator();
+		Iterator<GeneticVariant> modifiableGeneticVariants = modifiableGenotypeData.getVariantsByPos("22", 14433624)
+				.iterator();
+
+		assertEqualsVariantIterators(originalGeneticVariants, modifiableGeneticVariants);
 	}
 
 	@Test(expectedExceptions = GenotypeDataException.class)
@@ -145,37 +154,34 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 
 		assertEquals(modifiableGenotypeData.getSnpVariantByPos("22", 14431347).getRefAllele(), Allele.C_ALLELE);
 
-		// TODO fix test
-		// for (GeneticVariant variant : modifiableGenotypeData)
-		// {
-		// if (variant.getStartPos() == 14431347)
-		// {
-		// assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
-		// }
-		// }
-		//
-		// for (GeneticVariant variant :
-		// modifiableGenotypeData.getSequenceGeneticVariants("22"))
-		// {
-		// if (variant.getStartPos() == 14431347)
-		// {
-		// assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
-		// }
-		// }
-		//
-		// for (GeneticVariant variant :
-		// modifiableGenotypeData.getVariantsByPos("22", 14431347))
-		// {
-		// if (variant.getStartPos() == 14431347)
-		// {
-		// assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
-		// }
-		// }
+		for (GeneticVariant variant : modifiableGenotypeData)
+		{
+			if (variant.getStartPos() == 14431347)
+			{
+				assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
+			}
+		}
+
+		for (GeneticVariant variant : modifiableGenotypeData.getSequenceGeneticVariants("22"))
+		{
+			if (variant.getStartPos() == 14431347)
+			{
+				assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
+			}
+		}
+
+		for (GeneticVariant variant : modifiableGenotypeData.getVariantsByPos("22", 14431347))
+		{
+			if (variant.getStartPos() == 14431347)
+			{
+				assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
+			}
+		}
 
 	}
 
 	public static void assertEqualsVariantIterators(Iterator<GeneticVariant> originalGeneticVariants,
-			Iterator<ModifiableGeneticVariant> modifiableGeneticVariants)
+			Iterator<? extends GeneticVariant> modifiableGeneticVariants)
 	{
 
 		while (originalGeneticVariants.hasNext() && modifiableGeneticVariants.hasNext())

@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import org.molgenis.genotype.variant.GeneticVariant;
 
-public class ModifiableGeneticVariantIterator implements Iterator<ModifiableGeneticVariant>
+public class ModifiableGeneticVariantIterator<E extends GeneticVariant> implements Iterator<E>
 {
 
 	private final Iterator<GeneticVariant> originalIterator;
@@ -24,10 +24,11 @@ public class ModifiableGeneticVariantIterator implements Iterator<ModifiableGene
 		return originalIterator.hasNext();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ModifiableGeneticVariant next()
+	public E next()
 	{
-		return new ModifiableGeneticVariant(originalIterator.next(), modifiableGenotypeData);
+		return (E) new ModifiableGeneticVariant(originalIterator.next(), modifiableGenotypeData);
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class ModifiableGeneticVariantIterator implements Iterator<ModifiableGene
 	}
 
 	/**
-	 * 
+	 * Wrap genetic variant iterator to return modifiable genetic variants
 	 * 
 	 * @param originalIterator
 	 *            the original iterator
@@ -48,23 +49,38 @@ public class ModifiableGeneticVariantIterator implements Iterator<ModifiableGene
 	public static Iterable<ModifiableGeneticVariant> createModifiableGeneticVariantIterable(
 			Iterator<GeneticVariant> originalIterator, ModifiableGenotypeData modifiableGenotypeData)
 	{
-		return new ModifiableGeneticVariantIterable(new ModifiableGeneticVariantIterator(originalIterator,
-				modifiableGenotypeData));
+		return new ModifiableGeneticVariantIterable<ModifiableGeneticVariant>(
+				new ModifiableGeneticVariantIterator<ModifiableGeneticVariant>(originalIterator, modifiableGenotypeData));
 	}
 
-	protected static class ModifiableGeneticVariantIterable implements Iterable<ModifiableGeneticVariant>
+	/**
+	 * Wrap genetic variant iterable to return genetic variants that are
+	 * modifiable
+	 * 
+	 * @param originalIterator
+	 * @param modifiableGenotypeData
+	 * @return
+	 */
+	public static Iterable<GeneticVariant> createGeneticVariantIterableBackByModifiable(
+			Iterator<GeneticVariant> originalIterator, ModifiableGenotypeData modifiableGenotypeData)
+	{
+		return new ModifiableGeneticVariantIterable<GeneticVariant>(
+				new ModifiableGeneticVariantIterator<GeneticVariant>(originalIterator, modifiableGenotypeData));
+	}
+
+	protected static class ModifiableGeneticVariantIterable<E extends GeneticVariant> implements Iterable<E>
 	{
 
-		private final Iterator<ModifiableGeneticVariant> modifiableGeneticVariantIterator;
+		private final Iterator<E> modifiableGeneticVariantIterator;
 
-		public ModifiableGeneticVariantIterable(Iterator<ModifiableGeneticVariant> modifiableGeneticVariantIterator)
+		public ModifiableGeneticVariantIterable(Iterator<E> modifiableGeneticVariantIterator)
 		{
 			super();
 			this.modifiableGeneticVariantIterator = modifiableGeneticVariantIterator;
 		}
 
 		@Override
-		public Iterator<ModifiableGeneticVariant> iterator()
+		public Iterator<E> iterator()
 		{
 			return modifiableGeneticVariantIterator;
 		}

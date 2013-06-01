@@ -61,7 +61,8 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterable<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
-		return sourceGenotypeData.getVariantsByPos(seqName, startPos);
+		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(sourceGenotypeData
+				.getVariantsByPos(seqName, startPos).iterator(), this);
 	}
 
 	@Override
@@ -73,7 +74,8 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		return sourceGenotypeData.getSequenceGeneticVariants(seqName);
+		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(sourceGenotypeData
+				.getSequenceGeneticVariants(seqName).iterator(), this);
 	}
 
 	@Override
@@ -97,7 +99,8 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterator<GeneticVariant> iterator()
 	{
-		return sourceGenotypeData.iterator();
+		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(
+				sourceGenotypeData.iterator(), this).iterator();
 	}
 
 	@Override
