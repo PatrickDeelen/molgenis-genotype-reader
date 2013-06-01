@@ -6,9 +6,11 @@ import static org.testng.AssertJUnit.assertNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.molgenis.genotype.Allele;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.ResourceTest;
@@ -235,6 +237,123 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 			if (variant.getStartPos() == 14432618)
 			{
 				assertEquals(variant.getVariantId(), expectedId);
+			}
+		}
+
+	}
+
+	@Test
+	public void testSwap()
+	{
+
+		int posOfTestVariant = 14433624;
+
+		ModifiableGeneticVariant modifiableGeneticVariant = modifiableGenotypeData.getModifiableSnpVariantByPos("22",
+				posOfTestVariant);
+
+		ArrayList<Alleles> expectedSwappedSampleAlleles = new ArrayList<Alleles>(9);
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('C', 'C'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('T', 'C'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('C', 'C'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('C', 'C'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('C', 'C'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('T', 'C'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('C', 'C'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('C', 'C'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('T', 'C'));
+
+		byte[] expectedCalledDosage = new byte[]
+		{ 2, 1, 2, 2, 2, 1, 2, 2, 1 };
+
+		modifiableGeneticVariant.swap();
+
+		assertEquals(modifiableGeneticVariant.getSampleVariants(), expectedSwappedSampleAlleles);
+		assertEquals(modifiableGeneticVariant.getVariantAlleles(), Alleles.createBasedOnChars('C', 'T'));
+		assertEquals(modifiableGeneticVariant.getSampleCalledDosage(), expectedCalledDosage);
+		assertNull(modifiableGeneticVariant.getRefAllele());
+
+	}
+
+	@Test
+	public void testSwapWithRef()
+	{
+
+		int posOfTestVariant = 14433659;
+
+		ModifiableGeneticVariant modifiableGeneticVariant = modifiableGenotypeData.getModifiableSnpVariantByPos("22",
+				posOfTestVariant);
+
+		ArrayList<Alleles> expectedSwappedSampleAlleles = new ArrayList<Alleles>(9);
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('T', 'G'));
+		expectedSwappedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+
+		byte[] expectedCalledDosage = new byte[]
+		{ 0, 0, 0, 0, 0, 0, 0, 1, 0 };
+
+		modifiableGeneticVariant.updateRefAllele(Allele.A_ALLELE);
+
+		modifiableGeneticVariant.swap();
+
+		assertEquals(modifiableGeneticVariant.getSampleVariants(), expectedSwappedSampleAlleles);
+		assertEquals(modifiableGeneticVariant.getVariantAlleles(), Alleles.createBasedOnChars('T', 'G'));
+		assertEquals(modifiableGeneticVariant.getSampleCalledDosage(), expectedCalledDosage);
+		assertEquals(modifiableGeneticVariant.getRefAllele(), Allele.T_ALLELE);
+
+		modifiableGeneticVariant.updateRefAllele(Allele.G_ALLELE);
+
+		byte[] expectedCalledDosage2 = new byte[]
+		{ 2, 2, 2, 2, 2, 2, 2, 1, 2 };
+
+		assertEquals(modifiableGeneticVariant.getSampleVariants(), expectedSwappedSampleAlleles);
+		assertEquals(modifiableGeneticVariant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
+		assertEquals(modifiableGeneticVariant.getSampleCalledDosage(), expectedCalledDosage2);
+		assertEquals(modifiableGeneticVariant.getRefAllele(), Allele.G_ALLELE);
+
+		assertEquals(modifiableGenotypeData.getModifiableSnpVariantByPos("22", posOfTestVariant).getSampleVariants(),
+				expectedSwappedSampleAlleles);
+
+		// Make sure swap is present in all ways of accessing
+
+		assertEquals(modifiableGenotypeData.getSnpVariantByPos("22", posOfTestVariant).getSampleVariants(),
+				expectedSwappedSampleAlleles);
+
+		for (GeneticVariant variant : modifiableGenotypeData)
+		{
+			if (variant.getStartPos() == posOfTestVariant)
+			{
+				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
+				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
+				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
+				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+			}
+		}
+
+		for (GeneticVariant variant : modifiableGenotypeData.getSequenceGeneticVariants("22"))
+		{
+			if (variant.getStartPos() == posOfTestVariant)
+			{
+				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
+				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
+				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
+				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+			}
+		}
+
+		for (GeneticVariant variant : modifiableGenotypeData.getVariantsByPos("22", 14432618))
+		{
+			if (variant.getStartPos() == posOfTestVariant)
+			{
+				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
+				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
+				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
+				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
 			}
 		}
 

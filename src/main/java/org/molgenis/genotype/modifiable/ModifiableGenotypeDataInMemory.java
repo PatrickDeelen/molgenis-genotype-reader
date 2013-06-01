@@ -212,8 +212,12 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 		}
 
 		allelesUpdate.put(originalGeneticVariant, variantAlleles.getComplement());
-		refAlleleUpdate.put(originalGeneticVariant, refAllele.getComplement());
 		variantProviderUpdates.put(originalGeneticVariant, swappingSampleVariantsProvider);
+
+		if (refAllele != null)
+		{
+			refAlleleUpdate.put(originalGeneticVariant, refAllele.getComplement());
+		}
 
 	}
 
