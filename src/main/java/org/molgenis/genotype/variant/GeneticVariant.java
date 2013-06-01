@@ -144,7 +144,8 @@ public interface GeneticVariant
 	public float[] getSampleDosages();
 
 	/**
-	 * Dosage values of 0, 1 or 2
+	 * Dosage values of 0, 1 or 2. Count of reference allele. -1 for missing
+	 * data. If ref is null then count first of variant alleles.
 	 * 
 	 * @return
 	 */
