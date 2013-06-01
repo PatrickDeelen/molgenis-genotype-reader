@@ -142,23 +142,30 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 
 		GeneticVariant originalGeneticVariant = geneticVariant.getOriginalVariant();
 
-		if (idUpdates.containsKey(originalGeneticVariant))
+		GeneticVariantId currentId = idUpdates.get(originalGeneticVariant);
+
+		if (currentId != null)
 		{
-			if (idUpdates.get(originalGeneticVariant).getPrimairyId().equals(newPrimaryId))
+			if (currentId.getPrimairyId().equals(newPrimaryId))
 			{
 				return;
 			}
 		}
-		else if (originalGeneticVariant.getPrimaryVariantId().equals(newPrimaryId))
+		else
 		{
-			return;
+
+			currentId = originalGeneticVariant.getVariantId();
+
+			if (currentId.getPrimairyId().equals(newPrimaryId))
+			{
+				return;
+			}
 		}
 
-		GeneticVariantId oldId = originalGeneticVariant.getVariantId();
-		String oldPrimairyId = oldId.getPrimairyId();
+		String oldPrimairyId = currentId.getPrimairyId();
 
 		// Create alternative alleles based on old alternatives
-		ArrayList<String> newAlternativeAlleles = new ArrayList<String>(oldId.getAlternativeIds());
+		ArrayList<String> newAlternativeAlleles = new ArrayList<String>(currentId.getAlternativeIds());
 		// Remove new primary if it is one of the old alternative
 		newAlternativeAlleles.remove(newPrimaryId);
 		// add the old primary ID to the alternative ID list

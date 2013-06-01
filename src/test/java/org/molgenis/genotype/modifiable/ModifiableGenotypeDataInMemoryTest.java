@@ -1,6 +1,7 @@
 package org.molgenis.genotype.modifiable;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.plink.PedMapGenotypeData;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.id.GeneticVariantId;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -175,6 +177,64 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 			if (variant.getStartPos() == 14431347)
 			{
 				assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
+			}
+		}
+
+	}
+
+	@Test
+	public void updatePrimaryId()
+	{
+
+		ModifiableGeneticVariant modifiableGeneticVariant = modifiableGenotypeData.getModifiableSnpVariantByPos("22",
+				14432618);
+
+		// First overwrite the primaryId with original ID nothing should happen
+		modifiableGeneticVariant.updatePrimaryId("rs738829");
+		assertNull(modifiableGenotypeData.getUpdatedAlleles(modifiableGeneticVariant));
+
+		modifiableGeneticVariant.updatePrimaryId("testId1");
+		assertEquals(modifiableGeneticVariant.getPrimaryVariantId(), "testId1");
+		assertEquals(modifiableGeneticVariant.getAlternativeVariantIds().size(), 1);
+		assertEquals(modifiableGeneticVariant.getAlternativeVariantIds().get(0), "rs738829");
+
+		modifiableGeneticVariant.updatePrimaryId("testId2");
+		assertEquals(modifiableGeneticVariant.getPrimaryVariantId(), "testId2");
+		assertEquals(modifiableGeneticVariant.getAlternativeVariantIds().size(), 2);
+		assertEquals(modifiableGeneticVariant.getAlternativeVariantIds().contains("rs738829"), true);
+		assertEquals(modifiableGeneticVariant.getAlternativeVariantIds().contains("testId1"), true);
+
+		modifiableGeneticVariant.updatePrimaryId("testId1");
+		assertEquals(modifiableGeneticVariant.getVariantId().getPrimairyId(), "testId1");
+		assertEquals(modifiableGeneticVariant.getVariantId().getAlternativeIds().size(), 2);
+		assertEquals(modifiableGeneticVariant.getVariantId().getAlternativeIds().contains("rs738829"), true);
+		assertEquals(modifiableGeneticVariant.getVariantId().getAlternativeIds().contains("testId2"), true);
+
+		GeneticVariantId expectedId = modifiableGeneticVariant.getVariantId();
+
+		assertEquals(modifiableGenotypeData.getSnpVariantByPos("22", 14432618).getVariantId(), expectedId);
+
+		for (GeneticVariant variant : modifiableGenotypeData)
+		{
+			if (variant.getStartPos() == 14432618)
+			{
+				assertEquals(variant.getVariantId(), expectedId);
+			}
+		}
+
+		for (GeneticVariant variant : modifiableGenotypeData.getSequenceGeneticVariants("22"))
+		{
+			if (variant.getStartPos() == 14432618)
+			{
+				assertEquals(variant.getVariantId(), expectedId);
+			}
+		}
+
+		for (GeneticVariant variant : modifiableGenotypeData.getVariantsByPos("22", 14432618))
+		{
+			if (variant.getStartPos() == 14432618)
+			{
+				assertEquals(variant.getVariantId(), expectedId);
 			}
 		}
 
