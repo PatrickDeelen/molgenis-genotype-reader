@@ -321,4 +321,10 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 		filteredOutVariants.add(geneticVariant.getOriginalVariant());
 	}
 
+	@Override
+	public int getExcludedVariantCount()
+	{
+		return filteredOutVariants.size();
+	}
+
 }

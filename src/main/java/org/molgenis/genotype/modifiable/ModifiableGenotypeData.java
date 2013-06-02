@@ -138,4 +138,11 @@ public interface ModifiableGenotypeData extends RandomAccessGenotypeData
 	 */
 	void excludeVariant(ModifiableGeneticVariant geneticVariant);
 
+	/**
+	 * Get the number of excluded variants
+	 * 
+	 * @return excluded variant count
+	 */
+	int getExcludedVariantCount();
+
 }
