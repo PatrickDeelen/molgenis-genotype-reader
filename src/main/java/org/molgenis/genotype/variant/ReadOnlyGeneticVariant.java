@@ -14,7 +14,7 @@ import org.molgenis.genotype.util.LdCalculatorException;
 import org.molgenis.genotype.util.MafResult;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
 
-public class ReadOnlyGeneticVariant implements GeneticVariant
+public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 {
 
 	private final GeneticVariantId variantId;
@@ -316,4 +316,5 @@ public class ReadOnlyGeneticVariant implements GeneticVariant
 	{
 		this.annotationValues = annotationValues;
 	}
+
 }

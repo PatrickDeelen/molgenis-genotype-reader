@@ -9,18 +9,18 @@ import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
 import org.molgenis.genotype.util.MafResult;
+import org.molgenis.genotype.variant.AbstractGeneticVariant;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.MafCalculator;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
 
-public class ModifiableGeneticVariant implements GeneticVariant
+public class ModifiableGeneticVariant extends AbstractGeneticVariant
 {
 
 	private final GeneticVariant originalVariant;
 
 	private final ModifiableGenotypeData modifiableGenotypeData;
-	private MafResult mafResult = null;
 
 	public ModifiableGeneticVariant(GeneticVariant originalVariant, ModifiableGenotypeData modifiableGenotypeData)
 	{
@@ -122,20 +122,18 @@ public class ModifiableGeneticVariant implements GeneticVariant
 	@Override
 	public double getMinorAlleleFrequency()
 	{
-		if (mafResult == null)
-		{
-			mafResult = MafCalculator.calculateMaf(getVariantAlleles(), getRefAllele(), getSampleVariants());
-		}
+		// Do not cache MAF results since modifications to alleles need to be
+		// reflected
+		MafResult mafResult = MafCalculator.calculateMaf(getVariantAlleles(), getRefAllele(), getSampleVariants());
 		return mafResult.getFreq();
 	}
 
 	@Override
 	public Allele getMinorAllele()
 	{
-		if (mafResult == null)
-		{
-			mafResult = MafCalculator.calculateMaf(getVariantAlleles(), getRefAllele(), getSampleVariants());
-		}
+		// Do not cache MAF results since modifications to alleles need to be
+		// reflected
+		MafResult mafResult = MafCalculator.calculateMaf(getVariantAlleles(), getRefAllele(), getSampleVariants());
 		return mafResult.getMinorAllele();
 	}
 
@@ -239,33 +237,76 @@ public class ModifiableGeneticVariant implements GeneticVariant
 		return originalVariant;
 	}
 
+	/**
+	 * Updates reference allele
+	 * 
+	 * @param newRefAllele
+	 * @throws GenotypeModificationException
+	 *             if reference allele is not one of the variant alleles
+	 */
 	public void updateRefAllele(Allele newRefAllele)
 	{
 		modifiableGenotypeData.updateRefAllele(this, newRefAllele);
 	}
 
+	/**
+	 * Updates reference allele
+	 * 
+	 * @param newRefAllele
+	 * @throws GenotypeModificationException
+	 *             if reference allele is not one of the variant alleles
+	 */
 	public void updateRefAllele(String newRefAllele)
 	{
 		updateRefAllele(Allele.create(newRefAllele));
 	}
 
+	/**
+	 * Updates reference allele
+	 * 
+	 * @param newRefAllele
+	 * @throws GenotypeModificationException
+	 *             if reference allele is not one of the variant alleles
+	 */
 	public void updateRefAllele(char newRefAllele)
 	{
 		updateRefAllele(Allele.create(newRefAllele));
 	}
 
+	/**
+	 * Sets new primary ID. Old ID will made an alternative ID
+	 * 
+	 * @param newPrimaryId
+	 */
 	public void updatePrimaryId(String newPrimaryId)
 	{
 		modifiableGenotypeData.updateVariantPrimaryId(this, newPrimaryId);
 	}
 
+	/**
+	 * Overwrite old variant ID
+	 * 
+	 * @param newVariantId
+	 */
 	public void updateId(GeneticVariantId newVariantId)
 	{
 		modifiableGenotypeData.updateVariantId(this, newVariantId);
 	}
 
+	/**
+	 * Swap the alleles from this variants. Variant Alleles, Reference Allele
+	 * and Sample Alleles will be updated
+	 */
 	public void swap()
 	{
 		modifiableGenotypeData.swapGeneticVariant(this);
+	}
+
+	/**
+	 * Exclude this variant from the modifiable genotype data it belongs to.
+	 */
+	public void exclude()
+	{
+		modifiableGenotypeData.excludeVariant(this);
 	}
 }
