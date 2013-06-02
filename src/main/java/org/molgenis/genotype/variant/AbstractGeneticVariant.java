@@ -7,42 +7,42 @@ abstract public class AbstractGeneticVariant implements GeneticVariant
 
 	private static final ChromosomeComparator chrComparator = new ChromosomeComparator();
 
-	// @Override
-	// public int compareTo(GeneticVariant other)
-	// {
-	// if (other == null)
-	// {
-	// return 0;
-	// }
-	//
-	// if (this == other)
-	// {
-	// return 0;
-	// }
-	//
-	// if (this.getSequenceName().equals(other.getSequenceName()))
-	// {
-	// return chrComparator.compare(this.getSequenceName(),
-	// other.getSequenceName());
-	// }
-	// else
-	// {
-	// // same sequence
-	// if (this.getStartPos() != other.getStartPos())
-	// {
-	// return this.getStartPos() - other.getStartPos();
-	// }
-	// else
-	// {
-	// // same sequence and same start
-	// if (this.getVariantAlleles() != other.getVariantAlleles())
-	// {
-	// // return this.getVariantAlleles(). -
-	// // other.getVariantAlleles();
-	// }
-	// }
-	// }
-	// }
+	@Override
+	public int compareTo(GeneticVariant other)
+	{
+		if (other == null)
+		{
+			return 0;
+		}
+
+		if (this == other)
+		{
+			return 0;
+		}
+
+		if (!this.getSequenceName().equals(other.getSequenceName()))
+		{
+			return chrComparator.compare(this.getSequenceName(), other.getSequenceName());
+		}
+		else
+		{
+			// same sequence
+			if (this.getStartPos() != other.getStartPos())
+			{
+				return this.getStartPos() - other.getStartPos();
+			}
+			else
+			{
+				// TODO FIX ME!!!!!!!!!!!!!!!!!!!!
+				throw new RuntimeException(
+						"Genetic variant comparotor can not compare variants with identical sequence and pos. This is a major TODO");
+
+				// same sequence and same start
+
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -69,9 +69,8 @@ abstract public class AbstractGeneticVariant implements GeneticVariant
 	public boolean equals(Object obj)
 	{
 		if (this == obj) return true;
-		if (!super.equals(obj)) return false;
-		if (getClass() != obj.getClass()) return false;
-		ReadOnlyGeneticVariant other = (ReadOnlyGeneticVariant) obj;
+		if (!(obj instanceof GeneticVariant)) return false;
+		GeneticVariant other = (GeneticVariant) obj;
 		if (getVariantAlleles() == null)
 		{
 			if (other.getVariantAlleles() != null) return false;

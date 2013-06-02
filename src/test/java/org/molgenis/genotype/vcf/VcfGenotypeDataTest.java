@@ -136,7 +136,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertNotNull(variants);
 		assertEquals(variants.size(), 1);
 
-		GeneticVariant variant = variants.get(0);
+		// GeneticVariant variant = variants.get(0);
 		// TODO FIX
 		// assertNotNull(variant.getAnnotationValues());
 		// assertEquals(variant.getAnnotationValues().size(), 7);
