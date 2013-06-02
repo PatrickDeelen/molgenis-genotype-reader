@@ -65,6 +65,9 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		assertEquals(modifiableGeneticVariant.getSequenceName(), originalVariant.getSequenceName());
 		assertEquals(modifiableGeneticVariant.getStartPos(), originalVariant.getStartPos());
 
+		originalVariant = modifiableGenotypeData.getModifiableSnpVariantByPos("22", 1);
+		assertNull(originalVariant);
+
 	}
 
 	@Test
@@ -121,6 +124,9 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 
 		assertEquals(modifiable.getSequenceName(), original.getSequenceName());
 		assertEquals(modifiable.getStartPos(), original.getStartPos());
+
+		original = modifiableGenotypeData.getSnpVariantByPos("22", 1);
+		assertNull(original);
 	}
 
 	@Test
@@ -335,6 +341,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 			}
 		}
 
+		int counter = 0;
 		for (GeneticVariant variant : modifiableGenotypeData.getSequenceGeneticVariants("22"))
 		{
 			if (variant.getStartPos() == posOfTestVariant)
@@ -344,7 +351,9 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
 				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
 			}
+			++counter;
 		}
+		assertEquals(counter, 9);
 
 		for (GeneticVariant variant : modifiableGenotypeData.getVariantsByPos("22", 14432618))
 		{
@@ -356,6 +365,127 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
 			}
 		}
+
+		for (GeneticVariant variant : modifiableGenotypeData.getModifiableGeneticVariants())
+		{
+			if (variant.getStartPos() == posOfTestVariant)
+			{
+				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
+				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
+				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
+				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+			}
+		}
+
+		counter = 0;
+		for (GeneticVariant variant : modifiableGenotypeData.getModifiableSequenceGeneticVariants("22"))
+		{
+			if (variant.getStartPos() == posOfTestVariant)
+			{
+				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
+				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
+				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
+				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+			}
+			++counter;
+		}
+		assertEquals(counter, 9);
+
+		for (GeneticVariant variant : modifiableGenotypeData.getModifiableVariantsByPos("22", 14432618))
+		{
+			if (variant.getStartPos() == posOfTestVariant)
+			{
+				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
+				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
+				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
+				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+			}
+		}
+
+	}
+
+	@Test
+	public void filterVariants()
+	{
+
+		int removePos1 = 14434713;
+		String removeChr1 = "22";
+		int removePos2 = 14434960;
+		String removeChr2 = "23";
+
+		ModifiableGeneticVariant removedVariant1 = modifiableGenotypeData.getModifiableSnpVariantByPos(removeChr1,
+				removePos1);
+		ModifiableGeneticVariant removedVariant2 = modifiableGenotypeData.getModifiableSnpVariantByPos(removeChr2,
+				removePos2);
+
+		modifiableGenotypeData.excludeVariant(removedVariant1);
+		removedVariant2.exclude();
+
+		assertNull(modifiableGenotypeData.getModifiableSnpVariantByPos(removeChr1, removePos1));
+		assertNull(modifiableGenotypeData.getModifiableSnpVariantByPos(removeChr2, removePos2));
+
+		assertNull(modifiableGenotypeData.getSnpVariantByPos(removeChr1, removePos1));
+		assertNull(modifiableGenotypeData.getSnpVariantByPos(removeChr2, removePos2));
+
+		int counter;
+
+		counter = 0;
+		for (GeneticVariant variant : modifiableGenotypeData)
+		{
+			assertEquals(variant.getStartPos() == removePos1, false);
+			assertEquals(variant.getStartPos() == removePos2, false);
+			++counter;
+		}
+		assertEquals(counter, 8);
+
+		counter = 0;
+		for (GeneticVariant variant : modifiableGenotypeData.getSequenceGeneticVariants("22"))
+		{
+			assertEquals(variant.getStartPos() == removePos1, false);
+			assertEquals(variant.getStartPos() == removePos2, false);
+			++counter;
+		}
+		assertEquals(counter, 8);
+
+		counter = 0;
+		for (GeneticVariant variant : modifiableGenotypeData.getVariantsByPos("22", removePos1))
+		{
+			System.err.println(variant.isSnp());
+			System.err.println(variant.getStartPos());
+			assertEquals(variant.getStartPos() == removePos1, false);
+			assertEquals(variant.getStartPos() == removePos2, false);
+			++counter;
+		}
+		assertEquals(counter, 0);
+
+		counter = 0;
+		for (GeneticVariant variant : modifiableGenotypeData.getModifiableGeneticVariants())
+		{
+			assertEquals(variant.getStartPos() == removePos1, false);
+			assertEquals(variant.getStartPos() == removePos2, false);
+			++counter;
+		}
+		assertEquals(counter, 8);
+
+		counter = 0;
+		for (GeneticVariant variant : modifiableGenotypeData.getModifiableSequenceGeneticVariants("22"))
+		{
+			assertEquals(variant.getStartPos() == removePos1, false);
+			assertEquals(variant.getStartPos() == removePos2, false);
+			++counter;
+		}
+		assertEquals(counter, 8);
+
+		counter = 0;
+		for (GeneticVariant variant : modifiableGenotypeData.getModifiableVariantsByPos("22", removePos1))
+		{
+			System.err.println(variant.isSnp());
+			System.err.println(variant.getStartPos());
+			assertEquals(variant.getStartPos() == removePos1, false);
+			assertEquals(variant.getStartPos() == removePos2, false);
+			++counter;
+		}
+		assertEquals(counter, 0);
 
 	}
 
@@ -370,7 +500,6 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 
 			assertEquals(modifiableVariant.getSequenceName(), originalVariant.getSequenceName());
 			assertEquals(modifiableVariant.getStartPos(), originalVariant.getStartPos());
-
 		}
 
 		if (originalGeneticVariants.hasNext() || modifiableGeneticVariants.hasNext())

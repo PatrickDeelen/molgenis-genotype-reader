@@ -1,6 +1,8 @@
 package org.molgenis.genotype.modifiable;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.molgenis.genotype.variant.GeneticVariant;
 
@@ -9,32 +11,66 @@ public class ModifiableGeneticVariantIterator<E extends GeneticVariant> implemen
 
 	private final Iterator<GeneticVariant> originalIterator;
 	private final ModifiableGenotypeData modifiableGenotypeData;
+	private final HashSet<GeneticVariant> excludeList;
+	private ModifiableGeneticVariant next;
 
 	public ModifiableGeneticVariantIterator(Iterator<GeneticVariant> originalIterator,
-			ModifiableGenotypeData modifiableGenotypeData)
+			ModifiableGenotypeData modifiableGenotypeData, HashSet<GeneticVariant> excludeList)
 	{
 		super();
 		this.originalIterator = originalIterator;
 		this.modifiableGenotypeData = modifiableGenotypeData;
+		this.excludeList = excludeList;
+		goToNext();
 	}
 
 	@Override
 	public boolean hasNext()
 	{
-		return originalIterator.hasNext();
+		return next != null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public E next()
 	{
-		return (E) new ModifiableGeneticVariant(originalIterator.next(), modifiableGenotypeData);
+		if (next == null)
+		{
+			throw new NoSuchElementException();
+		}
+
+		ModifiableGeneticVariant currentNext = next;
+
+		// prepare next next
+		goToNext();
+
+		return (E) currentNext;
+
 	}
 
 	@Override
 	public void remove()
 	{
-		throw new UnsupportedOperationException("Not supported");
+		throw new UnsupportedOperationException("Removal not supported via iterator.");
+	}
+
+	private void goToNext()
+	{
+		while (originalIterator.hasNext())
+		{
+			GeneticVariant originalNext = originalIterator.next();
+			if (excludeList.contains(originalNext))
+			{
+				// skip variants on exclude list
+				continue;
+			}
+			next = new ModifiableGeneticVariant(originalNext, modifiableGenotypeData);
+			return;
+		}
+		// We do a return if we find a non excluded next. So if we get here it
+		// is the end of the original iterator. Setting next to null so hasNext
+		// knows it is the end.
+		next = null;
 	}
 
 	/**
@@ -44,13 +80,17 @@ public class ModifiableGeneticVariantIterator<E extends GeneticVariant> implemen
 	 *            the original iterator
 	 * @param modifiableGenotypeData
 	 *            the modifiable genotype data that stores the changes.
+	 * @param excludeList
+	 *            variant to skip over when iterating
 	 * @return
 	 */
 	public static Iterable<ModifiableGeneticVariant> createModifiableGeneticVariantIterable(
-			Iterator<GeneticVariant> originalIterator, ModifiableGenotypeData modifiableGenotypeData)
+			Iterator<GeneticVariant> originalIterator, ModifiableGenotypeData modifiableGenotypeData,
+			HashSet<GeneticVariant> excludeList)
 	{
 		return new ModifiableGeneticVariantIterable<ModifiableGeneticVariant>(
-				new ModifiableGeneticVariantIterator<ModifiableGeneticVariant>(originalIterator, modifiableGenotypeData));
+				new ModifiableGeneticVariantIterator<ModifiableGeneticVariant>(originalIterator,
+						modifiableGenotypeData, excludeList));
 	}
 
 	/**
@@ -59,13 +99,17 @@ public class ModifiableGeneticVariantIterator<E extends GeneticVariant> implemen
 	 * 
 	 * @param originalIterator
 	 * @param modifiableGenotypeData
+	 * @param excludeList
+	 *            variant to skip over when iterating
 	 * @return
 	 */
 	public static Iterable<GeneticVariant> createGeneticVariantIterableBackByModifiable(
-			Iterator<GeneticVariant> originalIterator, ModifiableGenotypeData modifiableGenotypeData)
+			Iterator<GeneticVariant> originalIterator, ModifiableGenotypeData modifiableGenotypeData,
+			HashSet<GeneticVariant> excludeList)
 	{
 		return new ModifiableGeneticVariantIterable<GeneticVariant>(
-				new ModifiableGeneticVariantIterator<GeneticVariant>(originalIterator, modifiableGenotypeData));
+				new ModifiableGeneticVariantIterator<GeneticVariant>(originalIterator, modifiableGenotypeData,
+						excludeList));
 	}
 
 	protected static class ModifiableGeneticVariantIterable<E extends GeneticVariant> implements Iterable<E>

@@ -7,7 +7,8 @@ import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
 
 /**
- * GenotypeData of which some variants properties can be updated
+ * GenotypeData of which some variants properties can be updated and from which
+ * variants can be excluded
  * 
  * @author Patrick Deelen
  * 
@@ -129,5 +130,12 @@ public interface ModifiableGenotypeData extends RandomAccessGenotypeData
 	 * @return
 	 */
 	Iterable<ModifiableGeneticVariant> getModifiableGeneticVariants();
+
+	/**
+	 * Exclude a variant from future queries on this dataset
+	 * 
+	 * @param geneticVariant
+	 */
+	void excludeVariant(ModifiableGeneticVariant geneticVariant);
 
 }
