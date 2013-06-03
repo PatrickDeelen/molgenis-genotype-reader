@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class Alleles implements Iterable<Allele>
+public class Alleles implements Iterable<Allele>, Comparable<Alleles>
 {
 	private static final Map<List<Allele>, Alleles> pool = new HashMap<List<Allele>, Alleles>();
 
@@ -262,6 +262,76 @@ public class Alleles implements Iterable<Allele>
 	public boolean contains(Allele queryAllele)
 	{
 		return (alleles.contains(queryAllele));
+	}
+
+	@Override
+	public int compareTo(Alleles other)
+	{
+		if (this == other)
+		{
+			return 0;
+		}
+
+		Iterator<Allele> thisAlleleIterator = this.alleles.iterator();
+		Iterator<Allele> otherAlleleIterator = other.alleles.iterator();
+
+		while (thisAlleleIterator.hasNext() && otherAlleleIterator.hasNext())
+		{
+			Allele thisCurrentAllele = thisAlleleIterator.next();
+			Allele otherCurrentAllele = otherAlleleIterator.next();
+
+			if (thisCurrentAllele != otherCurrentAllele)
+			{
+				return thisCurrentAllele.compareTo(otherCurrentAllele);
+			}
+		}
+
+		if (thisAlleleIterator.hasNext())
+		{
+			return 1;
+		}
+
+		if (otherAlleleIterator.hasNext())
+		{
+			return -1;
+		}
+
+		return 0;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((alleles == null) ? 0 : alleles.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		Alleles other = (Alleles) obj;
+		if (alleles == null)
+		{
+			if (other.alleles != null) return false;
+		}
+		else if (!alleles.equals(other.alleles)) return false;
+		return true;
 	}
 
 }

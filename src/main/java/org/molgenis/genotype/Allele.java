@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.molgenis.genotype.util.Utils;
 
-public class Allele
+public class Allele implements Comparable<Allele>
 {
 
 	private static Map<String, Allele> pool = new HashMap<String, Allele>();
@@ -157,4 +157,9 @@ public class Allele
 		return this.getAlleleAsString();
 	}
 
+	@Override
+	public int compareTo(Allele other)
+	{
+		return this.allele.compareTo(other.allele);
+	}
 }
