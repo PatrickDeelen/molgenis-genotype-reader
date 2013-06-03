@@ -70,11 +70,11 @@ public class Alleles implements Iterable<Allele>, Comparable<Alleles>
 			{
 				return false;
 			}
-			if (allele == Allele.A_ALLELE || allele == Allele.T_ALLELE)
+			if (allele == Allele.A || allele == Allele.T)
 			{
 				onlyGc = false;
 			}
-			if (allele == Allele.C_ALLELE || allele == Allele.G_ALLELE)
+			if (allele == Allele.C || allele == Allele.G)
 			{
 				onlyAt = false;
 			}

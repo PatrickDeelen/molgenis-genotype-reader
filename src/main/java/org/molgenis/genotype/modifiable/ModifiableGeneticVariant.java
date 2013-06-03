@@ -133,7 +133,7 @@ public class ModifiableGeneticVariant extends AbstractGeneticVariant
 		catch (NullPointerException e)
 		{
 			throw new GenotypeDataException("NullPointerException in maf caculation. " + getVariantAlleles() + " ref: "
-					+ getRefAllele() + getSampleVariants().toArray(new String[getSampleVariants().size()]), e);
+					+ getRefAllele(), e);
 		}
 
 	}
