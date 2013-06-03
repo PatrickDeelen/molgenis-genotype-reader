@@ -23,6 +23,7 @@ import org.molgenis.genotype.plink.drivers.BimFileDriver;
 import org.molgenis.genotype.plink.drivers.FamFileDriver;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 
 /**
@@ -54,6 +55,7 @@ public class BedBimFamReader implements SampleVariantsProvider
 	//helper variables
 	private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
+	private final int sampleVariantProviderUniqueId;
 	//private Map<Integer, List<Biallele>> sampleAllelesBySnpIndex = new HashMap<Integer, List<Biallele>>();
 
 	public BedBimFamReader(File bed, File bim, File fam) throws Exception
@@ -66,6 +68,8 @@ public class BedBimFamReader implements SampleVariantsProvider
 		nrOfSnps = bimfd.getNrOfElements();
 		nrOfGenotypes = nrOfIndividuals * nrOfSnps;
 		paddingPerSnp = (int) ((bedfd.getNrOfElements() - nrOfGenotypes) / nrOfSnps);
+		
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 	}
 
 	public void setIndividuals() throws Exception
@@ -393,5 +397,11 @@ public class BedBimFamReader implements SampleVariantsProvider
 	{
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 }
