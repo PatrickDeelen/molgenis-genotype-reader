@@ -318,49 +318,16 @@ public class BedBimFamReader implements SampleVariantsProvider
 		{
 			throw new IllegalArgumentException("Unknown primaryVariantId [" + variant.getPrimaryVariantId() + "]");
 		}
-
-		List<Biallele> bialleles = getAllelesByIndex(index);
-		List<Alleles> sampleVariants = new ArrayList<Alleles>(bialleles.size());
-		for (Biallele biallele : bialleles)
-		{
-			sampleVariants.add(Alleles.createBasedOnChars(biallele.getAllele1(), biallele.getAllele2()));
-		}
-
-		return sampleVariants;
-	}
-	
-	/**
-	 * Get the alleles for this SNP index
-	 * meaning: the position of this SNP in the BIM file
-	 * then get all of the individuals (samples) for this SNP
-	 * @param index
-	 * @return
-	 * @throws Exception 
-	 */
-	public List<Biallele> getAllelesByIndex(Integer index) throws GenotypeDataException
-	{
+		
 		List<Biallele> bialleles = new ArrayList<Biallele>();
 		
 		try
 		{
-			
-		//	int padding 
-		//	bedfd.getElement(index);
-			
-			//for SNP-major mode
-			long start = index * nrOfIndividuals;
-			long stop = start + nrOfIndividuals;
-			
-			String[] allIndividualsForThisSNP = bedfd.getElements(start, stop,
-					paddingPerSnp);
-			
+			String[] allIndividualsForThisSNP = bedfd.getSNPs(index.longValue(), (int)nrOfIndividuals);
 			
 			String a1 = Character.toString(snpCoding.get(snpNames.get(index)).getAllele1());
 			String a2 = Character.toString(snpCoding.get(snpNames.get(index)).getAllele2());
-	//		String hom1 = a1 + a1;
-	//		String hom2 = a2 + a2;
-	//		String hetr = a1 + a2;
-	//		
+
 			for(int i = 0; i < this.nrOfIndividuals; i++)
 			{
 				Biallele b;
@@ -384,11 +351,32 @@ public class BedBimFamReader implements SampleVariantsProvider
 			}
 			
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new GenotypeDataException(e);
 		}
-		
+
+		List<Alleles> sampleVariants = new ArrayList<Alleles>(bialleles.size());
+		for (Biallele biallele : bialleles)
+		{
+			//weird: first allele 2 then allele 1 ?
+			sampleVariants.add(Alleles.createBasedOnChars(biallele.getAllele2(), biallele.getAllele1()));
+		}
+		return sampleVariants;
+	}
+	
+	/**
+	 * Get the alleles for this SNP index
+	 * meaning: the position of this SNP in the BIM file
+	 * then get all of the individuals (samples) for this SNP
+	 * @param index
+	 * @return
+	 * @throws Exception 
+	 */
+	public List<Biallele> getAllelesByIndex(Integer index) throws GenotypeDataException
+	{
+		List<Biallele> bialleles = new ArrayList<Biallele>();
+		bialleles.add(bimEntries.get(index).getBiallele());
 		return bialleles;
 	}
 

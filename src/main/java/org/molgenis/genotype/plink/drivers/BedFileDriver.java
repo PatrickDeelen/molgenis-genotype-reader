@@ -185,15 +185,8 @@ public class BedFileDriver
 		//inclusive: read this byte index
 		//add 3 because of the reserved bytes in plink format
 		long startByte = (index * bytesPerIndividual) + 3;
-		
-		//exclusive: stop when reaching this index
+
 		long stopByte = startByte + bytesPerIndividual;
-		
-		System.out.println("nrOfIndividualsInPaddedByte: " + nrOfIndividualsInPaddedByte);
-		System.out.println("paddingIndividuals: " + paddingIndividuals);
-		System.out.println("bytesPerIndividual: " + bytesPerIndividual);
-		System.out.println("startByte: " + startByte);
-		System.out.println("stopByte: " + stopByte);
 		
 		byte[] res = new byte[(int) (stopByte - startByte)];
 		
@@ -201,8 +194,6 @@ public class BedFileDriver
 		raf.seek(startByte);
 		raf.read(res);
 		raf.close();
-		
-		System.out.println("RES LENGTH: " + res.length);
 		
 		String[] result = new String[nrOfIndividualsInFAMfile];
 		int res_index = 0;
