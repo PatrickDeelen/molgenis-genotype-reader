@@ -95,4 +95,17 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		assertEquals(samples.get(0).getFamilyId(), "F1042");
 	}
 
+	@Test
+	public void testGetSnpVariantByPos()
+	{
+
+		int pos = 14434960;
+
+		GeneticVariant variant = genotypeData.getSnpVariantByPos("23", pos);
+
+		assertNotNull(variant);
+		assertEquals(variant.getStartPos(), pos);
+
+	}
+
 }

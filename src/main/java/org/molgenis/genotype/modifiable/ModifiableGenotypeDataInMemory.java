@@ -2,6 +2,7 @@ package org.molgenis.genotype.modifiable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	private final HashMap<GeneticVariant, Allele> refAlleleUpdate;
 	private final HashMap<GeneticVariant, Alleles> allelesUpdate;
 	private final HashMap<GeneticVariant, SampleVariantsProvider> variantProviderUpdates;
+	private final HashSet<GeneticVariant> filteredOutVariants;
 
 	private final HashMap<SampleVariantsProvider, SampleVariantsProvider> swappingSampleVariantProviders;
 
@@ -38,6 +40,7 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 		this.allelesUpdate = new HashMap<GeneticVariant, Alleles>();
 		this.variantProviderUpdates = new HashMap<GeneticVariant, SampleVariantsProvider>();
 		this.swappingSampleVariantProviders = new HashMap<SampleVariantsProvider, SampleVariantsProvider>();
+		this.filteredOutVariants = new HashSet<GeneticVariant>();
 	}
 
 	@Override
@@ -55,42 +58,39 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Sequence getSequenceByName(String name)
 	{
-		throw new UnsupportedOperationException();
+		return sourceGenotypeData.getSequenceByName(name);
 	}
 
 	@Override
 	public Iterable<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(sourceGenotypeData
+				.getVariantsByPos(seqName, startPos).iterator(), this, filteredOutVariants);
 	}
 
 	@Override
 	public GeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return getModifiableSnpVariantByPos(seqName, startPos);
 	}
 
 	@Override
 	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(sourceGenotypeData
+				.getSequenceGeneticVariants(seqName).iterator(), this, filteredOutVariants);
 	}
 
 	@Override
 	public List<Annotation> getVariantAnnotations()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.getVariantAnnotations();
 	}
 
 	@Override
 	public Annotation getVariantAnnotation(String annotationId)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sourceGenotypeData.getVariantAnnotation(annotationId);
 	}
 
 	@Override
@@ -102,60 +102,75 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterator<GeneticVariant> iterator()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println(filteredOutVariants.size());
+
+		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(
+				sourceGenotypeData.iterator(), this, filteredOutVariants).iterator();
 	}
 
 	@Override
-	public synchronized GeneticVariantId getUpdatedId(GeneticVariant geneticVariant)
+	public synchronized GeneticVariantId getUpdatedId(ModifiableGeneticVariant geneticVariant)
 	{
-		return idUpdates.get(geneticVariant);
+		return idUpdates.get(geneticVariant.getOriginalVariant());
 	}
 
 	@Override
-	public synchronized Allele getUpdatedRef(GeneticVariant geneticVariant)
+	public synchronized Allele getUpdatedRef(ModifiableGeneticVariant geneticVariant)
 	{
-		return refAlleleUpdate.get(geneticVariant);
+		return refAlleleUpdate.get(geneticVariant.getOriginalVariant());
 	}
 
 	@Override
-	public synchronized SampleVariantsProvider getUpdatedSampleVariantProvider(GeneticVariant geneticVariant)
+	public synchronized SampleVariantsProvider getUpdatedSampleVariantProvider(ModifiableGeneticVariant geneticVariant)
 	{
-		return variantProviderUpdates.get(geneticVariant);
+		return variantProviderUpdates.get(geneticVariant.getOriginalVariant());
 	}
 
 	@Override
-	public synchronized void updateVariantId(GeneticVariant geneticVariant, GeneticVariantId newGeneticVariantId)
+	public synchronized void updateVariantId(ModifiableGeneticVariant geneticVariant,
+			GeneticVariantId newGeneticVariantId)
 	{
-		if (geneticVariant.getVariantId().equals(newGeneticVariantId))
+
+		GeneticVariant originalGeneticVariant = geneticVariant.getOriginalVariant();
+
+		if (originalGeneticVariant.getVariantId().equals(newGeneticVariantId))
 		{
-			idUpdates.remove(geneticVariant);
+			idUpdates.remove(originalGeneticVariant);
 			return;
 		}
-		idUpdates.put(geneticVariant, newGeneticVariantId);
+		idUpdates.put(originalGeneticVariant, newGeneticVariantId);
 	}
 
 	@Override
-	public synchronized void updateVariantPrimaryId(GeneticVariant geneticVariant, String newPrimaryId)
+	public synchronized void updateVariantPrimaryId(ModifiableGeneticVariant geneticVariant, String newPrimaryId)
 	{
 
-		if (idUpdates.containsKey(geneticVariant))
+		GeneticVariant originalGeneticVariant = geneticVariant.getOriginalVariant();
+
+		GeneticVariantId currentId = idUpdates.get(originalGeneticVariant);
+
+		if (currentId != null)
 		{
-			if (idUpdates.get(geneticVariant).getPrimairyId().equals(newPrimaryId))
+			if (currentId.getPrimairyId().equals(newPrimaryId))
 			{
 				return;
 			}
 		}
-		else if (geneticVariant.getPrimaryVariantId().equals(newPrimaryId))
+		else
 		{
-			return;
+
+			currentId = originalGeneticVariant.getVariantId();
+
+			if (currentId.getPrimairyId().equals(newPrimaryId))
+			{
+				return;
+			}
 		}
 
-		GeneticVariantId oldId = geneticVariant.getVariantId();
-		String oldPrimairyId = oldId.getPrimairyId();
+		String oldPrimairyId = currentId.getPrimairyId();
 
 		// Create alternative alleles based on old alternatives
-		ArrayList<String> newAlternativeAlleles = new ArrayList<String>(oldId.getAlternativeIds());
+		ArrayList<String> newAlternativeAlleles = new ArrayList<String>(currentId.getAlternativeIds());
 		// Remove new primary if it is one of the old alternative
 		newAlternativeAlleles.remove(newPrimaryId);
 		// add the old primary ID to the alternative ID list
@@ -166,24 +181,26 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	}
 
 	@Override
-	public synchronized void swapGeneticVariant(GeneticVariant geneticVariant)
+	public synchronized void swapGeneticVariant(ModifiableGeneticVariant geneticVariant)
 	{
+		GeneticVariant originalGeneticVariant = geneticVariant.getOriginalVariant();
+
 		Alleles variantAlleles = getUpdatedAlleles(geneticVariant);
 		if (variantAlleles == null)
 		{
-			variantAlleles = geneticVariant.getVariantAlleles();
+			variantAlleles = originalGeneticVariant.getVariantAlleles();
 		}
 
 		Allele refAllele = getUpdatedRef(geneticVariant);
 		if (refAllele == null)
 		{
-			refAllele = geneticVariant.getRefAllele();
+			refAllele = originalGeneticVariant.getRefAllele();
 		}
 
 		SampleVariantsProvider sampleVariantProvider = getUpdatedSampleVariantProvider(geneticVariant);
 		if (sampleVariantProvider == null)
 		{
-			sampleVariantProvider = geneticVariant.getSampleVariantsProvider();
+			sampleVariantProvider = originalGeneticVariant.getSampleVariantsProvider();
 		}
 
 		SampleVariantsProvider swappingSampleVariantsProvider = swappingSampleVariantProviders
@@ -199,21 +216,28 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 			swappingSampleVariantProviders.put(sampleVariantProvider, swappingSampleVariantsProvider);
 		}
 
-		allelesUpdate.put(geneticVariant, variantAlleles.getComplement());
-		refAlleleUpdate.put(geneticVariant, refAllele.getComplement());
-		variantProviderUpdates.put(geneticVariant, swappingSampleVariantsProvider);
+		allelesUpdate.put(originalGeneticVariant, variantAlleles.getComplement());
+		variantProviderUpdates.put(originalGeneticVariant, swappingSampleVariantsProvider);
+
+		if (refAllele != null)
+		{
+			refAlleleUpdate.put(originalGeneticVariant, refAllele.getComplement());
+		}
 
 	}
 
 	@Override
-	public synchronized void updateRefAllele(GeneticVariant geneticVariant, Allele newRefAllele)
+	public synchronized void updateRefAllele(ModifiableGeneticVariant geneticVariant, Allele newRefAllele)
 	{
+
+		GeneticVariant originalGeneticVariant = geneticVariant.getOriginalVariant();
 
 		// If no update do nothing expect if there was already a previous
 		// update. Reverting back is complicated because that would require
 		// recoding the alleles. Might undo intentional changes in ordering of
 		// alternative alleles
-		if (geneticVariant.getRefAllele() == newRefAllele && !refAlleleUpdate.containsKey(geneticVariant))
+		if (originalGeneticVariant.getRefAllele() == newRefAllele
+				&& !refAlleleUpdate.containsKey(originalGeneticVariant))
 		{
 			return;
 		}
@@ -221,15 +245,15 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 		Alleles variantAlleles = getUpdatedAlleles(geneticVariant);
 		if (variantAlleles == null)
 		{
-			variantAlleles = geneticVariant.getVariantAlleles();
+			variantAlleles = originalGeneticVariant.getVariantAlleles();
 		}
 
 		if (!variantAlleles.contains(newRefAllele))
 		{
 			throw new GenotypeDataException("Can not update to reference allele (" + newRefAllele
 					+ ") is not a found in supplied alleles " + variantAlleles.getAllelesAsString()
-					+ " for variant with ID: " + geneticVariant.getPrimaryVariantId() + " at: "
-					+ geneticVariant.getSequenceName() + ":" + geneticVariant.getStartPos());
+					+ " for variant with ID: " + originalGeneticVariant.getPrimaryVariantId() + " at: "
+					+ originalGeneticVariant.getSequenceName() + ":" + originalGeneticVariant.getStartPos());
 		}
 
 		// reference allele is changed so can never be the first allele so lets
@@ -238,15 +262,69 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 		allelesWithoutRef.remove(newRefAllele);
 		allelesWithoutRef.add(0, newRefAllele);
 
-		allelesUpdate.put(geneticVariant, Alleles.createAlleles(allelesWithoutRef));
-		refAlleleUpdate.put(geneticVariant, newRefAllele);
+		allelesUpdate.put(originalGeneticVariant, Alleles.createAlleles(allelesWithoutRef));
+		refAlleleUpdate.put(originalGeneticVariant, newRefAllele);
 
 	}
 
 	@Override
-	public synchronized Alleles getUpdatedAlleles(GeneticVariant geneticVariant)
+	public synchronized Alleles getUpdatedAlleles(ModifiableGeneticVariant geneticVariant)
 	{
-		return allelesUpdate.get(geneticVariant);
+		return allelesUpdate.get(geneticVariant.getOriginalVariant());
+	}
+
+	@Override
+	public Iterable<ModifiableGeneticVariant> getModifiableSequenceGeneticVariants(String seqName)
+	{
+		Iterator<GeneticVariant> originalIterator = sourceGenotypeData.getSequenceGeneticVariants(seqName).iterator();
+		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(originalIterator, this,
+				filteredOutVariants);
+	}
+
+	@Override
+	public Iterable<ModifiableGeneticVariant> getModifiableVariantsByPos(String seqName, int startPos)
+	{
+		Iterator<GeneticVariant> originalIterator = sourceGenotypeData.getVariantsByPos(seqName, startPos).iterator();
+		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(originalIterator, this,
+				filteredOutVariants);
+	}
+
+	@Override
+	public ModifiableGeneticVariant getModifiableSnpVariantByPos(String seqName, int startPos)
+	{
+		GeneticVariant originalVariant = sourceGenotypeData.getSnpVariantByPos(seqName, startPos);
+		if (originalVariant == null)
+		{
+			return null;
+		}
+		else if (filteredOutVariants.contains(originalVariant))
+		{
+			return null;
+		}
+		else
+		{
+			return new ModifiableGeneticVariant(originalVariant, this);
+		}
+
+	}
+
+	@Override
+	public Iterable<ModifiableGeneticVariant> getModifiableGeneticVariants()
+	{
+		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(this.iterator(), this,
+				filteredOutVariants);
+	}
+
+	@Override
+	public void excludeVariant(ModifiableGeneticVariant geneticVariant)
+	{
+		filteredOutVariants.add(geneticVariant.getOriginalVariant());
+	}
+
+	@Override
+	public int getExcludedVariantCount()
+	{
+		return filteredOutVariants.size();
 	}
 
 }

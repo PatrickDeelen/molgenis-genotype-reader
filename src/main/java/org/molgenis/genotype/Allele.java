@@ -24,7 +24,16 @@ public class Allele
 	{
 		if (allele.length() == 1)
 		{
-			this.snpAllele = allele.charAt(0);
+			if (allele.charAt(0) == 'I' || allele.charAt(0) == 'D')
+			{
+				// Some times these are found in plink files. These are not SNPs
+				this.snpAllele = (char) -1;
+			}
+			else
+			{
+				this.snpAllele = allele.charAt(0);
+			}
+
 		}
 		else
 		{
