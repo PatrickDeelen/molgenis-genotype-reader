@@ -5,16 +5,17 @@ import java.util.Map;
 
 import org.molgenis.genotype.util.Utils;
 
-public class Allele
+public class Allele implements Comparable<Allele>
 {
 
 	private static Map<String, Allele> pool = new HashMap<String, Allele>();
 	private static Map<Character, Allele> snpPool = new HashMap<Character, Allele>();
 
-	public final static Allele A_ALLELE = create('A');
-	public final static Allele C_ALLELE = create('C');
-	public final static Allele G_ALLELE = create('G');
-	public final static Allele T_ALLELE = create('T');
+	public final static Allele A = create('A');
+	public final static Allele C = create('C');
+	public final static Allele G = create('G');
+	public final static Allele T = create('T');
+	public final static Allele ZERO = create('0');
 
 	private final String allele;
 	private final char snpAllele;
@@ -44,8 +45,7 @@ public class Allele
 
 	private Allele(char allele)
 	{
-		this.snpAllele = allele;
-		this.allele = String.valueOf(allele);
+		this(String.valueOf(allele));
 	}
 
 	public boolean isSnpAllele()
@@ -157,4 +157,9 @@ public class Allele
 		return this.getAlleleAsString();
 	}
 
+	@Override
+	public int compareTo(Allele other)
+	{
+		return this.allele.compareTo(other.allele);
+	}
 }

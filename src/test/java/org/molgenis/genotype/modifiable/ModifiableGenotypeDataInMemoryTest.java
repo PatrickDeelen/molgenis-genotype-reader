@@ -147,7 +147,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		ModifiableGeneticVariant modifiableGeneticVariant = modifiableGenotypeData.getModifiableSnpVariantByPos("22",
 				14431347);
 
-		modifiableGeneticVariant.updateRefAllele(Allele.T_ALLELE);
+		modifiableGeneticVariant.updateRefAllele(Allele.T);
 
 	}
 
@@ -158,17 +158,17 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		ModifiableGeneticVariant modifiableGeneticVariant = modifiableGenotypeData.getModifiableSnpVariantByPos("22",
 				14431347);
 
-		modifiableGeneticVariant.updateRefAllele(Allele.C_ALLELE);
+		modifiableGeneticVariant.updateRefAllele(Allele.C);
 
-		assertEquals(modifiableGeneticVariant.getRefAllele(), Allele.C_ALLELE);
+		assertEquals(modifiableGeneticVariant.getRefAllele(), Allele.C);
 
-		assertEquals(modifiableGenotypeData.getSnpVariantByPos("22", 14431347).getRefAllele(), Allele.C_ALLELE);
+		assertEquals(modifiableGenotypeData.getSnpVariantByPos("22", 14431347).getRefAllele(), Allele.C);
 
 		for (GeneticVariant variant : modifiableGenotypeData)
 		{
 			if (variant.getStartPos() == 14431347)
 			{
-				assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.C);
 			}
 		}
 
@@ -176,7 +176,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		{
 			if (variant.getStartPos() == 14431347)
 			{
-				assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.C);
 			}
 		}
 
@@ -184,7 +184,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		{
 			if (variant.getStartPos() == 14431347)
 			{
-				assertEquals(variant.getRefAllele(), Allele.C_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.C);
 			}
 		}
 
@@ -303,16 +303,16 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		byte[] expectedCalledDosage = new byte[]
 		{ 0, 0, 0, 0, 0, 0, 0, 1, 0 };
 
-		modifiableGeneticVariant.updateRefAllele(Allele.A_ALLELE);
+		modifiableGeneticVariant.updateRefAllele(Allele.A);
 
 		modifiableGeneticVariant.swap();
 
 		assertEquals(modifiableGeneticVariant.getSampleVariants(), expectedSwappedSampleAlleles);
 		assertEquals(modifiableGeneticVariant.getVariantAlleles(), Alleles.createBasedOnChars('T', 'G'));
 		assertEquals(modifiableGeneticVariant.getSampleCalledDosage(), expectedCalledDosage);
-		assertEquals(modifiableGeneticVariant.getRefAllele(), Allele.T_ALLELE);
+		assertEquals(modifiableGeneticVariant.getRefAllele(), Allele.T);
 
-		modifiableGeneticVariant.updateRefAllele(Allele.G_ALLELE);
+		modifiableGeneticVariant.updateRefAllele(Allele.G);
 
 		byte[] expectedCalledDosage2 = new byte[]
 		{ 2, 2, 2, 2, 2, 2, 2, 1, 2 };
@@ -320,7 +320,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		assertEquals(modifiableGeneticVariant.getSampleVariants(), expectedSwappedSampleAlleles);
 		assertEquals(modifiableGeneticVariant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
 		assertEquals(modifiableGeneticVariant.getSampleCalledDosage(), expectedCalledDosage2);
-		assertEquals(modifiableGeneticVariant.getRefAllele(), Allele.G_ALLELE);
+		assertEquals(modifiableGeneticVariant.getRefAllele(), Allele.G);
 
 		assertEquals(modifiableGenotypeData.getModifiableSnpVariantByPos("22", posOfTestVariant).getSampleVariants(),
 				expectedSwappedSampleAlleles);
@@ -337,7 +337,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
 				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
 				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
-				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.G);
 			}
 		}
 
@@ -349,7 +349,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
 				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
 				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
-				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.G);
 			}
 			++counter;
 		}
@@ -362,7 +362,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
 				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
 				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
-				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.G);
 			}
 		}
 
@@ -373,7 +373,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
 				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
 				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
-				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.G);
 			}
 		}
 
@@ -385,7 +385,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
 				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
 				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
-				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.G);
 			}
 			++counter;
 		}
@@ -398,7 +398,7 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 				assertEquals(variant.getSampleVariants(), expectedSwappedSampleAlleles);
 				assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'T'));
 				assertEquals(variant.getSampleCalledDosage(), expectedCalledDosage2);
-				assertEquals(variant.getRefAllele(), Allele.G_ALLELE);
+				assertEquals(variant.getRefAllele(), Allele.G);
 			}
 		}
 

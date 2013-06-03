@@ -33,6 +33,7 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	private VariantQuery query;
 	private TabixIndex index;
 	private VariantQueryResult result;
+	private final int sampleVariantProviderUniqueId = 0;
 
 	@BeforeClass
 	public void beforeClass() throws IOException, URISyntaxException
@@ -147,5 +148,11 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	public int cacheSize()
 	{
 		return 0;
+	}
+
+	@Override
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 }

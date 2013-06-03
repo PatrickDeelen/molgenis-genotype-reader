@@ -41,7 +41,7 @@ public enum RandomAccessGenotypedDataReaderFormats
 		switch (this)
 		{
 			case PED_MAP:
-				return new PedMapGenotypeData(new File(path + "ped"), new File(path + "map"));
+				return new PedMapGenotypeData(new File(path + ".ped"), new File(path + ".map"));
 			case VCF:
 				return new VcfGenotypeData(new File(path), cacheSize);
 			case VCF_FOLDER:

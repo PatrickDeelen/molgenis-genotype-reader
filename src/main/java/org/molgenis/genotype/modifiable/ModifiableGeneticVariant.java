@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
@@ -124,8 +125,17 @@ public class ModifiableGeneticVariant extends AbstractGeneticVariant
 	{
 		// Do not cache MAF results since modifications to alleles need to be
 		// reflected
-		MafResult mafResult = MafCalculator.calculateMaf(getVariantAlleles(), getRefAllele(), getSampleVariants());
-		return mafResult.getFreq();
+		try
+		{
+			MafResult mafResult = MafCalculator.calculateMaf(getVariantAlleles(), getRefAllele(), getSampleVariants());
+			return mafResult.getFreq();
+		}
+		catch (NullPointerException e)
+		{
+			throw new GenotypeDataException("NullPointerException in maf caculation. " + getVariantAlleles() + " ref: "
+					+ getRefAllele(), e);
+		}
+
 	}
 
 	@Override
@@ -133,8 +143,16 @@ public class ModifiableGeneticVariant extends AbstractGeneticVariant
 	{
 		// Do not cache MAF results since modifications to alleles need to be
 		// reflected
-		MafResult mafResult = MafCalculator.calculateMaf(getVariantAlleles(), getRefAllele(), getSampleVariants());
-		return mafResult.getMinorAllele();
+		try
+		{
+			MafResult mafResult = MafCalculator.calculateMaf(getVariantAlleles(), getRefAllele(), getSampleVariants());
+			return mafResult.getMinorAllele();
+		}
+		catch (NullPointerException e)
+		{
+			throw new GenotypeDataException("NullPointerException in maf caculation. " + getVariantAlleles() + " ref: "
+					+ getRefAllele(), e);
+		}
 	}
 
 	@Override

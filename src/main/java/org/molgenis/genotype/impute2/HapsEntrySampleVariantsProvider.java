@@ -6,6 +6,7 @@ import java.util.List;
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 
 /**
@@ -17,10 +18,12 @@ import org.molgenis.genotype.variant.SampleVariantsProvider;
 public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 {
 	private HapsEntry hapsEntry;
+	private final int sampleVariantProviderUniqueId;
 
 	public HapsEntrySampleVariantsProvider(HapsEntry hapsEntry)
 	{
 		this.hapsEntry = hapsEntry;
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 	}
 
 	@Override
@@ -62,5 +65,11 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 	public int cacheSize()
 	{
 		return 0;
+	}
+
+	@Override
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 }
