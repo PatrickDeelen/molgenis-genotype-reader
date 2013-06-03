@@ -2,22 +2,18 @@ package org.molgenis.genotype.plink.readers;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.BimEntry;
 import org.molgenis.genotype.plink.datatypes.FamEntry;
-import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.molgenis.genotype.plink.drivers.BedFileDriver;
 import org.molgenis.genotype.plink.drivers.BimFileDriver;
 import org.molgenis.genotype.plink.drivers.FamFileDriver;
@@ -53,10 +49,8 @@ public class BedBimFamReader implements SampleVariantsProvider
 	private HashMap<String, Biallele> snpCoding;
 	
 	//helper variables
-	private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
-	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
+	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>();
 	private final int sampleVariantProviderUniqueId;
-	//private Map<Integer, List<Biallele>> sampleAllelesBySnpIndex = new HashMap<Integer, List<Biallele>>();
 
 	public BedBimFamReader(File bed, File bim, File fam) throws Exception
 	{
@@ -142,22 +136,8 @@ public class BedBimFamReader implements SampleVariantsProvider
 			
 			String id = entry.getSNP();
 			int startPos = (int) entry.getBpPos();
-			List<Biallele> alleles = getAllelesByIndex(index);
-			
-			
-			List<String> alleleList = new ArrayList<String>();
-			
-			for(Biallele b : alleles)
-			{
-				
-				String s1 = b.getAllele1() + "";
-				String s2 = b.getAllele2() + "";
-				alleleList.add(s1);
-				alleleList.add(s2);
-			}
-			
-			GeneticVariant snp = ReadOnlyGeneticVariant.createVariant(id, startPos, sequenceName, this, alleleList);
-			
+			Biallele allele = bimEntries.get(index).getBiallele();	
+			GeneticVariant snp = ReadOnlyGeneticVariant.createSnp(id, startPos, sequenceName, this, allele.getAllele1(), allele.getAllele2());
 			variants.add(snp);
 			index++;
 		}
@@ -204,12 +184,8 @@ public class BedBimFamReader implements SampleVariantsProvider
 
 			snpCounter++;
 		}
-
 		genotypesOut.close();
-
 	}
-	
-	
 
 	public List<FamEntry> getFamEntries()
 	{
@@ -225,17 +201,11 @@ public class BedBimFamReader implements SampleVariantsProvider
 	public static void main(String[] args) throws Exception
 	{
 		File bed = new File(Biallele.class.getResource("../testfiles/test.bed").getFile());
-
 		File bim = new File(Biallele.class.getResource("../testfiles/test.bim").getFile());
-
 		File fam = new File(Biallele.class.getResource("../testfiles/test.fam").getFile());
-
 		BedBimFamReader bbfr = new BedBimFamReader(bed, bim, fam);
-
 		File out = new File("geno_tmp.txt");
-
 		System.out.println("going to write to: " + out.getAbsolutePath());
-
 		bbfr.extractGenotypes(out);
 	}
 
@@ -298,21 +268,6 @@ public class BedBimFamReader implements SampleVariantsProvider
 			sampleVariants.add(Alleles.createBasedOnChars(biallele.getAllele2(), biallele.getAllele1()));
 		}
 		return sampleVariants;
-	}
-	
-	/**
-	 * Get the alleles for this SNP index
-	 * meaning: the position of this SNP in the BIM file
-	 * then get all of the individuals (samples) for this SNP
-	 * @param index
-	 * @return
-	 * @throws Exception 
-	 */
-	public List<Biallele> getAllelesByIndex(Integer index) throws GenotypeDataException
-	{
-		List<Biallele> bialleles = new ArrayList<Biallele>();
-		bialleles.add(bimEntries.get(index).getBiallele());
-		return bialleles;
 	}
 
 	@Override
