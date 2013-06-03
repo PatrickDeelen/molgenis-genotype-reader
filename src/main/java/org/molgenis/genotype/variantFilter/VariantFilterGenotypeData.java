@@ -13,10 +13,10 @@ import org.molgenis.genotype.variant.GeneticVariant;
 
 public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 {
-
-	private final GenotypeData originalGenotypeData;
-	private final HashSet<GeneticVariant> includeVariants;
-	private final HashSet<GeneticVariant> excludeVariants;
+	//
+	// private final GenotypeData originalGenotypeData;
+	// private final HashSet<GeneticVariant> includeVariants;
+	// private final HashSet<GeneticVariant> excludeVariants;
 
 	/**
 	 * View of originalGenotypeData with a subset of the genetic variants. Data
@@ -41,14 +41,17 @@ public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 	{
 		super();
 
-		if (includeVariants == null && excludeVariants == null)
-		{
-			throw new IllegalArgumentException("Include and exclude list are null for variantFilterGenotypeData");
-		}
+		throw new UnsupportedOperationException("This class is not fully implemented");
 
-		this.originalGenotypeData = originalGenotypeData;
-		this.includeVariants = includeVariants;
-		this.excludeVariants = excludeVariants;
+		// if (includeVariants == null && excludeVariants == null)
+		// {
+		// throw new
+		// IllegalArgumentException("Include and exclude list are null for variantFilterGenotypeData");
+		// }
+		//
+		// this.originalGenotypeData = originalGenotypeData;
+		// this.includeVariants = includeVariants;
+		// this.excludeVariants = excludeVariants;
 	}
 
 	@Override

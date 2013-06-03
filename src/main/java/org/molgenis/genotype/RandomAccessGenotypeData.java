@@ -47,6 +47,12 @@ public interface RandomAccessGenotypeData extends GenotypeData
 	 */
 	GeneticVariant getSnpVariantByPos(String seqName, int startPos);
 
+	/**
+	 * Get all variants from a sequence
+	 * 
+	 * @param seqName
+	 * @return
+	 */
 	Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName);
 
 }

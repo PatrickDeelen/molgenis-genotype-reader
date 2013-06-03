@@ -1,6 +1,8 @@
 package org.molgenis.genotype.multipart;
 
-public class IncompetibleMultiPartGenotypeDataException extends Exception
+import org.molgenis.genotype.GenotypeDataException;
+
+public class IncompetibleMultiPartGenotypeDataException extends GenotypeDataException
 {
 
 	public IncompetibleMultiPartGenotypeDataException(String message)
