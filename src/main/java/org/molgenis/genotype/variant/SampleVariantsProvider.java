@@ -16,4 +16,7 @@ public interface SampleVariantsProvider
 	List<Alleles> getSampleVariants(GeneticVariant variant);
 
 	int cacheSize();
+
+	int getSampleVariantProviderUniqueId();
+
 }

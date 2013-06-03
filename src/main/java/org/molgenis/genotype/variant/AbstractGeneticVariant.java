@@ -1,6 +1,7 @@
 package org.molgenis.genotype.variant;
 
 import org.molgenis.genotype.util.ChromosomeComparator;
+import org.molgenis.genotype.util.GeneticVariantTreeSet;
 
 abstract public class AbstractGeneticVariant implements GeneticVariant
 {
@@ -20,6 +21,11 @@ abstract public class AbstractGeneticVariant implements GeneticVariant
 			return 0;
 		}
 
+		if (this.equals(other))
+		{
+			return 0;
+		}
+
 		if (!this.getSequenceName().equals(other.getSequenceName()))
 		{
 			return chrComparator.compare(this.getSequenceName(), other.getSequenceName());
@@ -33,11 +39,49 @@ abstract public class AbstractGeneticVariant implements GeneticVariant
 			}
 			else
 			{
-				// TODO FIX ME!!!!!!!!!!!!!!!!!!!!
-				throw new RuntimeException(
-						"Genetic variant comparotor can not compare variants with identical sequence and pos. This is a major TODO");
 
 				// same sequence and same start
+
+				if (GeneticVariantTreeSet.getDummyGeneticVariantClass().isInstance(this))
+				{
+
+					if (!GeneticVariantTreeSet.getDummyGeneticVariantClass().isInstance(other))
+					{
+						return 1;
+					}
+					else
+					{
+						return 0;
+					}
+
+				}
+
+				if (GeneticVariantTreeSet.getDummyGeneticVariantClass().isInstance(other))
+				{
+					return -1;
+
+				}
+
+				// System.out.println(this.getClass().toString() +
+				// this.getSequenceName() + ":" + this.getStartPos() + " "
+				// + this.getVariantAlleles() + " vs " +
+				// other.getClass().toString() + other.getSequenceName()
+				// + ":" + other.getStartPos() + " " +
+				// other.getVariantAlleles());
+
+				if (!this.getVariantAlleles().equals(other.getVariantAlleles()))
+				{
+					// Alleles are different
+
+					return this.getVariantAlleles().compareTo(other.getVariantAlleles());
+				}
+				else
+				{
+
+					return this.getSampleVariantsProvider().getSampleVariantProviderUniqueId()
+							- other.getSampleVariantsProvider().getSampleVariantProviderUniqueId();
+
+				}
 
 			}
 		}
@@ -71,6 +115,15 @@ abstract public class AbstractGeneticVariant implements GeneticVariant
 		if (this == obj) return true;
 		if (!(obj instanceof GeneticVariant)) return false;
 		GeneticVariant other = (GeneticVariant) obj;
+		if (getSequenceName() == null)
+		{
+			if (other.getSequenceName() != null) return false;
+		}
+		else if (!getSequenceName().equals(other.getSequenceName())) return false;
+		if (getStartPos() != other.getStartPos()) return false;
+
+		// If we get here pos and sequence are identical
+
 		if (getVariantAlleles() == null)
 		{
 			if (other.getVariantAlleles() != null) return false;
@@ -81,12 +134,12 @@ abstract public class AbstractGeneticVariant implements GeneticVariant
 			if (other.getSampleVariantsProvider() != null) return false;
 		}
 		else if (!getSampleVariantsProvider().equals(other.getSampleVariantsProvider())) return false;
-		if (getSequenceName() == null)
-		{
-			if (other.getSequenceName() != null) return false;
-		}
-		else if (!getSequenceName().equals(other.getSequenceName())) return false;
-		if (getStartPos() != other.getStartPos()) return false;
 		return true;
+	}
+
+	@Override
+	public boolean isMapped()
+	{
+		return !(this.getSequenceName().equals("0") && this.getStartPos() == 0);
 	}
 }

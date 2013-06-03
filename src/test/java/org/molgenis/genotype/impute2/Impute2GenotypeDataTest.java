@@ -56,7 +56,7 @@ public class Impute2GenotypeDataTest extends ResourceTest
 				var.getSampleVariants(),
 				Arrays.asList(Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'A'),
 						Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'G')));
-		assertEquals(var.getMinorAllele(), Allele.G_ALLELE);
+		assertEquals(var.getMinorAllele(), Allele.G);
 		assertEquals(var.getMinorAlleleFrequency(), 0.375, 0.001);
 		assertEquals(Utils.iteratorToList(genotypeData.iterator()).size(), 4);
 	}

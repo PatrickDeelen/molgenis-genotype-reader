@@ -18,7 +18,7 @@ public class GeneticVariantTreeSet<E extends GeneticVariant> extends TreeSet<E>
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L; // TODO is this correct
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Get all variants on a sequence
@@ -40,13 +40,12 @@ public class GeneticVariantTreeSet<E extends GeneticVariant> extends TreeSet<E>
 	 * @param startPos
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public NavigableSet<E> getSequencePosVariants(String sequenceName, int startPos)
 	{
-		// Do this -1 and +1 to disregard ordering of allele or sample variant
-		// provider
-		return subSet((E) new DummyGenticVariant(sequenceName, startPos - 1), true, (E) new DummyGenticVariant(
-				sequenceName, startPos + 1), false);
+		// Dummy variant is always the last in the ordering at pos on a sequence
+
+		return getSequenceRangeVariants(sequenceName, startPos, startPos + 1);
+
 	}
 
 	/**
@@ -54,28 +53,31 @@ public class GeneticVariantTreeSet<E extends GeneticVariant> extends TreeSet<E>
 	 * 
 	 * @param sequenceName
 	 * @param rangeStart
-	 * @param startInclusive
+	 *            inclusive
 	 * @param rangeStop
-	 * @param stopInclusive
+	 *            exclusive
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public NavigableSet<E> getSequenceRangeVariants(String sequenceName, int rangeStart, boolean startInclusive,
-			int rangeStop, boolean stopInclusive)
+	public NavigableSet<E> getSequenceRangeVariants(String sequenceName, int rangeStart, int rangeStop)
 	{
-		// Do this -1 and +1 to disregard ordering of allele or sample variant
-		// provider
-		return subSet((E) new DummyGenticVariant(sequenceName, startInclusive ? rangeStart - 1 : rangeStart), true,
-				(E) new DummyGenticVariant(sequenceName, stopInclusive ? rangeStop + 1 : rangeStop), false);
+		// Dummy variant is always the last in the ordering at pos on a sequence
+		return subSet((E) new DummyGenticVariant(sequenceName, rangeStart - 1), false, (E) new DummyGenticVariant(
+				sequenceName, rangeStop - 1), false);
+	}
+
+	public static Class<DummyGenticVariant> getDummyGeneticVariantClass()
+	{
+		return DummyGenticVariant.class;
 	}
 
 	/**
-	 * Dummy genetic variant class used tp specify a range in the treeset
+	 * Dummy genetic variant class used to specify a range in the treeset
 	 * 
 	 * @author Patrick Deelen
 	 * 
 	 */
-	private class DummyGenticVariant extends AbstractGeneticVariant
+	private static class DummyGenticVariant extends AbstractGeneticVariant
 	{
 
 		private final String sequenceName;

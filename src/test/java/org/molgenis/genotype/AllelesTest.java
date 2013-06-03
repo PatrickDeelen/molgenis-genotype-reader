@@ -160,9 +160,9 @@ public class AllelesTest
 	public void contains()
 	{
 		Alleles alleles = Alleles.createBasedOnString(Arrays.asList("A", "T"));
-		assertEquals(alleles.contains(Allele.A_ALLELE), true);
-		assertEquals(alleles.contains(Allele.T_ALLELE), true);
-		assertEquals(alleles.contains(Allele.C_ALLELE), false);
+		assertEquals(alleles.contains(Allele.A), true);
+		assertEquals(alleles.contains(Allele.T), true);
+		assertEquals(alleles.contains(Allele.C), false);
 		assertEquals(alleles.contains(Allele.create("AA")), false);
 	}
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.testng.annotations.Test;
@@ -20,6 +21,12 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 {
 	private static final List<String> COL_NAMES = Arrays.asList("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER",
 			"INFO", "FORMAT", "sample1");
+	private final int sampleVariantProviderUniqueId;
+
+	public VcfVariantLineMapperTest()
+	{
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
+	}
 
 	@Test
 	public void mapLineSnp()
@@ -94,5 +101,11 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 	public int cacheSize()
 	{
 		return 0;
+	}
+
+	@Override
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 }

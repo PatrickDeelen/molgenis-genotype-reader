@@ -158,4 +158,6 @@ public interface GeneticVariant extends Comparable<GeneticVariant>
 	 */
 	public SampleVariantsProvider getSampleVariantsProvider();
 
+	public boolean isMapped();
+
 }
