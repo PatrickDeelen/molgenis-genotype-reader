@@ -80,4 +80,44 @@ public class BedFileDriverTest extends AbstractResourceTest
 		assertEquals("11", bedfd.getElement(15));
 
 	}
+	
+	@Test
+	public void BED_getElements() throws Exception
+	{
+		assertEquals(9, bedfd.getSNPs(0, 9).length);
+		assertEquals(9, bedfd.getSNPs(1, 9).length);
+		assertEquals(9, bedfd.getSNPs(2, 9).length);
+		
+		//indv 1, first 3
+		assertEquals("11", bedfd.getSNPs(0, 9)[0]);
+		assertEquals("01", bedfd.getSNPs(0, 9)[1]);
+		assertEquals("00", bedfd.getSNPs(0, 9)[2]);
+		
+		//indv 1, last 3
+		assertEquals("11", bedfd.getSNPs(0, 9)[6]);
+		assertEquals("01", bedfd.getSNPs(0, 9)[7]);
+		assertEquals("01", bedfd.getSNPs(0, 9)[8]);
+		
+		//indv 2, first 3
+		assertEquals("11", bedfd.getSNPs(1, 9)[0]);
+		assertEquals("01", bedfd.getSNPs(1, 9)[1]);
+		assertEquals("11", bedfd.getSNPs(1, 9)[2]);
+		
+		//indv 2, last 3
+		assertEquals("11", bedfd.getSNPs(1, 9)[6]);
+		assertEquals("11", bedfd.getSNPs(1, 9)[7]);
+		assertEquals("11", bedfd.getSNPs(1, 9)[8]);
+		
+		//indv 10, first 3
+		assertEquals("11", bedfd.getSNPs(9, 9)[0]);
+		assertEquals("11", bedfd.getSNPs(9, 9)[1]);
+		assertEquals("11", bedfd.getSNPs(9, 9)[2]);
+		
+		//indv 10, last 3
+		assertEquals("11", bedfd.getSNPs(9, 9)[6]);
+		assertEquals("11", bedfd.getSNPs(9, 9)[7]);
+		assertEquals("11", bedfd.getSNPs(9, 9)[8]);
+		
+		
+	}
 }

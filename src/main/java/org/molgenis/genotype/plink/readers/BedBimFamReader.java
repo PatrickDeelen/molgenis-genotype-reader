@@ -343,8 +343,12 @@ public class BedBimFamReader implements SampleVariantsProvider
 		//	int padding 
 		//	bedfd.getElement(index);
 			
-			String[] allIndividualsForThisSNP = bedfd.getElements(index, index + nrOfIndividuals,
-					paddingPerSnp, 0);
+			//for SNP-major mode
+			long start = index * nrOfIndividuals;
+			long stop = start + nrOfIndividuals;
+			
+			String[] allIndividualsForThisSNP = bedfd.getElements(start, stop,
+					paddingPerSnp);
 			
 			
 			String a1 = Character.toString(snpCoding.get(snpNames.get(index)).getAllele1());
