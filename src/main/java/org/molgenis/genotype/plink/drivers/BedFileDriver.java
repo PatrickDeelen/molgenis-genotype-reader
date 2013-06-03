@@ -203,13 +203,6 @@ public class BedFileDriver
 			byte b = res[i];
 			
 			String byteString = reverse(bits(b));
-			System.out.println("READ BYTE, REV BITS: " + byteString);
-			
-			//if we are in the last byte, and there is padding, we must adjust
-//			if(paddingIndividuals != 0 && i == res.length-1)
-//			{
-//				
-//			}
 			
 			int toBit = 8; // normally we take the whole byte
 			if (i == res.length - 1) // except at the end, when we correct for
@@ -225,17 +218,11 @@ public class BedFileDriver
 				}
 				toBit -= (paddingIndividuals * 2);
 			}
-
 			for (int pair = 0; pair < toBit; pair += 2)
 			{
-				// System.out.print(res_index + " ");
 				result[res_index++] = byteString.substring(pair, pair + 2);
 			}
-			
-			
-			
 		}
-		
 		return result;
 	}
 
@@ -265,6 +252,8 @@ public class BedFileDriver
 	 */
 	public String[] getElements(long from, long to, int nrOfIndividualsInFAMfile) throws Exception
 	{		
+		if(1==1) throw new UnsupportedOperationException("Not yet implemented");
+		
 		//calculate the number of individuals in the byte that is potentially padded
 		int nrOfIndividualsInPaddedByte = nrOfIndividualsInFAMfile % 4;
 		
@@ -320,9 +309,7 @@ public class BedFileDriver
 		System.out.println("GOING TO READ FROM BYTE " + start + " TO " + stop);
 		byte[] res = new byte[(int) (stop - start)];
 		int res_index = 0;
-		String[] result = new String[(int) (to - from)]; // to - from = nr. of
-															// individuals
-
+		String[] result = new String[(int) (to - from)]; // to - from = nr. of individuals
 		RandomAccessFile raf = new RandomAccessFile(bedFile, "r");
 		raf.seek(start);
 		raf.read(res);
@@ -350,11 +337,9 @@ public class BedFileDriver
 
 			for (int pair = 0; pair < toBit; pair += 2)
 			{
-				// System.out.print(res_index + " ");
 				result[res_index++] = byteString.substring(pair, pair + 2);
 			}
 		}
-		// System.out.println("");
 		return result;
 	}
 

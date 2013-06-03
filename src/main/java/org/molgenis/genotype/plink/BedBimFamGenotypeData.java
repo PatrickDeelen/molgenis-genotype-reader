@@ -30,22 +30,11 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 	public static final String PHENOTYPE_SAMPLE_ANNOTATION_NAME = "phenotype";
 	private static final char NULL_VALUE = '0';
 	private static final Logger LOG = Logger.getLogger(BedBimFamGenotypeData.class);
-
-	private final File bedFile;
-	private final File bimFile;
-	private final File famFile;
 	private final BedBimFamReader reader;
-
-
-	private List<GeneticVariant> snps = new ArrayList<GeneticVariant>(1000000);
-
-	//private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
 
 	public BedBimFamGenotypeData(File bedFile, File bimFile, File famFile) throws Exception
 	{
-		//BimFileDriver bfd = new BimFileDriver(bimFile);
-		
-		
+
 		if (bedFile == null) throw new IllegalArgumentException("BedFile is null");
 		if (bimFile == null) throw new IllegalArgumentException("BimFile is null");
 		if (famFile == null) throw new IllegalArgumentException("FamFile is null");
@@ -58,12 +47,6 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 
 		if (!famFile.isFile()) throw new FileNotFoundException("FAM file not found at " + famFile.getAbsolutePath());
 		if (!famFile.canRead()) throw new IOException("FAM file not found at " + famFile.getAbsolutePath());
-
-		this.bedFile = bedFile;
-		this.bimFile = bimFile;
-		this.famFile = famFile;
-
-		//BimFileDriver bfd = new BimFileDriver(bimFile);
 		
 		this.reader = new BedBimFamReader(bedFile, bimFile, famFile);
 		
@@ -101,13 +84,6 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 		return samples;
 	}
 
-//	@Override
-//	public List<Alleles> getSampleVariants(GeneticVariant variant)
-//
-//	{
-//		return null;
-//	}
-
 	@Override
 	protected Map<String, Annotation> getVariantAnnotationsMap()
 	{
@@ -143,10 +119,4 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 		return variants;
 	}
 
-//	@Override
-//	public int cacheSize()
-//	{
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
 }
