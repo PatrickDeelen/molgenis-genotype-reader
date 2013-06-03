@@ -18,12 +18,14 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 	private final SampleVariantsProvider sampleVariantProvider;
 	private final Cache<GeneticVariant, List<Alleles>> cache;
 	private final int cacheSize;
+	private final int sampleVariantProviderUniqueId;
 
 	public CachedSampleVariantProvider(SampleVariantsProvider sampleVariantProvider, int cacheSize)
 	{
 		this.sampleVariantProvider = sampleVariantProvider;
 		this.cache = new Cache<GeneticVariant, List<Alleles>>(cacheSize);
 		this.cacheSize = cacheSize;
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 	}
 
 	@Override
@@ -39,11 +41,18 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 			cache.put(variant, variantAlleles);
 			return variantAlleles;
 		}
+
 	}
 
 	@Override
 	public int cacheSize()
 	{
 		return cacheSize;
+	}
+
+	@Override
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 }
