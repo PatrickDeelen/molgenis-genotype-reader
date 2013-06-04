@@ -87,6 +87,7 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 		assertEquals(i, 5);
 	}
 
+
 	@Test
 	public void querySeq1() throws IOException
 	{
@@ -151,6 +152,12 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	}
 
 	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;

@@ -2,22 +2,16 @@ package org.molgenis.genotype.tabix;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
-import org.apache.commons.io.IOUtils;
-import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.tabix.TabixIndex.TabixIterator;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
-import org.molgenis.io.vcf.VcfRecord;
-import org.molgenis.io.vcf.VcfSampleGenotype;
 
 /**
  * Execute a query on the tabix iondex to get a subset of the data
@@ -27,7 +21,7 @@ import org.molgenis.io.vcf.VcfSampleGenotype;
  */
 public class TabixQuery implements VariantQuery
 {
-	private BlockCompressedInputStream inputStream;;
+	private BlockCompressedInputStream inputStream;
 	private final TabixIndex index;
 	private final VariantLineMapper variantLineMapper;
 
@@ -36,6 +30,7 @@ public class TabixQuery implements VariantQuery
 		if (bzipFile == null) throw new IllegalArgumentException("BzipFile is null");
 		if (index == null) throw new IllegalArgumentException("Index is null");
 		if (variantLineMapper == null) throw new IllegalArgumentException("VariantLineMapper is null");
+
 		try
 		{
 			inputStream = new BlockCompressedInputStream(bzipFile);
@@ -45,6 +40,7 @@ public class TabixQuery implements VariantQuery
 			throw new GenotypeDataException("IOExcption creating BlockCompressedInputStream for " + bzipFile.getName(),
 					e);
 		}
+
 		this.index = index;
 		this.variantLineMapper = variantLineMapper;
 	}
@@ -140,49 +136,4 @@ public class TabixQuery implements VariantQuery
 
 	}
 
-	// TODO remove this, is vcf specific
-	@Override
-	public List<Alleles> findSamplesForVariant(String sequence, int startPos, List<String> alleles,
-			List<String> columnNames, List<String> sampleNames)
-	{
-		try
-		{
-			TabixIterator tabixIterator = index.queryTabixIndex(sequence, startPos - 1, startPos, inputStream);
-
-			if (tabixIterator != null)
-			{
-				String line = tabixIterator.next();
-				while (line != null)
-				{
-					VcfRecord record = new VcfRecord(line, columnNames);
-					if (record.getChrom().equalsIgnoreCase(sequence) && (record.getPos() == startPos)
-							&& record.getAlleles().equals(alleles))
-					{
-						List<Alleles> sampleVariants = new ArrayList<Alleles>(sampleNames.size());
-						for (String sampleName : sampleNames)
-						{
-							VcfSampleGenotype geno = record.getSampleGenotype(sampleName);
-							if (geno == null) throw new GenotypeDataException("Missing GT format value for sample ["
-									+ sampleName + "]");
-							sampleVariants.add(Alleles.createBasedOnString(geno.getSamleVariants(alleles)));
-						}
-
-						return sampleVariants;
-					}
-
-					line = tabixIterator.next();
-				}
-			}
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-		finally
-		{
-			IOUtils.closeQuietly(inputStream);
-		}
-
-		return null;
-	}
 }

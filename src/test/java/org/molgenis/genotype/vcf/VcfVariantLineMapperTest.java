@@ -104,6 +104,11 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 	}
 
 	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		return null;
+	}
+	
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;

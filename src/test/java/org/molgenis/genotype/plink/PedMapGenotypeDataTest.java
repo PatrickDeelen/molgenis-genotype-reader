@@ -6,6 +6,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.molgenis.genotype.Alleles;
@@ -96,6 +97,14 @@ public class PedMapGenotypeDataTest extends ResourceTest
 	}
 
 	@Test
+	public void testGetSamplePhasing()
+	{
+		List<GeneticVariant> variants = genotypeData.getVariantsByPos("22", 14431347);
+		assertEquals(variants.size(), 1);
+		assertEquals(genotypeData.getSamplePhasing(variants.get(0)),
+				Arrays.asList(false, false, false, false, false, false, false, false, false));
+	}
+
 	public void testGetSnpVariantByPos()
 	{
 
@@ -107,5 +116,6 @@ public class PedMapGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getStartPos(), pos);
 
 	}
+
 
 }

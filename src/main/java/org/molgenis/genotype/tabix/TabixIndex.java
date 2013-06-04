@@ -16,15 +16,15 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.molgenis.genotype.GenotypeDataIndex;
+import org.molgenis.genotype.RawLineQuery;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.variant.VariantLineMapper;
 
 /**
- * Tabix implementation of the GenotypeDataIndex The constructor takes a gz.tbi
- * index file and a bzipped file.
+ * Tabix implementation of the GenotypeDataIndex The constructor takes a gz.tbi index file and a bzipped file.
  * 
- * Code is copied from the TabixReader wich comes with Tabix when you download
- * is see http://sourceforge.net/projects/samtools/
+ * Code is copied from the TabixReader wich comes with Tabix when you download is see
+ * http://sourceforge.net/projects/samtools/
  * 
  * Use creatQuery() to create a query to get a subset of the data
  * 
@@ -74,6 +74,12 @@ public class TabixIndex implements GenotypeDataIndex
 	public VariantQuery createQuery()
 	{
 		return new TabixQuery(bzipFile, this, variantLineMapper);
+	}
+
+	@Override
+	public RawLineQuery createRawLineQuery()
+	{
+		return new TabixRawLineQuery(bzipFile, this);
 	}
 
 	private int chr2tid(final String chr)
