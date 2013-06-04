@@ -253,7 +253,6 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
-<<<<<<< HEAD
 	public List<Boolean> getSamplePhasing(GeneticVariant variant)
 	{
 		List<VcfSampleGenotype> sampleGenotypes = getSampleGenotypes(variant);
@@ -313,12 +312,11 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 
 		return genotypes;
 	}
-}
 
+	@Override
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
 	}
 
 }
-

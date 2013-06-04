@@ -62,7 +62,9 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 		List<Boolean> phasing = sampleVariantProvider.getSamplePhasing(variant);
 		phasingCache.put(variant, phasing);
 		return phasing;
+	}
 
+	@Override
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;

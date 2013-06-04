@@ -269,7 +269,6 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		return 0;
 	}
 
-
 	/**
 	 * Ped/Map daoes not support phasing, always return false
 	 * 
@@ -285,7 +284,9 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		List<Boolean> phasing = Collections.nCopies(getSampleVariants(variant).size(), false);
 		samplePhasing.put(variant, phasing);
 		return phasing;
+	}
 
+	@Override
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
