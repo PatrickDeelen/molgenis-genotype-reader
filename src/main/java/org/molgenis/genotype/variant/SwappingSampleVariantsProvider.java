@@ -7,10 +7,12 @@ import org.molgenis.genotype.Alleles;
 public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 {
 	private SampleVariantsProvider sampleVariantsProvider;
+	private final int sampleVariantProviderUniqueId;
 
 	public SwappingSampleVariantsProvider(SampleVariantsProvider sampleVariantsProvider)
 	{
 		this.sampleVariantsProvider = sampleVariantsProvider;
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 	}
 
 	@Override
@@ -35,6 +37,11 @@ public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 	public List<Boolean> getSamplePhasing(GeneticVariant variant)
 	{
 		return sampleVariantsProvider.getSamplePhasing(variant);
+	}
+	
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 
 }

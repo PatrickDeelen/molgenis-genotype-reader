@@ -22,4 +22,7 @@ public interface SampleVariantsProvider
 	List<Boolean> getSamplePhasing(GeneticVariant variant);
 
 	int cacheSize();
+
+	int getSampleVariantProviderUniqueId();
+
 }

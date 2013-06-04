@@ -1,7 +1,6 @@
 package org.molgenis.genotype;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.molgenis.genotype.variant.GeneticVariant;
@@ -25,7 +24,7 @@ public abstract class AbstractRandomAccessGenotypeData extends AbstractGenotypeD
 	@Override
 	public GeneticVariant getSnpVariantByPos(String seqName, int startPos)
 	{
-		List<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
+		Iterable<GeneticVariant> variants = getVariantsByPos(seqName, startPos);
 
 		for (GeneticVariant variant : variants)
 		{
@@ -55,7 +54,7 @@ public abstract class AbstractRandomAccessGenotypeData extends AbstractGenotypeD
 		public GeneticVariantsIterator(RandomAccessGenotypeData randomAccessGenotypeData)
 		{
 			seqNames = randomAccessGenotypeData.getSeqNames().iterator();
-			seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next());
+			seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next()).iterator();
 			this.randomAccessGenotypeData = randomAccessGenotypeData;
 		}
 
@@ -75,7 +74,7 @@ public abstract class AbstractRandomAccessGenotypeData extends AbstractGenotypeD
 
 			if (seqNames.hasNext())
 			{
-				seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next());
+				seqGeneticVariants = randomAccessGenotypeData.getSequenceGeneticVariants(seqNames.next()).iterator();
 				return seqGeneticVariants.next();
 			}
 

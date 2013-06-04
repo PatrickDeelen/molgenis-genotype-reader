@@ -25,8 +25,10 @@ import org.molgenis.genotype.plink.datatypes.MapEntry;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.molgenis.genotype.plink.drivers.PedFileDriver;
 import org.molgenis.genotype.plink.readers.MapFileReader;
+import org.molgenis.genotype.util.GeneticVariantTreeSet;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 
 public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData implements SampleVariantsProvider
@@ -37,11 +39,12 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	public static final String PHENOTYPE_SAMPLE_ANNOTATION_NAME = "phenotype";
 	private static final char NULL_VALUE = '0';
 	private static final Logger LOG = Logger.getLogger(PedMapGenotypeData.class);
+	private final int sampleVariantProviderUniqueId;
 
 	private final File pedFile;
 	private Map<Integer, List<Biallele>> sampleAllelesBySnpIndex = new HashMap<Integer, List<Biallele>>();
 
-	private List<GeneticVariant> snps = new ArrayList<GeneticVariant>(1000000);
+	private GeneticVariantTreeSet<GeneticVariant> snps = new GeneticVariantTreeSet<GeneticVariant>();
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
 	private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
 	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
@@ -74,6 +77,8 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			IOUtils.closeQuietly(pedFileDriver);
 			IOUtils.closeQuietly(mapFileReader);
 		}
+
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 
 	}
 
@@ -235,15 +240,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	@Override
 	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
-		List<GeneticVariant> variants = new ArrayList<GeneticVariant>();
-		for (GeneticVariant snp : snps)
-		{
-			if ((snp.getSequenceName() != null) && snp.getSequenceName().equals(seqName)
-					&& (snp.getStartPos() == startPos))
-			{
-				variants.add(snp);
-			}
-		}
+		List<GeneticVariant> variants = new ArrayList<GeneticVariant>(snps.getSequencePosVariants(seqName, startPos));
 
 		return variants;
 	}
@@ -255,7 +252,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	}
 
 	@Override
-	public Iterator<GeneticVariant> getSequenceGeneticVariants(String seqName)
+	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
 		List<GeneticVariant> variants = snpBySequence.get(seqName);
 		if (seqName == null)
@@ -263,7 +260,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			throw new IllegalArgumentException("Unknown sequence [" + seqName + "]");
 		}
 
-		return variants.iterator();
+		return variants;
 	}
 
 	@Override
@@ -271,6 +268,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	{
 		return 0;
 	}
+
 
 	/**
 	 * Ped/Map daoes not support phasing, always return false
@@ -287,5 +285,9 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		List<Boolean> phasing = Collections.nCopies(getSampleVariants(variant).size(), false);
 		samplePhasing.put(variant, phasing);
 		return phasing;
+
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 }

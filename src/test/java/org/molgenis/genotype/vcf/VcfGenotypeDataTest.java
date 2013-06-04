@@ -117,7 +117,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 	@Test
 	public void testgetSequenceGeneticVariants() throws IOException
 	{
-		List<GeneticVariant> variants = Utils.iteratorToList(genotypeData.getSequenceGeneticVariants("1"));
+		List<GeneticVariant> variants = Utils.iteratorToList(genotypeData.getSequenceGeneticVariants("1").iterator());
 		assertEquals(variants.size(), 6);
 	}
 
@@ -137,7 +137,7 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertNotNull(variants);
 		assertEquals(variants.size(), 1);
 
-		GeneticVariant variant = variants.get(0);
+		// GeneticVariant variant = variants.get(0);
 		// TODO FIX
 		// assertNotNull(variant.getAnnotationValues());
 		// assertEquals(variant.getAnnotationValues().size(), 7);

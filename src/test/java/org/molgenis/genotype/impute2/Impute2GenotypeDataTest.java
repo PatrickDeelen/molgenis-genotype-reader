@@ -56,7 +56,7 @@ public class Impute2GenotypeDataTest extends ResourceTest
 				var.getSampleVariants(),
 				Arrays.asList(Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'A'),
 						Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'G')));
-		assertEquals(var.getMinorAllele(), Allele.G_ALLELE);
+		assertEquals(var.getMinorAllele(), Allele.G);
 		assertEquals(var.getMinorAlleleFrequency(), 0.375, 0.001);
 		assertEquals(Utils.iteratorToList(genotypeData.iterator()).size(), 4);
 	}
@@ -92,7 +92,7 @@ public class Impute2GenotypeDataTest extends ResourceTest
 	@Test
 	public void getSequenceGeneticVariants()
 	{
-		Iterator<GeneticVariant> it = genotypeData.getSequenceGeneticVariants("7");
+		Iterator<GeneticVariant> it = genotypeData.getSequenceGeneticVariants("7").iterator();
 		List<GeneticVariant> variants = Utils.iteratorToList(it);
 		assertEquals(variants.size(), 3);
 

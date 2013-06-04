@@ -18,6 +18,7 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 	private final Cache<GeneticVariant, List<Alleles>> cache;
 	private final Cache<GeneticVariant, List<Boolean>> phasingCache;
 	private final int cacheSize;
+	private final int sampleVariantProviderUniqueId;
 
 	public CachedSampleVariantProvider(SampleVariantsProvider sampleVariantProvider, int cacheSize)
 	{
@@ -25,6 +26,7 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 		this.cache = new Cache<GeneticVariant, List<Alleles>>(cacheSize);
 		this.phasingCache = new Cache<GeneticVariant, List<Boolean>>(cacheSize);
 		this.cacheSize = cacheSize;
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 	}
 
 	@Override
@@ -40,6 +42,7 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 			cache.put(variant, variantAlleles);
 			return variantAlleles;
 		}
+
 	}
 
 	@Override
@@ -59,5 +62,9 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 		List<Boolean> phasing = sampleVariantProvider.getSamplePhasing(variant);
 		phasingCache.put(variant, phasing);
 		return phasing;
+
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 }

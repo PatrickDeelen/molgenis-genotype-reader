@@ -26,8 +26,12 @@ public class MafCalculator
 			{
 				for (Allele sampleAllele : sampleAlleles.getAlleles())
 				{
-					if (sampleAllele != null)
+					if (sampleAllele != null && sampleAllele != Allele.ZERO)
 					{
+						if (!alleleCounts.containsKey(sampleAllele))
+						{
+							throw new NullPointerException("No counter for allele: " + sampleAllele);
+						}
 						alleleCounts.get(sampleAllele).incrementAndGet();
 					}
 				}

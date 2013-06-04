@@ -25,25 +25,25 @@ public class AlleleTest
 	@Test
 	public void getComplement()
 	{
-		assertEquals(Allele.A_ALLELE.getComplement().getAlleleAsString(), "T");
+		assertEquals(Allele.A.getComplement().getAlleleAsString(), "T");
 	}
 
 	@Test
 	public void getSnpAllele()
 	{
-		assertEquals(Allele.A_ALLELE.getAlleleAsSnp(), 'A');
+		assertEquals(Allele.A.getAlleleAsSnp(), 'A');
 	}
 
 	@Test
 	public void getStringAllele()
 	{
-		assertEquals(Allele.A_ALLELE.getAlleleAsString(), "A");
+		assertEquals(Allele.A.getAlleleAsString(), "A");
 	}
 
 	@Test
 	public void isSnpAllele()
 	{
-		assertEquals(Allele.A_ALLELE.isSnpAllele(), true);
+		assertEquals(Allele.A.isSnpAllele(), true);
 	}
 
 }

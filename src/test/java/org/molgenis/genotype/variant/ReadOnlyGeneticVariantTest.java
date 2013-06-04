@@ -61,7 +61,7 @@ public class ReadOnlyGeneticVariantTest
 	@Test
 	public void getMinorAllele()
 	{
-		assertEquals(testInstance.getMinorAllele(), Allele.C_ALLELE);
+		assertEquals(testInstance.getMinorAllele(), Allele.C);
 	}
 
 	@Test

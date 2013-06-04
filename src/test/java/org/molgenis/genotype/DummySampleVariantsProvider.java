@@ -3,17 +3,20 @@ package org.molgenis.genotype;
 import java.util.List;
 
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 
 public class DummySampleVariantsProvider implements SampleVariantsProvider
 {
 
 	private final List<Alleles> variantAlleles;
+	private final int sampleVariantProviderUniqueId;
 
 	public DummySampleVariantsProvider(List<Alleles> variantAlleles)
 	{
 		super();
 		this.variantAlleles = variantAlleles;
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 	}
 
 	@Override
@@ -32,6 +35,11 @@ public class DummySampleVariantsProvider implements SampleVariantsProvider
 	public List<Boolean> getSamplePhasing(GeneticVariant variant)
 	{
 		return null;
+	}
+	
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
 	}
 
 }

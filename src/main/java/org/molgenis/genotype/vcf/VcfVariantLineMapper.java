@@ -41,8 +41,8 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		List<String> alleles = record.getAlleles();
 		String refAllele = record.getRef();
 
+		// TODO fix addingm annotations
 		Map<String, Object> annotationValues = getAnnotationValues(record, infoAnnotations);
-		Integer stopPos = (Integer) annotationValues.get(END_INFO_ID);
 
 		// Check if the alt alleles contain references to alt annotaions
 		List<String> altTypes = new ArrayList<String>();

@@ -28,6 +28,7 @@ import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.variant.CachedSampleVariantProvider;
 import org.molgenis.genotype.variant.GeneticVariant;
+import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.io.vcf.VcfAlt;
@@ -46,6 +47,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	private final VcfReader reader;
 	private Map<String, Annotation> sampleAnnotationsMap;
 	private Map<String, String> altDescriptions;
+	private final int sampleVariantProviderUniqueId;
 
 	/**
 	 * VCF genotype reader with default cache of 100
@@ -124,6 +126,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		{
 			throw new GenotypeDataException(e);
 		}
+		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 	}
 
 	@Override
@@ -250,6 +253,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	}
 
 	@Override
+<<<<<<< HEAD
 	public List<Boolean> getSamplePhasing(GeneticVariant variant)
 	{
 		List<VcfSampleGenotype> sampleGenotypes = getSampleGenotypes(variant);
@@ -310,3 +314,11 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		return genotypes;
 	}
 }
+
+	public int getSampleVariantProviderUniqueId()
+	{
+		return sampleVariantProviderUniqueId;
+	}
+
+}
+

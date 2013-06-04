@@ -21,8 +21,6 @@ public class LdCalculatorTest
 	public void calculateLd() throws LdCalculatorException
 	{
 
-		Alleles alleles = Alleles.createBasedOnChars('A', 'C');
-
 		ArrayList<Alleles> sampleAlleles = new ArrayList<Alleles>();
 		sampleAlleles.add(Alleles.createBasedOnChars('A', 'C'));
 		sampleAlleles.add(Alleles.createBasedOnChars('A', 'C'));
@@ -53,8 +51,6 @@ public class LdCalculatorTest
 	public void calculateLd2() throws LdCalculatorException
 	{
 
-		Alleles alleles = Alleles.createBasedOnChars('A', 'C');
-
 		ArrayList<Alleles> sampleAlleles = new ArrayList<Alleles>();
 		sampleAlleles.add(Alleles.createBasedOnChars('A', 'C'));
 		sampleAlleles.add(Alleles.createBasedOnChars('A', 'C'));
@@ -65,8 +61,6 @@ public class LdCalculatorTest
 
 		GeneticVariant testInstance = ReadOnlyGeneticVariant.createSnp("rs1", 1, "chr1", sampleAllelesProvider, 'A',
 				'C');
-
-		alleles = Alleles.createBasedOnChars('T', 'C');
 
 		sampleAlleles = new ArrayList<Alleles>();
 		sampleAlleles.add(Alleles.createBasedOnChars('T', 'C'));
