@@ -7,6 +7,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -174,4 +175,10 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertEquals(variants.size(), 1);
 	}
 
+	@Test
+	public void testGetSamplePhasing()
+	{
+		GeneticVariant variant = genotypeData.getVariantsByPos("1", 565286).iterator().next();
+		assertEquals(genotypeData.getSamplePhasing(variant), Arrays.asList(false));
+	}
 }

@@ -28,4 +28,10 @@ public class DummySampleVariantsProvider implements SampleVariantsProvider
 		return 0;
 	}
 
+	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		return null;
+	}
+
 }

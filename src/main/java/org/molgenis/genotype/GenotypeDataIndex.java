@@ -7,4 +7,6 @@ public interface GenotypeDataIndex
 	List<String> getSeqNames();
 
 	VariantQuery createQuery();
+
+	RawLineQuery createRawLineQuery();
 }

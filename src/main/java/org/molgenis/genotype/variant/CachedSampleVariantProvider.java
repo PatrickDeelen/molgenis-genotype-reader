@@ -6,8 +6,7 @@ import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Cache;
 
 /**
- * Cached sample variant provider to prevent reloading a SNPs that is accessed
- * multiple times in a sort periode.
+ * Cached sample variant provider to prevent reloading a SNPs that is accessed multiple times in a sort periode.
  * 
  * @author Patrick Deelen
  * 
@@ -17,12 +16,14 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 
 	private final SampleVariantsProvider sampleVariantProvider;
 	private final Cache<GeneticVariant, List<Alleles>> cache;
+	private final Cache<GeneticVariant, List<Boolean>> phasingCache;
 	private final int cacheSize;
 
 	public CachedSampleVariantProvider(SampleVariantsProvider sampleVariantProvider, int cacheSize)
 	{
 		this.sampleVariantProvider = sampleVariantProvider;
 		this.cache = new Cache<GeneticVariant, List<Alleles>>(cacheSize);
+		this.phasingCache = new Cache<GeneticVariant, List<Boolean>>(cacheSize);
 		this.cacheSize = cacheSize;
 	}
 
@@ -45,5 +46,18 @@ public class CachedSampleVariantProvider implements SampleVariantsProvider
 	public int cacheSize()
 	{
 		return cacheSize;
+	}
+
+	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		if (phasingCache.containsKey(variant))
+		{
+			return phasingCache.get(variant);
+		}
+
+		List<Boolean> phasing = sampleVariantProvider.getSamplePhasing(variant);
+		phasingCache.put(variant, phasing);
+		return phasing;
 	}
 }

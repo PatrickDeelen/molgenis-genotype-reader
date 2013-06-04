@@ -86,6 +86,22 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 		assertEquals(i, 5);
 	}
 
+	/*
+	 * @Test public void testGetRawLines() { result = query.executeQuery("1", 565286, 6097450); List<String> rawLines =
+	 * Utils.iteratorToList(result.getRawLines()); assertEquals( rawLines, Arrays.asList(
+	 * "1	565286	rs1578391	C	T	.	flt	NS=1;DP=5;AF=1.000;ANNOT=INT;GI=LOC100131754	GT:DP:EC:CONFS	1/1:5:5:5.300,5.300,1.000,1.000,1.000,1.000,1.000"
+	 * ,
+	 * "1	2243618	rs35434908	A	GTTTCA	.	flt	NS=1;DP=6;AF=1.000;ANNOT=ING	GT:DP:EC:CONFS	1/1:6:6:6.500,6.560,1.000,1.000,1.000,1.000,1.000"
+	 * ,
+	 * "1	3171929	rs4648464	G	A	.	flt	NS=1;DP=4;AF=1.000;ANNOT=INT;GI=PRDM16;TI=NM_022114.3;PI=NP_071397.3	GT:DP:EC:CONFS	1/1:4:4:1.400,4.450,0.330,1.000,1.000,1.000,1.000"
+	 * ,
+	 * "1	3172062	rs4648465	G	A	.	flt	NS=1;DP=11;AF=1.000;ANNOT=INT;GI=PRDM16;TI=NM_022114.3;PI=NP_071397.3	GT:DP:EC:CONFS	1/1:11:11:6.700,8.600,0.780,1.000,1.000,1.000,1.000"
+	 * ,
+	 * "1	3172273	rs2455100	T	C	.	flt	NS=1;DP=7;AF=1.000;ANNOT=INT;GI=PRDM16;TI=NM_022114.3;PI=NP_071397.3	GT:DP:EC:CONFS	1/1:7:7:3.400,7.310,0.470,1.000,1.000,1.000,1.000"
+	 * ,
+	 * "1	6097450	rs1295089	G	A	.	flt	NS=1;DP=5;AF=1.000;ANNOT=INT;GI=KCNAB2;TI=NM_003636.2;PI=NP_003627.1	GT:DP:EC:CONFS	1/1:5:5:5.000,5.070,1.000,1.000,1.000,1.000,1.000"
+	 * )); }
+	 */
 	@Test
 	public void querySeq1() throws IOException
 	{
@@ -147,5 +163,12 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 	public int cacheSize()
 	{
 		return 0;
+	}
+
+	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

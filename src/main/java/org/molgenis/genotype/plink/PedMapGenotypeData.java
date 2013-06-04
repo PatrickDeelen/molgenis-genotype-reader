@@ -44,6 +44,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	private List<GeneticVariant> snps = new ArrayList<GeneticVariant>(1000000);
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
 	private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
+	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
 
 	public PedMapGenotypeData(File pedFile, File mapFile) throws FileNotFoundException, IOException
 	{
@@ -269,5 +270,22 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	public int cacheSize()
 	{
 		return 0;
+	}
+
+	/**
+	 * Ped/Map daoes not support phasing, always return false
+	 * 
+	 */
+	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		if (samplePhasing.containsKey(variant))
+		{
+			return samplePhasing.get(variant);
+		}
+
+		List<Boolean> phasing = Collections.nCopies(getSampleVariants(variant).size(), false);
+		samplePhasing.put(variant, phasing);
+		return phasing;
 	}
 }
