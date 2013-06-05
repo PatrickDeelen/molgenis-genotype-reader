@@ -29,6 +29,11 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 	@Override
 	public List<Alleles> getSampleVariants(GeneticVariant variant)
 	{
+		if (!variant.getPrimaryVariantId().equals(hapsEntry.getSnpId()))
+		{
+			throw new IllegalArgumentException("Ids don't match");
+		}
+
 		List<Alleles> allelesList = new ArrayList<Alleles>();
 		for (String[] sampleAlleles : hapsEntry.getSampleAlleles())
 		{
@@ -41,24 +46,45 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 		return allelesList;
 	}
 
+	/*
+	 * Sample can have an asterisk directly after the allele indicating that it is unphased
+	 */
 	private Allele createAllele(String sample)
 	{
-		if (sample.equalsIgnoreCase("?"))
+		char allele = sample.charAt(0);
+		switch (allele)
 		{
-			return Allele.create(null);
+			case '?':
+				return Allele.ZERO;
+			case '0':
+				return Allele.create(hapsEntry.getFirstAllele());
+			case '1':
+				return Allele.create(hapsEntry.getSecondAllele());
+			default:
+				throw new IllegalArgumentException("[" + sample + "] is an invalid value for a haps sample value");
 		}
 
-		if (sample.equalsIgnoreCase("0"))
+	}
+
+	/*
+	 * Sample can have an asterisk directly after the allele indicating that it is unphased
+	 */
+	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		if (!variant.getPrimaryVariantId().equals(hapsEntry.getSnpId()))
 		{
-			return Allele.create(hapsEntry.getFirstAllele());
+			throw new IllegalArgumentException("Ids don't match");
 		}
 
-		if (sample.equalsIgnoreCase("1"))
+		List<Boolean> phasingList = new ArrayList<Boolean>();
+		for (String[] sampleAlleles : hapsEntry.getSampleAlleles())
 		{
-			return Allele.create(hapsEntry.getSecondAllele());
+			boolean phased = !sampleAlleles[0].endsWith("*");
+			phasingList.add(phased);
 		}
 
-		throw new IllegalArgumentException("[" + sample + "] is an invalid value for a haps sample value");
+		return phasingList;
 	}
 
 	@Override
@@ -72,4 +98,5 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 	{
 		return sampleVariantProviderUniqueId;
 	}
+
 }

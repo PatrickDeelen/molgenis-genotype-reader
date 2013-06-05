@@ -34,6 +34,11 @@ public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 	}
 
 	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		return sampleVariantsProvider.getSamplePhasing(variant);
+	}
+	
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
