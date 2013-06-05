@@ -11,16 +11,14 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.molgenis.genotype.AbstractRandomAccessGenotypeData;
-import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.Sample;
+import org.molgenis.genotype.Sample.SampleAnnotation;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
 import org.molgenis.genotype.annotation.Annotation;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.FamEntry;
 import org.molgenis.genotype.plink.readers.BedBimFamReader;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
 
 public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 {
@@ -74,11 +72,11 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 		List<Sample> samples = new ArrayList<Sample>();
 		for (FamEntry famEntry : reader.getFamEntries())
 		{
-			Map<String, Object> annotations = new HashMap<String, Object>(4);
-			annotations.put(FATHER_SAMPLE_ANNOTATION_NAME, famEntry.getFather());
-			annotations.put(MOTHER_SAMPLE_ANNOTATION_NAME, famEntry.getMother());
-			annotations.put(SEX_SAMPLE_ANNOTATION_NAME, famEntry.getSex());
-			annotations.put(PHENOTYPE_SAMPLE_ANNOTATION_NAME, famEntry.getPhenotype());
+			Map<String, SampleAnnotation> annotations = new HashMap<String, SampleAnnotation>(4);
+			annotations.put(FATHER_SAMPLE_ANNOTATION_NAME, new SampleAnnotation(FATHER_SAMPLE_ANNOTATION_NAME, famEntry.getFather(), SampleAnnotation.Type.OTHER));
+			annotations.put(MOTHER_SAMPLE_ANNOTATION_NAME, new SampleAnnotation(MOTHER_SAMPLE_ANNOTATION_NAME, famEntry.getMother(), SampleAnnotation.Type.OTHER));
+			annotations.put(SEX_SAMPLE_ANNOTATION_NAME, new SampleAnnotation(SEX_SAMPLE_ANNOTATION_NAME, famEntry.getSex(), SampleAnnotation.Type.OTHER));
+			annotations.put(PHENOTYPE_SAMPLE_ANNOTATION_NAME, new SampleAnnotation(PHENOTYPE_SAMPLE_ANNOTATION_NAME, famEntry.getPhenotype(), SampleAnnotation.Type.PHENOTYPE));
 			samples.add(new Sample(famEntry.getIndividual(), famEntry.getFamily(), annotations));
 		}
 		return samples;

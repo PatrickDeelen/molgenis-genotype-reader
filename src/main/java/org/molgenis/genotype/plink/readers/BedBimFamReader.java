@@ -282,4 +282,11 @@ public class BedBimFamReader implements SampleVariantsProvider
 	{
 		return sampleVariantProviderUniqueId;
 	}
+
+	@Override
+	public List<Boolean> getSamplePhasing(GeneticVariant variant)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
