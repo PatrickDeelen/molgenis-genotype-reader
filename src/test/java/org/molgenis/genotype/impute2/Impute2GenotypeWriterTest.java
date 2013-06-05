@@ -31,11 +31,11 @@ public class Impute2GenotypeWriterTest extends ResourceTest
 		{
 			writer.write("write-test");
 
-			assertEquals(FileUtils.readFileToString(getTestImpute2Haps()),
-					FileUtils.readFileToString(new File("write-test.haps")));
+			assertEquals(FileUtils.readFileToString(new File("write-test.haps")),
+					FileUtils.readFileToString(getTestImpute2Haps()));
 
-			assertEquals(FileUtils.readFileToString(getTestImpute2Sample()),
-					FileUtils.readFileToString(new File("write-test.sample")));
+			assertEquals(FileUtils.readFileToString(new File("write-test.sample")),
+					FileUtils.readFileToString(getTestImpute2Sample()));
 		}
 		finally
 		{

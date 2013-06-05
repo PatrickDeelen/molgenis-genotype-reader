@@ -189,7 +189,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 				annotations.put(MOTHER_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(
 						MOTHER_SAMPLE_ANNOTATION_NAME, pedEntry.getMother(), Sample.SampleAnnotation.Type.OTHER));
 				annotations.put(SEX_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(SEX_SAMPLE_ANNOTATION_NAME,
-						pedEntry.getSex(), Sample.SampleAnnotation.Type.PHENOTYPE));
+						pedEntry.getSex(), Sample.SampleAnnotation.Type.OTHER));
 				annotations.put(PHENOTYPE_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(
 						PHENOTYPE_SAMPLE_ANNOTATION_NAME, pedEntry.getPhenotype(),
 						Sample.SampleAnnotation.Type.PHENOTYPE));

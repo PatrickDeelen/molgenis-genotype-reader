@@ -145,6 +145,17 @@ public class Impute2GenotypeWriter
 			return value.equals(true) ? "1" : "0";
 		}
 
+		if (value instanceof Double || value instanceof Float)
+		{
+			String result = value.toString();
+			if (result.endsWith("0"))
+			{
+				result = result.substring(0, result.length() - 1);
+			}
+
+			return result;
+		}
+
 		return value.toString();
 	}
 
