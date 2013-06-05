@@ -55,7 +55,7 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 		switch (allele)
 		{
 			case '?':
-				return Allele.create(null);
+				return Allele.ZERO;
 			case '0':
 				return Allele.create(hapsEntry.getFirstAllele());
 			case '1':
@@ -92,7 +92,6 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 	{
 		return 0;
 	}
-
 
 	@Override
 	public int getSampleVariantProviderUniqueId()

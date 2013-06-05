@@ -44,4 +44,9 @@ public class ResourceTest
 	{
 		return getTestResourceFile("/test.sample");
 	}
+
+	protected File getTestImpute2Haps() throws URISyntaxException
+	{
+		return getTestResourceFile("/test.haps");
+	}
 }

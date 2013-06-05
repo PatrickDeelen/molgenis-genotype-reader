@@ -60,7 +60,7 @@ public class PedMapGenotypeWriter
 
 			for (GeneticVariant variant : genotypeData)
 			{
-				if (variant.isSnp())
+				if (!variant.isSnp())
 				{
 					throw new NotASnpException(variant);
 				}
