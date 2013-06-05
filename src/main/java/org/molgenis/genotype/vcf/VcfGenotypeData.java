@@ -201,7 +201,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		List<Sample> samples = new ArrayList<Sample>(sampleNames.size());
 		for (String sampleName : sampleNames)
 		{
-			Sample sample = new Sample(sampleName, null, Collections.<String, Object> emptyMap());
+			Sample sample = new Sample(sampleName, null, Collections.<String, Sample.SampleAnnotation> emptyMap());
 			samples.add(sample);
 		}
 

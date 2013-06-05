@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -182,11 +183,16 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			List<Sample> samples = new ArrayList<Sample>();
 			for (PedEntry pedEntry : pedFileDriver)
 			{
-				Map<String, Object> annotations = new HashMap<String, Object>(4);
-				annotations.put(FATHER_SAMPLE_ANNOTATION_NAME, pedEntry.getFather());
-				annotations.put(MOTHER_SAMPLE_ANNOTATION_NAME, pedEntry.getMother());
-				annotations.put(SEX_SAMPLE_ANNOTATION_NAME, pedEntry.getSex());
-				annotations.put(PHENOTYPE_SAMPLE_ANNOTATION_NAME, pedEntry.getPhenotype());
+				Map<String, Sample.SampleAnnotation> annotations = new LinkedHashMap<String, Sample.SampleAnnotation>();
+				annotations.put(FATHER_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(
+						FATHER_SAMPLE_ANNOTATION_NAME, pedEntry.getFather(), Sample.SampleAnnotation.Type.OTHER));
+				annotations.put(MOTHER_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(
+						MOTHER_SAMPLE_ANNOTATION_NAME, pedEntry.getMother(), Sample.SampleAnnotation.Type.OTHER));
+				annotations.put(SEX_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(SEX_SAMPLE_ANNOTATION_NAME,
+						pedEntry.getSex(), Sample.SampleAnnotation.Type.PHENOTYPE));
+				annotations.put(PHENOTYPE_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(
+						PHENOTYPE_SAMPLE_ANNOTATION_NAME, pedEntry.getPhenotype(),
+						Sample.SampleAnnotation.Type.PHENOTYPE));
 
 				samples.add(new Sample(pedEntry.getIndividual(), pedEntry.getFamily(), annotations));
 			}
