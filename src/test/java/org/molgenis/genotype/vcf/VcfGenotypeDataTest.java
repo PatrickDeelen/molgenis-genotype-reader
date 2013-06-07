@@ -137,30 +137,29 @@ public class VcfGenotypeDataTest extends ResourceTest
 		assertNotNull(variants);
 		assertEquals(variants.size(), 1);
 
-		// GeneticVariant variant = variants.get(0);
-		// TODO FIX
-		// assertNotNull(variant.getAnnotationValues());
-		// assertEquals(variant.getAnnotationValues().size(), 7);
+		GeneticVariant variant = variants.get(0);
+		assertNotNull(variant.getAnnotationValues());
+		assertEquals(variant.getAnnotationValues().size(), 7);
 
-		// Object annotationValue = variant.getAnnotationValues().get("NS");
-		// assertNotNull(annotationValue);
-		// assertEquals(annotationValue, Integer.valueOf(1));
-		//
-		// annotationValue = variant.getAnnotationValues().get("AF");
-		// assertNotNull(annotationValue);
-		// assertTrue(annotationValue instanceof List);
-		// @SuppressWarnings("unchecked")
-		// List<Float> floats = (List<Float>) annotationValue;
-		// assertEquals(floats.size(), 1);
-		// assertEquals(floats.get(0).floatValue(), 1.0, 0.001);
-		//
-		// annotationValue = variant.getAnnotationValues().get("ANNOT");
-		// assertNotNull(annotationValue);
-		// assertTrue(annotationValue instanceof List);
-		// @SuppressWarnings("unchecked")
-		// List<String> strings = (List<String>) annotationValue;
-		// assertEquals(strings.size(), 1);
-		// assertEquals(strings.get(0), "INT");
+		Object annotationValue = variant.getAnnotationValues().get("NS");
+		assertNotNull(annotationValue);
+		assertEquals(annotationValue, Integer.valueOf(1));
+
+		annotationValue = variant.getAnnotationValues().get("AF");
+		assertNotNull(annotationValue);
+		assertTrue(annotationValue instanceof List);
+		@SuppressWarnings("unchecked")
+		List<Float> floats = (List<Float>) annotationValue;
+		assertEquals(floats.size(), 1);
+		assertEquals(floats.get(0).floatValue(), 1.0, 0.001);
+
+		annotationValue = variant.getAnnotationValues().get("ANNOT");
+		assertNotNull(annotationValue);
+		assertTrue(annotationValue instanceof List);
+		@SuppressWarnings("unchecked")
+		List<String> strings = (List<String>) annotationValue;
+		assertEquals(strings.size(), 1);
+		assertEquals(strings.get(0), "INT");
 	}
 
 	@Test

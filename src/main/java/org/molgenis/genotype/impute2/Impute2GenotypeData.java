@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.annotation.SampleAnnotation;
+import org.molgenis.genotype.annotation.SampleAnnotation.SampleAnnotationType;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.util.Utils;
 import org.molgenis.io.csv.CsvReader;
@@ -27,6 +30,7 @@ import org.molgenis.util.tuple.Tuple;
  * 
  * First run <code>index-haps.sh yourfile.haps<code> to create the tabix index file
  * 
+ * The two character string 'NA' is treated as missing when encountered in the sample file
  * 
  * @author erwin
  * 
@@ -35,6 +39,8 @@ public class Impute2GenotypeData extends IndexedGenotypeData
 {
 	private GenotypeDataIndex index;
 	private File sampleFile;
+	private Map<String, SampleAnnotation> sampleAnnotations = new LinkedHashMap<String, SampleAnnotation>();
+
 	private static final Logger LOG = Logger.getLogger(Impute2GenotypeData.class);
 
 	public Impute2GenotypeData(File bzipHapsFile, File tabixIndexFile, File sampleFile) throws IOException
@@ -57,7 +63,12 @@ public class Impute2GenotypeData extends IndexedGenotypeData
 		if (!sampleFile.canRead()) throw new IOException("sampleFile file not found at " + sampleFile.getAbsolutePath());
 
 		index = new TabixIndex(tabixIndexFile, bzipHapsFile, new Impute2VariantLineMapper());
+		LOG.info("Read tabix index");
+
 		this.sampleFile = sampleFile;
+
+		loadAnnotations();
+		LOG.info("Annotations loaded");
 	}
 
 	@Override
@@ -81,76 +92,53 @@ public class Impute2GenotypeData extends IndexedGenotypeData
 		try
 		{
 			reader = new CsvReader(sampleFile, ' ');
+			Iterator<Tuple> it = reader.iterator();
 
-			List<String> colNames = Utils.iteratorToList(reader.colNamesIterator());
+			it.next();// Datatype row
 
-			Tuple dataTypes = null;
-			boolean firstRow = true;
-
-			for (Tuple tuple : reader)
+			while (it.hasNext())
 			{
-				if (firstRow)// First after the headers contains the datatype of a column
+				Tuple tuple = it.next();
+
+				String familyId = tuple.getString(0);
+				String sampleId = tuple.getString(1);
+
+				Map<String, Object> annotationValues = new LinkedHashMap<String, Object>();
+				annotationValues.put("missing", tuple.getDouble(2));
+
+				for (String colName : sampleAnnotations.keySet())
 				{
-					dataTypes = tuple;
-					firstRow = false;
-				}
-				else
-				{
+					SampleAnnotation annotation = sampleAnnotations.get(colName);
 
-					String familyId = tuple.getString(0);
-					String sampleId = tuple.getString(1);
-					double missing = tuple.getDouble(2);
-
-					Map<String, Sample.SampleAnnotation> annotations = new LinkedHashMap<String, Sample.SampleAnnotation>();
-					annotations.put("missing", new Sample.SampleAnnotation("missing", missing,
-							Sample.SampleAnnotation.Type.OTHER));
-
-					for (int i = 3; i < tuple.getNrCols(); i++)
+					Object value = null;
+					if (!tuple.getString(colName).equalsIgnoreCase("NA"))
 					{
-						if (dataTypes.getString(i).equalsIgnoreCase("D"))
+						switch (annotation.getType())
 						{
-							Integer value = tuple.getString(i).equalsIgnoreCase("NA") ? null : tuple.getInt(i);
-							annotations.put(colNames.get(i), new Sample.SampleAnnotation(colNames.get(i), value,
-									Sample.SampleAnnotation.Type.COVARIATE));
-
-						}
-						else if (dataTypes.getString(i).equalsIgnoreCase("C"))
-						{
-							Double value = tuple.getString(i).equalsIgnoreCase("NA") ? null : tuple.getDouble(i);
-							annotations.put(colNames.get(i), new Sample.SampleAnnotation(colNames.get(i), value,
-									Sample.SampleAnnotation.Type.COVARIATE));
-						}
-						else if (dataTypes.getString(i).equalsIgnoreCase("P"))
-						{
-							Double value = tuple.getString(i).equalsIgnoreCase("NA") ? null : tuple.getDouble(i);
-							annotations.put(colNames.get(i), new Sample.SampleAnnotation(colNames.get(i), value,
-									Sample.SampleAnnotation.Type.PHENOTYPE));
-						}
-						else if (dataTypes.getString(i).equalsIgnoreCase("B"))
-						{
-							Boolean value = tuple.getString(i).equalsIgnoreCase("NA") ? null : tuple.getBoolean(i);
-							annotations.put(colNames.get(i), new Sample.SampleAnnotation(colNames.get(i), value,
-									Sample.SampleAnnotation.Type.PHENOTYPE));
-						}
-						else
-						{
-							LOG.warn("Unknown datatype [" + dataTypes.getString(i) + "]");
+							case INTEGER:
+								value = tuple.getInt(colName);
+								break;
+							case BOOLEAN:
+								value = tuple.getBoolean(colName);
+								break;
+							case FLOAT:
+								value = tuple.getDouble(colName);
+								break;
+							default:
+								LOG.warn("Unsupported data type encountered for column [" + colName + "]");
 						}
 					}
 
-					samples.add(new Sample(sampleId, familyId, annotations));
+					annotationValues.put(colName, value);
 				}
 
+				samples.add(new Sample(sampleId, familyId, annotationValues));
 			}
 
 		}
 		catch (FileNotFoundException e)
 		{
 			throw new RuntimeException("File [" + sampleFile.getAbsolutePath() + "] does not exists", e);
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException("IOException parsing [" + sampleFile.getAbsolutePath() + "]", e);
 		}
 		finally
 		{
@@ -171,4 +159,66 @@ public class Impute2GenotypeData extends IndexedGenotypeData
 		return Collections.emptyMap();
 	}
 
+	@Override
+	protected Map<String, SampleAnnotation> getSampleAnnotationsMap()
+	{
+		return sampleAnnotations;
+	}
+
+	private void loadAnnotations() throws IOException
+	{
+		sampleAnnotations.clear();
+
+		SampleAnnotation missingAnnotation = new SampleAnnotation("missing", "missing",
+				"Missing data proportion of each individual", Annotation.Type.FLOAT, SampleAnnotationType.OTHER, false);
+		sampleAnnotations.put(missingAnnotation.getId(), missingAnnotation);
+
+		CsvReader reader = null;
+		try
+		{
+			reader = new CsvReader(sampleFile, ' ');
+
+			List<String> colNames = Utils.iteratorToList(reader.colNamesIterator());
+			Tuple dataTypes = reader.iterator().next();
+			for (int i = 3; i < colNames.size(); i++)
+			{
+				SampleAnnotation annotation = null;
+				if (dataTypes.getString(i).equalsIgnoreCase("D"))
+				{
+					annotation = new SampleAnnotation(colNames.get(i), colNames.get(i), "", Annotation.Type.INTEGER,
+							SampleAnnotationType.COVARIATE, false);
+
+				}
+				else if (dataTypes.getString(i).equalsIgnoreCase("C"))
+				{
+					annotation = new SampleAnnotation(colNames.get(i), colNames.get(i), "", Annotation.Type.FLOAT,
+							SampleAnnotationType.COVARIATE, false);
+				}
+				else if (dataTypes.getString(i).equalsIgnoreCase("P"))
+				{
+					annotation = new SampleAnnotation(colNames.get(i), colNames.get(i), "", Annotation.Type.FLOAT,
+							SampleAnnotationType.PHENOTYPE, false);
+				}
+				else if (dataTypes.getString(i).equalsIgnoreCase("B"))
+				{
+					annotation = new SampleAnnotation(colNames.get(i), colNames.get(i), "", Annotation.Type.BOOLEAN,
+							SampleAnnotationType.PHENOTYPE, false);
+				}
+				else
+				{
+					LOG.warn("Unknown datatype [" + dataTypes.getString(i) + "]");
+				}
+
+				if (annotation != null)
+				{
+					sampleAnnotations.put(annotation.getId(), annotation);
+				}
+			}
+		}
+		finally
+		{
+			IOUtils.closeQuietly(reader);
+		}
+
+	}
 }

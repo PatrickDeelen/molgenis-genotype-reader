@@ -57,6 +57,7 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 		this.sampleVariantsProvider = sampleVariantsProvider;
 		this.alleles = alleles;
 		this.refAllele = refAllele;
+		this.annotationValues = annotationValues;
 	}
 
 	public static GeneticVariant createSnp(String snpId, int pos, String sequenceName,
@@ -141,6 +142,15 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 	{
 		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName, null,
 				sampleVariantsProvider, Alleles.createBasedOnString(alleles), Allele.create(refAllele));
+	}
+
+	public static GeneticVariant createVariant(List<String> variantIds, int pos, String sequenceName,
+			Map<String, ?> annotationValues, SampleVariantsProvider sampleVariantsProvider, List<String> alleles,
+			String refAllele)
+	{
+		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantIds), pos, sequenceName,
+				annotationValues, sampleVariantsProvider, Alleles.createBasedOnString(alleles),
+				Allele.create(refAllele));
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.annotation.SampleAnnotation;
 import org.molgenis.genotype.variant.GeneticVariant;
 
 /**
@@ -29,6 +30,21 @@ public interface GenotypeData extends Iterable<GeneticVariant>
 	 * @throws IOException
 	 */
 	Annotation getVariantAnnotation(String annotationId);
+
+	/**
+	 * Get all posible sample annotations
+	 * 
+	 * @return
+	 */
+	List<SampleAnnotation> getSampleAnnotations();
+
+	/**
+	 * Get a specific sample annotation
+	 * 
+	 * @param annotationId
+	 * @return The Annotation or null if not found
+	 */
+	Annotation getSampleAnnotation(String annotationId);
 
 	/**
 	 * 

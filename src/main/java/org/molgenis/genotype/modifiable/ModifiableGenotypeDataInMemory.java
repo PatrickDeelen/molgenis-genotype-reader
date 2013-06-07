@@ -13,6 +13,7 @@ import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.annotation.SampleAnnotation;
 import org.molgenis.genotype.variant.CachedSampleVariantProvider;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
@@ -325,6 +326,18 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	public int getExcludedVariantCount()
 	{
 		return filteredOutVariants.size();
+	}
+
+	@Override
+	public List<SampleAnnotation> getSampleAnnotations()
+	{
+		return sourceGenotypeData.getSampleAnnotations();
+	}
+
+	@Override
+	public Annotation getSampleAnnotation(String annotationId)
+	{
+		return sourceGenotypeData.getSampleAnnotation(annotationId);
 	}
 
 }
