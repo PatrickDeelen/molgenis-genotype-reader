@@ -122,7 +122,7 @@ public class PedMapGenotypeWriter
 			return "0";
 		}
 
-		Object value = sample.getAnnotations().get(fatherSampleAnnotionId);
+		Object value = sample.getAnnotationValues().get(fatherSampleAnnotionId);
 		if (value == null)
 		{
 			return "0";
@@ -138,7 +138,7 @@ public class PedMapGenotypeWriter
 			return "0";
 		}
 
-		Object value = sample.getAnnotations().get(motherSampleAnnotionId);
+		Object value = sample.getAnnotationValues().get(motherSampleAnnotionId);
 		if (value == null)
 		{
 			return "0";
@@ -154,7 +154,7 @@ public class PedMapGenotypeWriter
 			return 0;
 		}
 
-		Object value = sample.getAnnotations().get(sexSampleAnnotionId);
+		Object value = sample.getAnnotationValues().get(sexSampleAnnotionId);
 		if (value == null)
 		{
 			return 0;
@@ -175,7 +175,7 @@ public class PedMapGenotypeWriter
 			return -9;
 		}
 
-		Object value = sample.getAnnotations().get(phenoSampleAnnotionId);
+		Object value = sample.getAnnotationValues().get(phenoSampleAnnotionId);
 		if (value == null)
 		{
 			return -9;

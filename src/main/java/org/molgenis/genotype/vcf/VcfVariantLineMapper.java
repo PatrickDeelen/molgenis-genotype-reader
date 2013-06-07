@@ -14,7 +14,6 @@ import org.molgenis.io.vcf.VcfRecord;
 
 public class VcfVariantLineMapper implements VariantLineMapper
 {
-	private static final String END_INFO_ID = "END";
 	private final List<String> colNames;
 	private final List<Annotation> infoAnnotations;
 	private final Map<String, String> altDescriptions;
@@ -32,7 +31,6 @@ public class VcfVariantLineMapper implements VariantLineMapper
 	@Override
 	public GeneticVariant mapLine(String line)
 	{
-		System.out.println(line);
 		VcfRecord record = new VcfRecord(line, colNames);
 
 		List<String> ids = record.getId();
@@ -41,10 +39,9 @@ public class VcfVariantLineMapper implements VariantLineMapper
 		List<String> alleles = record.getAlleles();
 		String refAllele = record.getRef();
 
-		// TODO fix addingm annotations
 		Map<String, Object> annotationValues = getAnnotationValues(record, infoAnnotations);
 
-		// Check if the alt alleles contain references to alt annotaions
+		// Check if the alt alleles contain references to alt annotations
 		List<String> altTypes = new ArrayList<String>();
 		List<String> altDescriptions = new ArrayList<String>();
 
@@ -67,7 +64,7 @@ public class VcfVariantLineMapper implements VariantLineMapper
 			}
 		}
 
-		GeneticVariant variant = ReadOnlyGeneticVariant.createVariant(ids, startPos, sequenceName,
+		GeneticVariant variant = ReadOnlyGeneticVariant.createVariant(ids, startPos, sequenceName, annotationValues,
 				sampleVariantsProvider, alleles, refAllele);
 
 		return variant;

@@ -21,6 +21,8 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.annotation.SampleAnnotation;
+import org.molgenis.genotype.annotation.SampleAnnotation.SampleAnnotationType;
 import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.MapEntry;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
@@ -49,6 +51,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
 	private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
 	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
+	private Map<String, SampleAnnotation> sampleAnnotations = new LinkedHashMap<String, SampleAnnotation>();
 
 	public PedMapGenotypeData(File pedFile, File mapFile) throws FileNotFoundException, IOException
 	{
@@ -81,6 +84,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 
 		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 
+		loadSampleAnnotations();
 	}
 
 	private void loadSampleBialleles(PedFileDriver pedFileDriver)
@@ -183,18 +187,13 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			List<Sample> samples = new ArrayList<Sample>();
 			for (PedEntry pedEntry : pedFileDriver)
 			{
-				Map<String, Sample.SampleAnnotation> annotations = new LinkedHashMap<String, Sample.SampleAnnotation>();
-				annotations.put(FATHER_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(
-						FATHER_SAMPLE_ANNOTATION_NAME, pedEntry.getFather(), Sample.SampleAnnotation.Type.OTHER));
-				annotations.put(MOTHER_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(
-						MOTHER_SAMPLE_ANNOTATION_NAME, pedEntry.getMother(), Sample.SampleAnnotation.Type.OTHER));
-				annotations.put(SEX_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(SEX_SAMPLE_ANNOTATION_NAME,
-						pedEntry.getSex(), Sample.SampleAnnotation.Type.OTHER));
-				annotations.put(PHENOTYPE_SAMPLE_ANNOTATION_NAME, new Sample.SampleAnnotation(
-						PHENOTYPE_SAMPLE_ANNOTATION_NAME, pedEntry.getPhenotype(),
-						Sample.SampleAnnotation.Type.PHENOTYPE));
+				Map<String, Object> annotationValues = new LinkedHashMap<String, Object>();
+				annotationValues.put(FATHER_SAMPLE_ANNOTATION_NAME, pedEntry.getFather());
+				annotationValues.put(MOTHER_SAMPLE_ANNOTATION_NAME, pedEntry.getMother());
+				annotationValues.put(SEX_SAMPLE_ANNOTATION_NAME, pedEntry.getSex());
+				annotationValues.put(PHENOTYPE_SAMPLE_ANNOTATION_NAME, pedEntry.getPhenotype());
 
-				samples.add(new Sample(pedEntry.getIndividual(), pedEntry.getFamily(), annotations));
+				samples.add(new Sample(pedEntry.getIndividual(), pedEntry.getFamily(), annotationValues));
 			}
 
 			return samples;
@@ -296,5 +295,32 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
+	}
+
+	@Override
+	protected Map<String, SampleAnnotation> getSampleAnnotationsMap()
+	{
+		return sampleAnnotations;
+	}
+
+	private void loadSampleAnnotations()
+	{
+		sampleAnnotations.clear();
+
+		SampleAnnotation fatherAnno = new SampleAnnotation(FATHER_SAMPLE_ANNOTATION_NAME,
+				FATHER_SAMPLE_ANNOTATION_NAME, "", Annotation.Type.STRING, SampleAnnotationType.OTHER, false);
+		sampleAnnotations.put(fatherAnno.getId(), fatherAnno);
+
+		SampleAnnotation motherAnno = new SampleAnnotation(MOTHER_SAMPLE_ANNOTATION_NAME,
+				MOTHER_SAMPLE_ANNOTATION_NAME, "", Annotation.Type.STRING, SampleAnnotationType.OTHER, false);
+		sampleAnnotations.put(motherAnno.getId(), motherAnno);
+
+		SampleAnnotation sexAnno = new SampleAnnotation(SEX_SAMPLE_ANNOTATION_NAME, SEX_SAMPLE_ANNOTATION_NAME, "",
+				Annotation.Type.INTEGER, SampleAnnotationType.OTHER, false);
+		sampleAnnotations.put(sexAnno.getId(), sexAnno);
+
+		SampleAnnotation phenoAnno = new SampleAnnotation(PHENOTYPE_SAMPLE_ANNOTATION_NAME,
+				PHENOTYPE_SAMPLE_ANNOTATION_NAME, "", Annotation.Type.FLOAT, SampleAnnotationType.PHENOTYPE, false);
+		sampleAnnotations.put(phenoAnno.getId(), phenoAnno);
 	}
 }

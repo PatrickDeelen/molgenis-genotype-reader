@@ -24,6 +24,7 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.annotation.SampleAnnotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
 import org.molgenis.genotype.variant.CachedSampleVariantProvider;
@@ -201,7 +202,7 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 		List<Sample> samples = new ArrayList<Sample>(sampleNames.size());
 		for (String sampleName : sampleNames)
 		{
-			Sample sample = new Sample(sampleName, null, Collections.<String, Sample.SampleAnnotation> emptyMap());
+			Sample sample = new Sample(sampleName, null, Collections.<String, SampleAnnotation> emptyMap());
 			samples.add(sample);
 		}
 
@@ -317,6 +318,12 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
+	}
+
+	@Override
+	protected Map<String, SampleAnnotation> getSampleAnnotationsMap()
+	{
+		return Collections.emptyMap();
 	}
 
 }

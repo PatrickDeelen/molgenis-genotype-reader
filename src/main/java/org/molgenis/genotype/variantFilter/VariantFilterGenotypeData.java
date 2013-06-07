@@ -9,6 +9,7 @@ import org.molgenis.genotype.RandomAccessGenotypeData;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.annotation.SampleAnnotation;
 import org.molgenis.genotype.variant.GeneticVariant;
 
 public class VariantFilterGenotypeData implements RandomAccessGenotypeData
@@ -19,20 +20,18 @@ public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 	// private final HashSet<GeneticVariant> excludeVariants;
 
 	/**
-	 * View of originalGenotypeData with a subset of the genetic variants. Data
-	 * is not copied. Modifications in the original data are reflected here
+	 * View of originalGenotypeData with a subset of the genetic variants. Data is not copied. Modifications in the
+	 * original data are reflected here
 	 * 
-	 * If both an include list as an exclude list is specified the exclude list
-	 * takes presidency. i.e. other words all variants in the exclude list are
-	 * removed from the include list. Only variants remaining in the include
-	 * list will be visible via this view.
+	 * If both an include list as an exclude list is specified the exclude list takes presidency. i.e. other words all
+	 * variants in the exclude list are removed from the include list. Only variants remaining in the include list will
+	 * be visible via this view.
 	 * 
 	 * Either include or exclude must other than null.
 	 * 
 	 * @param originalGenotypeData
 	 * @param includeVariants
-	 *            list with variants to include. If null all but the excluded
-	 *            variants are selected
+	 *            list with variants to include. If null all but the excluded variants are selected
 	 * @param excludeVariants
 	 *            list with variants to exclude. Can be null
 	 */
@@ -119,6 +118,20 @@ public class VariantFilterGenotypeData implements RandomAccessGenotypeData
 
 	@Override
 	public GeneticVariant getSnpVariantByPos(String seqName, int startPos)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SampleAnnotation> getSampleAnnotations()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Annotation getSampleAnnotation(String annotationId)
 	{
 		// TODO Auto-generated method stub
 		return null;

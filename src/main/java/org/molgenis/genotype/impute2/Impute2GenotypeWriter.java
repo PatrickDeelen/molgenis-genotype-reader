@@ -9,7 +9,6 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -17,13 +16,16 @@ import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeData;
 import org.molgenis.genotype.Sample;
-import org.molgenis.genotype.Sample.SampleAnnotation.Type;
+import org.molgenis.genotype.annotation.SampleAnnotation;
+import org.molgenis.genotype.annotation.SampleAnnotation.SampleAnnotationType;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.NotASnpException;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 
 /**
  * Export a GenotypeData object to an impute2 haps/sample files
+ * 
+ * Missing values in the samplefile are written as 'NA'
  * 
  * @author erwin
  * 
@@ -85,13 +87,51 @@ public class Impute2GenotypeWriter
 		sb.append(SEPARATOR);
 		sb.append("missing");
 
-		List<Sample> samples = genotypeData.getSamples();
-		List<String> headers = getSampleHeaders(samples);
+		List<String> colNames = new ArrayList<String>();
+		List<String> dataTypes = new ArrayList<String>();
 
-		for (String header : headers)
+		for (SampleAnnotation annotation : genotypeData.getSampleAnnotations())
+		{
+			if (annotation.getSampleAnnotationType() == SampleAnnotationType.COVARIATE)
+			{
+				switch (annotation.getType())
+				{
+					case INTEGER:
+						colNames.add(annotation.getId());
+						dataTypes.add("D");
+						break;
+					case FLOAT:
+						colNames.add(annotation.getId());
+						dataTypes.add("C");
+					default:
+						LOG.warn("Unsupported covariate datatype [" + annotation.getType() + "]");
+				}
+			}
+			else if (annotation.getSampleAnnotationType() == SampleAnnotationType.PHENOTYPE)
+			{
+				switch (annotation.getType())
+				{
+					case BOOLEAN:
+						colNames.add(annotation.getId());
+						dataTypes.add("B");
+						break;
+					case FLOAT:
+						colNames.add(annotation.getId());
+						dataTypes.add("P");
+					default:
+						LOG.warn("Unsupported phenotype datatype [" + annotation.getType() + "]");
+				}
+			}
+			else
+			{
+				LOG.warn("'OTHER' sample annotation type not supported by impute2");
+			}
+		}
+
+		for (String colName : colNames)
 		{
 			sb.append(SEPARATOR);
-			sb.append(header);
+			sb.append(colName);
 		}
 
 		sb.append(LINE_ENDING);
@@ -103,7 +143,7 @@ public class Impute2GenotypeWriter
 		sb.append(SEPARATOR);
 		sb.append("0");
 
-		for (String dataType : getDataTypes(headers, samples))
+		for (String dataType : dataTypes)
 		{
 			sb.append(SEPARATOR);
 			sb.append(dataType);
@@ -112,7 +152,8 @@ public class Impute2GenotypeWriter
 		sb.append(LINE_ENDING);
 		sampleWriter.write(sb.toString());
 
-		for (Sample sample : samples)
+		// Write values
+		for (Sample sample : genotypeData.getSamples())
 		{
 			sb = new StringBuilder();
 			sb.append(sample.getFamilyId() == null ? "NA" : sample.getFamilyId());
@@ -121,10 +162,10 @@ public class Impute2GenotypeWriter
 			sb.append(SEPARATOR);
 			sb.append(getValue("missing", sample, "0"));
 
-			for (String header : headers)
+			for (String colName : colNames)
 			{
 				sb.append(SEPARATOR);
-				sb.append(getValue(header, sample, "NA"));
+				sb.append(getValue(colName, sample, "NA"));
 			}
 
 			sb.append(LINE_ENDING);
@@ -132,9 +173,9 @@ public class Impute2GenotypeWriter
 		}
 	}
 
-	private String getValue(String header, Sample sample, String nullValue)
+	private String getValue(String colName, Sample sample, String nullValue)
 	{
-		Object value = sample.getAnnotations().get(header).getValue();
+		Object value = sample.getAnnotationValues().get(colName);
 		if (value == null)
 		{
 			return nullValue;
@@ -157,76 +198,6 @@ public class Impute2GenotypeWriter
 		}
 
 		return value.toString();
-	}
-
-	private List<String> getDataTypes(List<String> headers, List<Sample> samples)
-	{
-		List<String> dataTypes = new ArrayList<String>();
-
-		for (String header : headers)
-		{
-			boolean found = false;
-			for (int i = 0; i < samples.size() && !found; i++)
-			{
-				Map<String, Sample.SampleAnnotation> annotations = samples.get(i).getAnnotations();
-				if (annotations.containsKey(header))
-				{
-					Sample.SampleAnnotation annotation = annotations.get(header);
-					Object value = annotation.getValue();
-
-					if ((value != null) && (!value.equals("NA")))
-					{
-						if (value instanceof Boolean)
-						{
-							dataTypes.add("B");
-						}
-						else if (value instanceof Integer)
-						{
-							dataTypes.add("D");
-						}
-						else if (value instanceof Double || value instanceof Float)
-						{
-							String dataType = annotation.getType() == Type.COVARIATE ? "C" : "P";
-							dataTypes.add(dataType);
-						}
-						else
-						{
-							LOG.warn("Annotation with key [" + header + "] is of an unsupported data type");
-						}
-
-						found = true;
-					}
-
-				}
-			}
-		}
-
-		return dataTypes;
-	}
-
-	private List<String> getSampleHeaders(List<Sample> samples)
-	{
-		List<String> headers = new ArrayList<String>();
-
-		for (Sample sample : samples)
-		{
-			for (String header : sample.getAnnotations().keySet())
-			{
-				if (!header.equalsIgnoreCase("missing"))
-				{
-					if (sample.getAnnotations().get(header).getType() == Type.OTHER)
-					{
-						LOG.warn("Annotation with key [" + header + "] is of an unsuppoprted type");
-					}
-					else if (!headers.contains(header))
-					{
-						headers.add(header);
-					}
-				}
-			}
-		}
-
-		return headers;
 	}
 
 	private void writeHapsFile(Writer hapsFileWriter) throws IOException
