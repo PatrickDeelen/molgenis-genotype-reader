@@ -258,6 +258,8 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	@Override
 	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
+		// TODO remove snpBySequence this makes no sense now that we have the
+		// treset
 		List<GeneticVariant> variants = snpBySequence.get(seqName);
 		if (variants == null)
 		{
@@ -300,6 +302,12 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	protected Map<String, SampleAnnotation> getSampleAnnotationsMap()
 	{
 		return sampleAnnotations;
+	}
+
+	@Override
+	public Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd)
+	{
+		return snps.getSequenceRangeVariants(seqName, rangeStart, rangeEnd);
 	}
 
 }

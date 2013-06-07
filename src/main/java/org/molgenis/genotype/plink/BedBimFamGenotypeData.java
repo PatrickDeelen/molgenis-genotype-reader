@@ -125,4 +125,10 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 		return sampleAnnotations;
 	}
 
+	@Override
+	public Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd)
+	{
+		throw new UnsupportedOperationException();
+	}
+
 }

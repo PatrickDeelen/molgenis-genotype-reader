@@ -340,4 +340,11 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 		return sourceGenotypeData.getSampleAnnotation(annotationId);
 	}
 
+	@Override
+	public Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd)
+	{
+		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(sourceGenotypeData
+				.getVariantsByRange(seqName, rangeStart, rangeEnd).iterator(), this, filteredOutVariants);
+	}
+
 }
