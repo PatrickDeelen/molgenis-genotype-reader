@@ -22,7 +22,6 @@ import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.SampleAnnotation;
-import org.molgenis.genotype.annotation.SampleAnnotation.SampleAnnotationType;
 import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.MapEntry;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
@@ -51,7 +50,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
 	private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
 	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
-	private Map<String, SampleAnnotation> sampleAnnotations = new LinkedHashMap<String, SampleAnnotation>();
+	private Map<String, SampleAnnotation> sampleAnnotations;
 
 	public PedMapGenotypeData(File pedFile, File mapFile) throws FileNotFoundException, IOException
 	{
@@ -84,7 +83,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 
 		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 
-		loadSampleAnnotations();
+		sampleAnnotations = PlinkSampleAnnotations.getSampleAnnotations();
 	}
 
 	private void loadSampleBialleles(PedFileDriver pedFileDriver)
@@ -303,24 +302,4 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		return sampleAnnotations;
 	}
 
-	private void loadSampleAnnotations()
-	{
-		sampleAnnotations.clear();
-
-		SampleAnnotation fatherAnno = new SampleAnnotation(FATHER_SAMPLE_ANNOTATION_NAME,
-				FATHER_SAMPLE_ANNOTATION_NAME, "", Annotation.Type.STRING, SampleAnnotationType.OTHER, false);
-		sampleAnnotations.put(fatherAnno.getId(), fatherAnno);
-
-		SampleAnnotation motherAnno = new SampleAnnotation(MOTHER_SAMPLE_ANNOTATION_NAME,
-				MOTHER_SAMPLE_ANNOTATION_NAME, "", Annotation.Type.STRING, SampleAnnotationType.OTHER, false);
-		sampleAnnotations.put(motherAnno.getId(), motherAnno);
-
-		SampleAnnotation sexAnno = new SampleAnnotation(SEX_SAMPLE_ANNOTATION_NAME, SEX_SAMPLE_ANNOTATION_NAME, "",
-				Annotation.Type.INTEGER, SampleAnnotationType.OTHER, false);
-		sampleAnnotations.put(sexAnno.getId(), sexAnno);
-
-		SampleAnnotation phenoAnno = new SampleAnnotation(PHENOTYPE_SAMPLE_ANNOTATION_NAME,
-				PHENOTYPE_SAMPLE_ANNOTATION_NAME, "", Annotation.Type.FLOAT, SampleAnnotationType.PHENOTYPE, false);
-		sampleAnnotations.put(phenoAnno.getId(), phenoAnno);
-	}
 }
