@@ -8,6 +8,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * Looks like the test for MAP file, but with 2 additional columns for the alleles (encoded in the BED file)
+ * @author jvelde
+ *
+ */
 public class BimFileDriverTest extends AbstractResourceTest
 {
 	private BimFileDriver bimfd;
@@ -21,7 +26,7 @@ public class BimFileDriverTest extends AbstractResourceTest
 	@Test
 	public void BIM_construct() throws Exception
 	{
-		assertEquals(2, bimfd.getNrOfElements());
+		assertEquals(10, bimfd.getNrOfElements());
 	}
 
 	@Test
@@ -30,18 +35,21 @@ public class BimFileDriverTest extends AbstractResourceTest
 		assertEquals(1, bimfd.getEntries(0, 1).size());
 		assertEquals(1, bimfd.getEntries(1, 2).size());
 		assertEquals(2, bimfd.getEntries(0, 2).size());
-		assertEquals(2, bimfd.getAllEntries().size());
-
-		assertEquals("snp1", bimfd.getEntries(0, 1).get(0).getSNP());
-		assertEquals('A', bimfd.getEntries(0, 1).get(0).getBiallele().getAllele1());
+		assertEquals(10, bimfd.getAllEntries().size());
+		assertEquals("rs11089130", bimfd.getEntries(0, 1).get(0).getSNP());
 		assertEquals(0.0, bimfd.getEntries(1, 2).get(0).getcM());
-		assertEquals("1", bimfd.getEntries(1, 2).get(0).getChromosome());
-
+		assertEquals("22", bimfd.getEntries(1, 2).get(0).getChromosome());
+		assertEquals(14431347, bimfd.getAllEntries().get(0).getBpPos());
+		assertEquals(14432618, bimfd.getAllEntries().get(1).getBpPos());
+		assertEquals("rs738829", bimfd.getAllEntries().get(1).getSNP());
+		
+		//alleles
+		assertEquals('G', bimfd.getAllEntries().get(0).getBiallele().getAllele1());
 		assertEquals('C', bimfd.getAllEntries().get(0).getBiallele().getAllele2());
-		assertEquals('T', bimfd.getAllEntries().get(1).getBiallele().getAllele2());
-		assertEquals(1, bimfd.getAllEntries().get(0).getBpPos());
-		assertEquals(2, bimfd.getAllEntries().get(1).getBpPos());
-		assertEquals("snp2", bimfd.getAllEntries().get(1).getSNP());
+		assertEquals('A', bimfd.getAllEntries().get(1).getBiallele().getAllele1());
+		assertEquals('G', bimfd.getAllEntries().get(1).getBiallele().getAllele2());
+		assertEquals('A', bimfd.getAllEntries().get(5).getBiallele().getAllele1());
+		assertEquals('C', bimfd.getAllEntries().get(5).getBiallele().getAllele2());
 	}
 
 	@AfterClass

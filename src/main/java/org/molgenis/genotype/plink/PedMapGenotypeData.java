@@ -261,7 +261,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
 		List<GeneticVariant> variants = snpBySequence.get(seqName);
-		if (seqName == null)
+		if (variants == null)
 		{
 			throw new IllegalArgumentException("Unknown sequence [" + seqName + "]");
 		}
