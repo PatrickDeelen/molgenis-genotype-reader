@@ -3,8 +3,8 @@ package org.molgenis.genotype;
 import java.util.List;
 
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantUniqueIdProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 public class DummySampleVariantsProvider implements SampleVariantsProvider
 {

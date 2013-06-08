@@ -14,6 +14,7 @@ import org.molgenis.genotype.util.LdCalculatorException;
 import org.molgenis.genotype.util.MafCalculator;
 import org.molgenis.genotype.util.MafResult;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 {

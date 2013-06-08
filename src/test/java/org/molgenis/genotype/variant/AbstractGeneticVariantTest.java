@@ -3,6 +3,7 @@ package org.molgenis.genotype.variant;
 import static org.testng.AssertJUnit.assertEquals;
 
 import org.molgenis.genotype.DummySampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

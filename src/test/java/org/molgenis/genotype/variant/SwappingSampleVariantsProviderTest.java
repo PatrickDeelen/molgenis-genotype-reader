@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SwappingSampleVariantsProvider;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

@@ -20,7 +20,7 @@ import org.molgenis.genotype.annotation.SampleAnnotation;
 import org.molgenis.genotype.annotation.SampleAnnotation.SampleAnnotationType;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.NotASnpException;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 /**
  * Export a GenotypeData object to an impute2 haps/sample files

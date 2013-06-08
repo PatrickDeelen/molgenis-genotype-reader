@@ -1,8 +1,9 @@
-package org.molgenis.genotype.variant;
+package org.molgenis.genotype.variant.sampleProvider;
 
 import java.util.List;
 
 import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.variant.GeneticVariant;
 
 /**
  * Loads the sample variants for a variant. Is used to enable lazy loading of the sample variants

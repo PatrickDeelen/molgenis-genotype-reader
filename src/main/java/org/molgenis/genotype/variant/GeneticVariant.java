@@ -8,6 +8,7 @@ import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculatorException;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 public interface GeneticVariant extends Comparable<GeneticVariant>
 {

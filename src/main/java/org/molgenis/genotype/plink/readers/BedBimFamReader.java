@@ -19,8 +19,8 @@ import org.molgenis.genotype.plink.drivers.BimFileDriver;
 import org.molgenis.genotype.plink.drivers.FamFileDriver;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantUniqueIdProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 /**
  * Plink binary reader/converter. See:

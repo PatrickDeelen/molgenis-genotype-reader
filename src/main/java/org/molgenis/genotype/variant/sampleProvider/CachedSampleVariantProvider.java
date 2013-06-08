@@ -1,9 +1,10 @@
-package org.molgenis.genotype.variant;
+package org.molgenis.genotype.variant.sampleProvider;
 
 import java.util.List;
 
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.util.Cache;
+import org.molgenis.genotype.variant.GeneticVariant;
 
 /**
  * Cached sample variant provider to prevent reloading a SNPs that is accessed multiple times in a sort periode.
