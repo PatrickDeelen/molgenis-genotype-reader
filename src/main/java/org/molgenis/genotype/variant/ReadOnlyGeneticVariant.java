@@ -302,7 +302,7 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 
 			for (Allele allele : sampleVariant)
 			{
-				if (allele == null)
+				if (allele == null || allele == Allele.ZERO)
 				{
 					missing = true;
 				}
