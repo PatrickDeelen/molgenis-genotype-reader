@@ -1,4 +1,4 @@
-package org.molgenis.genotype.variant;
+package org.molgenis.genotype.util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
-import org.molgenis.genotype.util.MafResult;
 
 public class MafCalculator
 {
