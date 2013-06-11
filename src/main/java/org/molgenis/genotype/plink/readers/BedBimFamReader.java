@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,9 @@ public class BedBimFamReader implements SampleVariantsProvider
 	
 	//first lookup is on sequence (usually chromosome, ie. "chr1" ), second on position (basepair, ie. 9345352)
 	private Map<String, Map<Long, Integer>> snpIndexByPosition  = new HashMap<String, Map<Long, Integer>>();
+	
+	//sample phasing
+	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
 
 	public BedBimFamReader(File bed, File bim, File fam) throws Exception
 	{
@@ -302,8 +306,14 @@ public class BedBimFamReader implements SampleVariantsProvider
 	@Override
 	public List<Boolean> getSamplePhasing(GeneticVariant variant)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if (samplePhasing.containsKey(variant))
+		{
+			return samplePhasing.get(variant);
+		}
+
+		List<Boolean> phasing = Collections.nCopies(getSampleVariants(variant).size(), false);
+		samplePhasing.put(variant, phasing);
+		return phasing;
 	}
 
 	public List<GeneticVariant> loadVariantsForIndex(int index)
