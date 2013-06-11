@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,12 @@ public class BedBimFamReader implements SampleVariantsProvider
 	//helper variables
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>();
 	private final int sampleVariantProviderUniqueId;
+	
+	//first lookup is on sequence (usually chromosome, ie. "chr1" ), second on position (basepair, ie. 9345352)
+	private Map<String, Map<Long, Integer>> snpIndexByPosition  = new HashMap<String, Map<Long, Integer>>();
+	
+	//sample phasing
+	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
 
 	public BedBimFamReader(File bed, File bim, File fam) throws Exception
 	{
@@ -114,6 +121,14 @@ public class BedBimFamReader implements SampleVariantsProvider
 				uniqueChromosomes.add(be.getChromosome());
 			}
 			snpIndexById.put(be.getSNP(), index);
+			
+			//add to sequence -> position map, create one if missing for this sequence (or 'chromosome')
+			if(snpIndexByPosition.get(be.getChromosome()) == null){
+				Map<Long, Integer> mapForThisSequence= new HashMap<Long, Integer>();
+				snpIndexByPosition.put(be.getChromosome(), mapForThisSequence);
+			}
+			snpIndexByPosition.get(be.getChromosome()).put(be.getBpPos(), index);
+			
 			index++;
 		}
 		this.snpNames = snpNames;
@@ -192,10 +207,19 @@ public class BedBimFamReader implements SampleVariantsProvider
 		return famEntries;
 	}
 
+	public List<BimEntry> getBimEntries()
+	{
+		return bimEntries;
+	}
 
 	public List<String> getSequences()
 	{
 		return sequences;
+	}
+	
+	public int getSnpIndexByPosition(String seq, long pos)
+	{
+		return snpIndexByPosition.get(seq).get(pos);
 	}
 
 	public static void main(String[] args) throws Exception
@@ -286,7 +310,23 @@ public class BedBimFamReader implements SampleVariantsProvider
 	@Override
 	public List<Boolean> getSamplePhasing(GeneticVariant variant)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if (samplePhasing.containsKey(variant))
+		{
+			return samplePhasing.get(variant);
+		}
+
+		List<Boolean> phasing = Collections.nCopies(getSampleVariants(variant).size(), false);
+		samplePhasing.put(variant, phasing);
+		return phasing;
+	}
+
+	public List<GeneticVariant> loadVariantsForIndex(int index)
+	{
+		BimEntry be = bimEntries.get(index);
+		List<GeneticVariant> variants = new ArrayList<GeneticVariant>();
+		Biallele allele = be.getBiallele();	
+		GeneticVariant snp = ReadOnlyGeneticVariant.createSnp(be.getSNP(), (int) be.getBpPos(), be.getChromosome(), this, allele.getAllele1(), allele.getAllele2());
+		variants.add(snp);
+		return variants;
 	}
 }
