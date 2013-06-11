@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -87,7 +88,7 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 	@Override
 	protected Map<String, Annotation> getVariantAnnotationsMap()
 	{
-		return null;
+		return Collections.emptyMap();
 	}
 
 	@Override

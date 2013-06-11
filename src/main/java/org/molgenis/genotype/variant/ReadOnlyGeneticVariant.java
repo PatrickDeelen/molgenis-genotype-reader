@@ -57,7 +57,7 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 		this.sampleVariantsProvider = sampleVariantsProvider;
 		this.alleles = alleles;
 		this.refAllele = refAllele;
-		this.annotationValues = annotationValues;
+		this.annotationValues = annotationValues != null ? annotationValues : Collections.<String, Object> emptyMap();
 	}
 
 	public static GeneticVariant createSnp(String snpId, int pos, String sequenceName,

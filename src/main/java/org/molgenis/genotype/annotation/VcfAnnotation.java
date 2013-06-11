@@ -1,7 +1,7 @@
 package org.molgenis.genotype.annotation;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.molgenis.io.vcf.VcfInfo;
+import org.molgenis.genotype.vcf.VcfInfo;
 
 public class VcfAnnotation extends Annotation
 {

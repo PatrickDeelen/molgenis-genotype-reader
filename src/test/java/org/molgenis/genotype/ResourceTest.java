@@ -15,6 +15,11 @@ public class ResourceTest
 		return getTestResourceFile("/test.vcf.gz");
 	}
 
+	protected File getTestVcf1() throws URISyntaxException
+	{
+		return getTestResourceFile("/test1.vcf");
+	}
+
 	protected File getTestVcfGzTbi() throws URISyntaxException
 	{
 		return getTestResourceFile("/test.vcf.gz.tbi");
@@ -29,17 +34,17 @@ public class ResourceTest
 	{
 		return getTestResourceFile("/test.ped");
 	}
-	
+
 	protected File getTestBed() throws URISyntaxException
 	{
 		return getTestResourceFile("/test.bed");
 	}
-	
+
 	protected File getTestBim() throws URISyntaxException
 	{
 		return getTestResourceFile("/test.bim");
 	}
-	
+
 	protected File getTestFam() throws URISyntaxException
 	{
 		return getTestResourceFile("/test.fam");

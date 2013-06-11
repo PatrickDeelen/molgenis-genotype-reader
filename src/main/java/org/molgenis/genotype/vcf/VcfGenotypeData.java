@@ -32,12 +32,6 @@ import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
 import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
-import org.molgenis.io.vcf.VcfAlt;
-import org.molgenis.io.vcf.VcfContig;
-import org.molgenis.io.vcf.VcfInfo;
-import org.molgenis.io.vcf.VcfReader;
-import org.molgenis.io.vcf.VcfRecord;
-import org.molgenis.io.vcf.VcfSampleGenotype;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
