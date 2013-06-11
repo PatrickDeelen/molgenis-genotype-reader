@@ -207,6 +207,10 @@ public class BedBimFamReader implements SampleVariantsProvider
 		return famEntries;
 	}
 
+	public List<BimEntry> getBimEntries()
+	{
+		return bimEntries;
+	}
 
 	public List<String> getSequences()
 	{
