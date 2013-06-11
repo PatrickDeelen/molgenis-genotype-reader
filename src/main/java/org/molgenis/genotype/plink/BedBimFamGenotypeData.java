@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -145,6 +146,11 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 	protected Map<String, org.molgenis.genotype.annotation.SampleAnnotation> getSampleAnnotationsMap()
 	{
 		return sampleAnnotations;
+	}
+
+	public Collection<Boolean> getSamplePhasing(GeneticVariant geneticVariant)
+	{
+		return this.reader.getSamplePhasing(geneticVariant);
 	}
 
 }
