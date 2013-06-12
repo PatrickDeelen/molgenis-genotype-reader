@@ -5,7 +5,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import org.molgenis.genotype.Alleles;
@@ -19,8 +18,9 @@ import org.testng.annotations.Test;
 
 /**
  * The same as the PED/MAP test, except on the BED/BIM/FAM backend
+ * 
  * @author jvelde
- *
+ * 
  */
 public class BedBimFamGenotypeDataTest extends ResourceTest
 {
@@ -99,6 +99,26 @@ public class BedBimFamGenotypeDataTest extends ResourceTest
 		assertEquals(samples.size(), 9);
 		assertEquals(samples.get(0).getId(), "1042");
 		assertEquals(samples.get(0).getFamilyId(), "F1042");
+	}
+
+	@Test
+	public void testGetSamplePhasing()
+	{
+		List<GeneticVariant> variants = genotypeData.getVariantsByPos("22", 14431347);
+		assertEquals(variants.size(), 1);
+		// TODO fix
+		// assertEquals(variants.get(0).phasing.getSamplePhasing(variants.get(0)),
+		// Arrays.asList(false, false, false, false, false, false, false, false,
+		// false));
+	}
+
+	@Test
+	public void testGetSnpVariantByPos()
+	{
+		int pos = 14434960;
+		GeneticVariant variant = genotypeData.getSnpVariantByPos("23", pos);
+		assertNotNull(variant);
+		assertEquals(variant.getStartPos(), pos);
 	}
 
 }

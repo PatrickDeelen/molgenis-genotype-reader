@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.molgenis.genotype.AbstractRandomAccessGenotypeData;
+import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
@@ -87,7 +89,7 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 	@Override
 	protected Map<String, Annotation> getVariantAnnotationsMap()
 	{
-		return null;
+		return Collections.emptyMap();
 	}
 
 	@Override
@@ -99,13 +101,36 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 	@Override
 	public List<GeneticVariant> getVariantsByPos(String seqName, int startPos)
 	{
-		return null;
+		int index = this.reader.getSnpIndexByPosition(seqName, startPos);
+		return this.reader.loadVariantsForIndex(index);
 	}
 
 	@Override
 	public Iterator<GeneticVariant> iterator()
 	{
-		return null;
+		Iterator<GeneticVariant> it = new Iterator<GeneticVariant>()
+		{
+			private int currentIndex = 0;
+
+			@Override
+			public boolean hasNext()
+			{
+				return currentIndex < reader.getBimEntries().size();
+			}
+
+			@Override
+			public GeneticVariant next()
+			{
+				return reader.loadVariantsForIndex(currentIndex++).get(0);
+			}
+
+			@Override
+			public void remove()
+			{
+				throw new GenotypeDataException("Operation 'remove' not implemented for binary Plink iterator");
+			}
+		};
+		return it;
 	}
 
 	@Override

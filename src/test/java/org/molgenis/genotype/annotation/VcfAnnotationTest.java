@@ -6,7 +6,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import org.molgenis.io.vcf.VcfInfo;
+import org.molgenis.genotype.vcf.VcfInfo;
 import org.testng.annotations.Test;
 
 public class VcfAnnotationTest

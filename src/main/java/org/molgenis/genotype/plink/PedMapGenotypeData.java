@@ -52,6 +52,11 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
 	private Map<String, SampleAnnotation> sampleAnnotations;
 
+	public PedMapGenotypeData(String basePath) throws FileNotFoundException, IOException
+	{
+		this(new File(basePath + ".ped"), new File(basePath + ".map"));
+	}
+
 	public PedMapGenotypeData(File pedFile, File mapFile) throws FileNotFoundException, IOException
 	{
 		if (pedFile == null) throw new IllegalArgumentException("PedFile is null");
