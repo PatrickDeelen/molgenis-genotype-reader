@@ -60,7 +60,7 @@ public class BedBimFamReader implements SampleVariantsProvider
 	private Map<String, Map<Long, Integer>> snpIndexByPosition = new HashMap<String, Map<Long, Integer>>();
 
 	// sample phasing
-	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
+	private final List<Boolean> phasing;
 
 	public BedBimFamReader(File bed, File bim, File fam) throws Exception
 	{
@@ -72,6 +72,8 @@ public class BedBimFamReader implements SampleVariantsProvider
 		nrOfSnps = bimfd.getNrOfElements();
 		nrOfGenotypes = nrOfIndividuals * nrOfSnps;
 		paddingPerSnp = (int) ((bedfd.getNrOfElements() - nrOfGenotypes) / nrOfSnps);
+
+		phasing = Collections.nCopies((int) nrOfIndividuals, false);
 
 		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 	}
@@ -303,7 +305,6 @@ public class BedBimFamReader implements SampleVariantsProvider
 	@Override
 	public int cacheSize()
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -316,13 +317,6 @@ public class BedBimFamReader implements SampleVariantsProvider
 	@Override
 	public List<Boolean> getSamplePhasing(GeneticVariant variant)
 	{
-		if (samplePhasing.containsKey(variant))
-		{
-			return samplePhasing.get(variant);
-		}
-
-		List<Boolean> phasing = Collections.nCopies(getSampleVariants(variant).size(), false);
-		samplePhasing.put(variant, phasing);
 		return phasing;
 	}
 
