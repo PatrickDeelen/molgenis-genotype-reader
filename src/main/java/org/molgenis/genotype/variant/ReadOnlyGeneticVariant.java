@@ -155,6 +155,13 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 				Allele.create(refAllele));
 	}
 
+	public static GeneticVariant createVariant(String variantId, int startPos, String sequenceName,
+			SampleVariantsProvider sampleVariantsProvider, Alleles alleles)
+	{
+		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), startPos, sequenceName, null,
+				sampleVariantsProvider, alleles, null);
+	}
+
 	@Override
 	public String getPrimaryVariantId()
 	{

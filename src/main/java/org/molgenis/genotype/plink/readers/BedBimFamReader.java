@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeDataException;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.BimEntry;
 import org.molgenis.genotype.plink.datatypes.FamEntry;
 import org.molgenis.genotype.plink.drivers.BedFileDriver;
@@ -49,7 +49,7 @@ public class BedBimFamReader implements SampleVariantsProvider
 	private List<FamEntry> famEntries;
 	private List<String> sequences; // usually the chromosome numbers, unique
 									// within this list
-	private HashMap<String, Biallele> snpCoding;
+	private HashMap<String, Alleles> snpCoding;
 
 	// helper variables
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>();
@@ -111,7 +111,7 @@ public class BedBimFamReader implements SampleVariantsProvider
 					"Problem with BIM file: scanned number of elements does not match number of parsed elements");
 		}
 		this.bimEntries = bimEntries;
-		snpCoding = new HashMap<String, Biallele>();
+		snpCoding = new HashMap<String, Alleles>();
 		int index = 0;
 		for (BimEntry be : bimEntries)
 		{
@@ -158,9 +158,8 @@ public class BedBimFamReader implements SampleVariantsProvider
 
 			String id = entry.getSNP();
 			int startPos = (int) entry.getBpPos();
-			Biallele allele = bimEntries.get(index).getBiallele();
-			GeneticVariant snp = ReadOnlyGeneticVariant.createSnp(id, startPos, sequenceName, this,
-					allele.getAllele1(), allele.getAllele2());
+			Alleles alleles = bimEntries.get(index).getBiallele();
+			GeneticVariant snp = ReadOnlyGeneticVariant.createVariant(id, startPos, sequenceName, this, alleles);
 			variants.add(snp);
 			index++;
 		}
@@ -191,8 +190,8 @@ public class BedBimFamReader implements SampleVariantsProvider
 			String snpName = snpNames.get(snpCounter);
 			String[] allIndividualsForThisSNP = bedfd.getElements(genotypeStart, genotypeStart + nrOfIndividuals,
 					paddingPerSnp, snpCounter);
-			String a1 = Character.toString(snpCoding.get(snpName).getAllele1());
-			String a2 = Character.toString(snpCoding.get(snpName).getAllele2());
+			String a1 = snpCoding.get(snpName).get(0).toString();
+			String a2 = snpCoding.get(snpName).get(1).toString();
 			String hom1 = a1 + a1;
 			String hom2 = a2 + a2;
 			String hetr = a1 + a2;
@@ -232,9 +231,9 @@ public class BedBimFamReader implements SampleVariantsProvider
 
 	public static void main(String[] args) throws Exception
 	{
-		File bed = new File(Biallele.class.getResource("../testfiles/test.bed").getFile());
-		File bim = new File(Biallele.class.getResource("../testfiles/test.bim").getFile());
-		File fam = new File(Biallele.class.getResource("../testfiles/test.fam").getFile());
+		File bed = new File(Alleles.class.getResource("../testfiles/test.bed").getFile());
+		File bim = new File(Alleles.class.getResource("../testfiles/test.bim").getFile());
+		File fam = new File(Alleles.class.getResource("../testfiles/test.fam").getFile());
 		BedBimFamReader bbfr = new BedBimFamReader(bed, bim, fam);
 		File out = new File("geno_tmp.txt");
 		System.out.println("going to write to: " + out.getAbsolutePath());
@@ -256,29 +255,29 @@ public class BedBimFamReader implements SampleVariantsProvider
 			throw new IllegalArgumentException("Unknown primaryVariantId [" + variant.getPrimaryVariantId() + "]");
 		}
 
-		List<Biallele> bialleles = new ArrayList<Biallele>();
+		List<Alleles> bialleles = new ArrayList<Alleles>();
 
 		try
 		{
 			String[] allIndividualsForThisSNP = bedfd.getSNPs(index.longValue(), (int) nrOfIndividuals);
 
-			String a1 = Character.toString(snpCoding.get(snpNames.get(index)).getAllele1());
-			String a2 = Character.toString(snpCoding.get(snpNames.get(index)).getAllele2());
+			Allele a1 = snpCoding.get(snpNames.get(index)).get(0);
+			Allele a2 = snpCoding.get(snpNames.get(index)).get(1);
 
 			for (int i = 0; i < this.nrOfIndividuals; i++)
 			{
-				Biallele b;
+				Alleles b;
 				if (allIndividualsForThisSNP[i].equals("00"))
 				{
-					b = new Biallele(a1, a1);
+					b = Alleles.createAlleles(a1, a1);
 				}
 				else if (allIndividualsForThisSNP[i].equals("01"))
 				{
-					b = new Biallele(a1, a2);
+					b = Alleles.createAlleles(a1, a2);
 				}
 				else if (allIndividualsForThisSNP[i].equals("11"))
 				{
-					b = new Biallele(a2, a2);
+					b = Alleles.createAlleles(a2, a2);
 				}
 				else
 				{
@@ -293,13 +292,7 @@ public class BedBimFamReader implements SampleVariantsProvider
 			throw new GenotypeDataException(e);
 		}
 
-		List<Alleles> sampleVariants = new ArrayList<Alleles>(bialleles.size());
-		for (Biallele biallele : bialleles)
-		{
-			// weird: first allele 2 then allele 1 ?
-			sampleVariants.add(Alleles.createBasedOnChars(biallele.getAllele2(), biallele.getAllele1()));
-		}
-		return sampleVariants;
+		return bialleles;
 	}
 
 	@Override
@@ -324,9 +317,9 @@ public class BedBimFamReader implements SampleVariantsProvider
 	{
 		BimEntry be = bimEntries.get(index);
 		List<GeneticVariant> variants = new ArrayList<GeneticVariant>();
-		Biallele allele = be.getBiallele();
-		GeneticVariant snp = ReadOnlyGeneticVariant.createSnp(be.getSNP(), (int) be.getBpPos(), be.getChromosome(),
-				this, allele.getAllele1(), allele.getAllele2());
+		Alleles alleles = be.getBiallele();
+		GeneticVariant snp = ReadOnlyGeneticVariant.createVariant(be.getSNP(), (int) be.getBpPos(), be.getChromosome(),
+				this, alleles);
 		variants.add(snp);
 		return variants;
 	}

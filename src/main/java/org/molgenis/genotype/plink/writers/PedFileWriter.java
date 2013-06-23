@@ -6,8 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.plink.PlinkFileParser;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 
 /**
@@ -49,12 +49,12 @@ public class PedFileWriter implements PlinkFileParser
 		writer.write(separator);
 		writer.write(Double.toString(ped.getPhenotype()));
 
-		for (Biallele biallele : ped)
+		for (Alleles biallele : ped)
 		{
 			writer.write(separator);
-			writer.write(biallele.getAllele1());
+			writer.write(biallele.get(0).toString());
 			writer.write(separator);
-			writer.write(biallele.getAllele2());
+			writer.write(biallele.get(1).toString());
 		}
 
 		writer.write(LINE_SEPARATOR);

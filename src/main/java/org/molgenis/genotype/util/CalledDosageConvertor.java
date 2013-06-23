@@ -54,6 +54,7 @@ public class CalledDosageConvertor
 
 			for (Allele allele : sampleVariant)
 			{
+
 				if (allele == null || allele == Allele.ZERO)
 				{
 					missing = true;

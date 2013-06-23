@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeData;
 import org.molgenis.genotype.Sample;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.MapEntry;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.molgenis.genotype.plink.writers.MapFileWriter;
@@ -189,7 +188,7 @@ public class PedMapGenotypeWriter
 		return Double.valueOf(value.toString());
 	}
 
-	private class BialleleIterator implements Iterator<Biallele>
+	private class BialleleIterator implements Iterator<Alleles>
 	{
 		private Iterator<GeneticVariant> variantsIterator;
 		private int sampleIndex;
@@ -207,13 +206,11 @@ public class PedMapGenotypeWriter
 		}
 
 		@Override
-		public Biallele next()
+		public Alleles next()
 		{
 			GeneticVariant variant = variantsIterator.next();
 			Alleles variantAlleles = variant.getSampleVariants().get(sampleIndex);
-			char[] alleles = variantAlleles.getAllelesAsChars();
-
-			return Biallele.create(alleles[0], alleles[1]);
+			return variantAlleles;
 		}
 
 		@Override

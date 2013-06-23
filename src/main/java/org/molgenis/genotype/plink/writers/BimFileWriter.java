@@ -44,9 +44,9 @@ public class BimFileWriter implements PlinkFileParser
 		writer.write(this.separator);
 		writer.write(Long.toString(bim.getBpPos()));
 		writer.write(this.separator);
-		writer.write(bim.getBiallele().getAllele1());
+		writer.write(bim.getBiallele().get(0).toString());
 		writer.write(this.separator);
-		writer.write(bim.getBiallele().getAllele2());
+		writer.write(bim.getBiallele().get(1).toString());
 		writer.write(LINE_SEPARATOR);
 	}
 

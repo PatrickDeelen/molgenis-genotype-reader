@@ -229,12 +229,16 @@ public class ModifiableGeneticVariant extends AbstractGeneticVariant
 
 		Allele refShouldBeUsed = getRefAllele() == null ? getVariantAlleles().get(0) : getRefAllele();
 
+		// System.out.println("Ref used: " + refUsedForOriginalDosage +
+		// " should be: " + refShouldBeUsed);
+
 		if (refUsedForOriginalDosage == refShouldBeUsed)
 		{
 			return dosageByProvider;
 		}
 		else if (refUsedForOriginalDosage == refShouldBeUsed.getComplement())
 		{
+			// System.out.println("do nothing is complement");
 			return dosageByProvider;
 		}
 		else

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.plink.PlinkFileParser;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.BimEntry;
 import org.molgenis.util.TextFileUtils;
 
@@ -44,7 +44,7 @@ public class BimFileDriver implements PlinkFileParser
 	{
 		this(bimFile, String.valueOf(separator));
 	}
-	
+
 	public BimFileDriver(File bimFile, String separators)
 	{
 		if (bimFile == null) throw new IllegalArgumentException("file is null");
@@ -104,7 +104,7 @@ public class BimFileDriver implements PlinkFileParser
 			long bpPos = Long.parseLong(strTokenizer.nextToken());
 			char allelle1 = strTokenizer.nextToken().charAt(0);
 			char allelle2 = strTokenizer.nextToken().charAt(0);
-			return new BimEntry(chromosome, snp, cM, bpPos, Biallele.create(allelle1, allelle2));
+			return new BimEntry(chromosome, snp, cM, bpPos, Alleles.createBasedOnChars(allelle1, allelle2));
 		}
 		catch (NoSuchElementException e)
 		{

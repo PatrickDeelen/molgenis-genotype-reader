@@ -1,5 +1,6 @@
 package org.molgenis.genotype.plink.datatypes;
 
+import org.molgenis.genotype.Alleles;
 import org.molgenis.util.tuple.KeyValueTuple;
 import org.molgenis.util.tuple.Tuple;
 import org.molgenis.util.tuple.WritableTuple;
@@ -7,15 +8,15 @@ import org.molgenis.util.tuple.WritableTuple;
 public class BimEntry extends MapEntry
 {
 
-	private Biallele biallele;
+	private Alleles biallele;
 
-	public BimEntry(String chromosome, String SNP, double cM, long bpPos, Biallele biallele)
+	public BimEntry(String chromosome, String SNP, double cM, long bpPos, Alleles biallele)
 	{
 		super(chromosome, SNP, cM, bpPos);
 		this.biallele = biallele;
 	}
 
-	public Biallele getBiallele()
+	public Alleles getBiallele()
 	{
 		return biallele;
 	}
@@ -33,8 +34,8 @@ public class BimEntry extends MapEntry
 		tuple.set("snp", bim.getSNP());
 		tuple.set("cm", bim.getcM());
 		tuple.set("bp", bim.getBpPos());
-		tuple.set("al1", bim.getBiallele().getAllele1());
-		tuple.set("al2", bim.getBiallele().getAllele2());
+		tuple.set("al1", bim.getBiallele().get(0));
+		tuple.set("al2", bim.getBiallele().get(1));
 		return tuple;
 	}
 }

@@ -271,12 +271,14 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		byte[] expectedCalledDosage = new byte[]
 		{ 2, 1, 2, 2, 2, 1, 2, 2, 1 };
 
+		assertEquals(modifiableGeneticVariant.getSampleCalledDosages(), expectedCalledDosage);
+
 		modifiableGeneticVariant.swap();
 
 		assertEquals(modifiableGeneticVariant.getSampleVariants(), expectedSwappedSampleAlleles);
 		assertEquals(modifiableGeneticVariant.getVariantAlleles(), Alleles.createBasedOnChars('C', 'T'));
-		assertEquals(modifiableGeneticVariant.getSampleCalledDosages(), expectedCalledDosage);
 		assertNull(modifiableGeneticVariant.getRefAllele());
+		assertEquals(modifiableGeneticVariant.getSampleCalledDosages(), expectedCalledDosage);
 
 		boolean tested = false;
 		for (GeneticVariant variant : modifiableGenotypeData.getModifiableGeneticVariants())
@@ -321,7 +323,6 @@ public class ModifiableGenotypeDataInMemoryTest extends ResourceTest
 		{ 0, 0, 0, 0, 0, 0, 0, 1, 0 };
 
 		modifiableGeneticVariant.updateRefAllele(Allele.A);
-
 		modifiableGeneticVariant.swap();
 
 		assertEquals(modifiableGeneticVariant.getSampleVariants(), expectedSwappedSampleAlleles);

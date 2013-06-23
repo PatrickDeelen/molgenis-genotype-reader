@@ -8,8 +8,8 @@ import java.io.RandomAccessFile;
  * Driver to query BED (binary Plink genotype) files. See:
  * http://pngu.mgh.harvard.edu/~purcell/plink/binary.shtml
  * 
- * PLEASE NOTE THAT:
- * this driver at the moment works ONLY on SNP-major mode files!
+ * PLEASE NOTE THAT: this driver at the moment works ONLY on SNP-major mode
+ * files!
  * 
  */
 public class BedFileDriver
@@ -152,13 +152,12 @@ public class BedFileDriver
 		int bitpair = (int) (index % 4) * 2;
 		return byteString.substring(bitpair, bitpair + 2);
 	}
-	
+
 	/**
-	 * Get the SNP collection for this SNP index in the BIM file
-	 * Returns all individuals for this set of SNPs
-	 * You need to supply the numnber of individuals so that the reader knows
-	 * 1) when to stop reading bytes and 2) how many padding bits to compensate
-	 * for when reading any index > 0.
+	 * Get the SNP collection for this SNP index in the BIM file Returns all
+	 * individuals for this set of SNPs You need to supply the numnber of
+	 * individuals so that the reader knows 1) when to stop reading bytes and 2)
+	 * how many padding bits to compensate for when reading any index > 0.
 	 * 
 	 * @param index
 	 * @param nrOfIndividualsInFAMfile
@@ -167,43 +166,46 @@ public class BedFileDriver
 	 */
 	public String[] getSNPs(long index, int nrOfIndividualsInFAMfile) throws Exception
 	{
-		//calculate the number of individuals in the byte that is potentially padded
+		// calculate the number of individuals in the byte that is potentially
+		// padded
 		int nrOfIndividualsInPaddedByte = nrOfIndividualsInFAMfile % 4;
-		
-		//if nrOfIndividualsInPaddedByte is 0, there are no padding bit pairs (paddingIndividuals = 0)
-		//else, its 4 minus the amount of individuals in the padding byte (1, 2 or 3)
+
+		// if nrOfIndividualsInPaddedByte is 0, there are no padding bit pairs
+		// (paddingIndividuals = 0)
+		// else, its 4 minus the amount of individuals in the padding byte (1, 2
+		// or 3)
 		int paddingIndividuals = nrOfIndividualsInPaddedByte == 0 ? 0 : 4 - nrOfIndividualsInPaddedByte;
-		
-		//check if we got the numbers right.. we want a multiplication of 4
-		if((nrOfIndividualsInFAMfile + paddingIndividuals) % 4 != 0)
+
+		// check if we got the numbers right.. we want a multiplication of 4
+		if ((nrOfIndividualsInFAMfile + paddingIndividuals) % 4 != 0)
 		{
 			throw new Exception("nrOfIndividuals + paddingIndividuals) % 4 must be 0");
 		}
-		
+
 		int bytesPerIndividual = (nrOfIndividualsInFAMfile + paddingIndividuals) / 4;
 
-		//inclusive: read this byte index
-		//add 3 because of the reserved bytes in plink format
+		// inclusive: read this byte index
+		// add 3 because of the reserved bytes in plink format
 		long startByte = (index * bytesPerIndividual) + 3;
 
 		long stopByte = startByte + bytesPerIndividual;
-		
+
 		byte[] res = new byte[(int) (stopByte - startByte)];
-		
+
 		RandomAccessFile raf = new RandomAccessFile(bedFile, "r");
 		raf.seek(startByte);
 		raf.read(res);
 		raf.close();
-		
+
 		String[] result = new String[nrOfIndividualsInFAMfile];
 		int res_index = 0;
-		
+
 		for (int i = 0; i < res.length; i++)
 		{
 			byte b = res[i];
-			
+
 			String byteString = reverse(bits(b));
-			
+
 			int toBit = 8; // normally we take the whole byte
 			if (i == res.length - 1) // except at the end, when we correct for
 										// padding 0's
@@ -230,65 +232,77 @@ public class BedFileDriver
 	 * 
 	 * UNIMPLEMENTED
 	 * 
-	 * Get a String[] of elements from the BED file. This function returns the elements in
-	 * their intended order, with bits already reversed, and taking into account the padding
-	 * bits at the end of each sequence of SNPs. (SNP major mode: lists ALL individuals
-	 * for 1 SNP, then moves on to the next SNP)
+	 * Get a String[] of elements from the BED file. This function returns the
+	 * elements in their intended order, with bits already reversed, and taking
+	 * into account the padding bits at the end of each sequence of SNPs. (SNP
+	 * major mode: lists ALL individuals for 1 SNP, then moves on to the next
+	 * SNP)
 	 * 
-	 * From -> to is NOT whole SNPs (all individuals), but single SNP elements within the file
-	 * Reason is that this function can be used for reading batches on the smallest elements
-	 * to get a complete SNP set (all individuals for 1 snp) using this function, set your
-	 * from / to arguments to match up with your number of individuals (in which case, the
+	 * From -> to is NOT whole SNPs (all individuals), but single SNP elements
+	 * within the file Reason is that this function can be used for reading
+	 * batches on the smallest elements to get a complete SNP set (all
+	 * individuals for 1 snp) using this function, set your from / to arguments
+	 * to match up with your number of individuals (in which case, the
 	 * nrOfIndividuals argument is (to minus from)
 	 * 
-	 * @param from: the starting bitpair, inclusive
-	 * @param to: last bitpair to read, exclusive (e.g. reading first element is 0, 1)
-	 * @param nrOfIndividualsInFAMfile: need to correct in two ways: 1) when to adjust for
-	 * padding when reading SNPs from the bytes and 2) to know the number of padding
-	 * bytes: by taking modulo 4 (4 bitpairs in a byte, 0 padding when the amount of
-	 * individuals is a multiplication of 4, etc)
+	 * @param from
+	 *            : the starting bitpair, inclusive
+	 * @param to
+	 *            : last bitpair to read, exclusive (e.g. reading first element
+	 *            is 0, 1)
+	 * @param nrOfIndividualsInFAMfile
+	 *            : need to correct in two ways: 1) when to adjust for padding
+	 *            when reading SNPs from the bytes and 2) to know the number of
+	 *            padding bytes: by taking modulo 4 (4 bitpairs in a byte, 0
+	 *            padding when the amount of individuals is a multiplication of
+	 *            4, etc)
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public String[] getElements(long from, long to, int nrOfIndividualsInFAMfile) throws Exception
-	{		
-		if(1==1) throw new UnsupportedOperationException("Not yet implemented");
-		
-		//calculate the number of individuals in the byte that is potentially padded
+	{
+		if (1 == 1) throw new UnsupportedOperationException("Not yet implemented");
+
+		// calculate the number of individuals in the byte that is potentially
+		// padded
 		int nrOfIndividualsInPaddedByte = nrOfIndividualsInFAMfile % 4;
-		
-		//if nrOfIndividualsInPaddedByte is 0, there are no padding bit pairs (paddingIndividuals = 0)
+
+		// if nrOfIndividualsInPaddedByte is 0, there are no padding bit pairs
+		// (paddingIndividuals = 0)
 		int paddingIndividuals = nrOfIndividualsInPaddedByte == 0 ? 0 : 4 - nrOfIndividualsInPaddedByte;
-		
-		//check if we got the numbers right.. we want a multiplication of 4
-		if((nrOfIndividualsInFAMfile + paddingIndividuals) % 4 != 0)
+
+		// check if we got the numbers right.. we want a multiplication of 4
+		if ((nrOfIndividualsInFAMfile + paddingIndividuals) % 4 != 0)
 		{
 			throw new Exception("nrOfIndividuals + paddingIndividuals) % 4 must be 0");
 		}
-		
-		//calculate the amount of bytes that must be read to get the SNPs set (1 snp for all individuals)
+
+		// calculate the amount of bytes that must be read to get the SNPs set
+		// (1 snp for all individuals)
 		int totalBytesToReadPerIndividual = (nrOfIndividualsInFAMfile + paddingIndividuals) / 4;
-		
-		//inclusive: read this byte index
+
+		// inclusive: read this byte index
 		long startByte = 0;
-		//exclusive: stop when reaching this index
+		// exclusive: stop when reaching this index
 		long stopByte = 0;
-		
+
 		byte[] res = new byte[(int) (stopByte - startByte)];
-		
+
 		String[] placeholder = new String[0];
 		return placeholder;
 	}
-	
+
 	/**
 	 * Get a String[] of elements from the BED file.
 	 * 
-	 * NOTE: the 'pass' argument is vague.. it has to do with the multiplication of the padding,
-	 * and is implicit on e.g. a for loop iteration retrieving all individuals, so for the next 'pass',
-	 * more padding must be added to correct for the offset.
+	 * NOTE: the 'pass' argument is vague.. it has to do with the multiplication
+	 * of the padding, and is implicit on e.g. a for loop iteration retrieving
+	 * all individuals, so for the next 'pass', more padding must be added to
+	 * correct for the offset.
 	 * 
-	 * NOTE2: this function is difficult to use correctly and counter intuitive, please
-	 * use public String[] getElements(long from, long to, int nrOfIndividuals) instead!
+	 * NOTE2: this function is difficult to use correctly and counter intuitive,
+	 * please use public String[] getElements(long from, long to, int
+	 * nrOfIndividuals) instead!
 	 * 
 	 * from = inclusive to = exclusive
 	 * 
@@ -309,7 +323,8 @@ public class BedFileDriver
 		System.out.println("GOING TO READ FROM BYTE " + start + " TO " + stop);
 		byte[] res = new byte[(int) (stop - start)];
 		int res_index = 0;
-		String[] result = new String[(int) (to - from)]; // to - from = nr. of individuals
+		String[] result = new String[(int) (to - from)]; // to - from = nr. of
+															// individuals
 		RandomAccessFile raf = new RandomAccessFile(bedFile, "r");
 		raf.seek(start);
 		raf.read(res);

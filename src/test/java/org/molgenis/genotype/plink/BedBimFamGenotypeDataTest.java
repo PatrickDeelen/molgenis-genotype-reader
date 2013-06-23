@@ -65,8 +65,7 @@ public class BedBimFamGenotypeDataTest extends ResourceTest
 		assertEquals(variant.getStartPos(), 14431347);
 
 		assertEquals(variant.getSequenceName(), "22");
-		// TODO fix test below
-		// assertEquals(variant.getType(), GeneticVariantOld.Type.SNP);
+		assertEquals(variant.isSnp(), true);
 
 		List<String> alleles = variant.getVariantAlleles().getAllelesAsString();
 		assertNotNull(alleles);
@@ -83,8 +82,8 @@ public class BedBimFamGenotypeDataTest extends ResourceTest
 		assertEquals(sampleVariants.get(0).getAllelesAsChars()[1], 'C');
 		assertNotNull(sampleVariants.get(1).getAllelesAsChars());
 		assertEquals(sampleVariants.get(1).getAllelesAsChars().length, 2);
-		assertEquals(sampleVariants.get(1).getAllelesAsChars()[0], 'C');
-		assertEquals(sampleVariants.get(1).getAllelesAsChars()[1], 'G');
+		assertEquals(sampleVariants.get(1).getAllelesAsChars()[0], 'G');
+		assertEquals(sampleVariants.get(1).getAllelesAsChars()[1], 'C');
 		assertNotNull(sampleVariants.get(2).getAllelesAsChars());
 		assertEquals(sampleVariants.get(2).getAllelesAsChars().length, 2);
 		assertEquals(sampleVariants.get(2).getAllelesAsChars()[0], 'G');
@@ -107,7 +106,7 @@ public class BedBimFamGenotypeDataTest extends ResourceTest
 		List<GeneticVariant> variants = genotypeData.getVariantsByPos("22", 14431347);
 		assertEquals(variants.size(), 1);
 		// TODO fix
-		// assertEquals(variants.get(0).phasing.getSamplePhasing(variants.get(0)),
+		// assertEquals(variants.get(0),
 		// Arrays.asList(false, false, false, false, false, false, false, false,
 		// false));
 	}
