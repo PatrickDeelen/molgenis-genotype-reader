@@ -27,6 +27,7 @@ import org.molgenis.genotype.plink.datatypes.MapEntry;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.molgenis.genotype.plink.drivers.PedFileDriver;
 import org.molgenis.genotype.plink.readers.MapFileReader;
+import org.molgenis.genotype.util.CalledDosageConvertor;
 import org.molgenis.genotype.util.GeneticVariantTreeSet;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
@@ -315,4 +316,17 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		return snps.getSequenceRangeVariants(seqName, rangeStart, rangeEnd);
 	}
 
+	@Override
+	public byte[] getSampleCalledDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToCalledDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
+	}
+
+	@Override
+	public float[] getSampleDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
+	}
 }

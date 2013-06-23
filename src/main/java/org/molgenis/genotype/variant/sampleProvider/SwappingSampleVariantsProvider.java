@@ -39,10 +39,22 @@ public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 	{
 		return sampleVariantsProvider.getSamplePhasing(variant);
 	}
-	
+
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
+	}
+
+	@Override
+	public byte[] getSampleCalledDosage(GeneticVariant variant)
+	{
+		return sampleVariantsProvider.getSampleCalledDosage(variant);
+	}
+
+	@Override
+	public float[] getSampleDosage(GeneticVariant variant)
+	{
+		return sampleVariantsProvider.getSampleDosage(variant);
 	}
 
 }

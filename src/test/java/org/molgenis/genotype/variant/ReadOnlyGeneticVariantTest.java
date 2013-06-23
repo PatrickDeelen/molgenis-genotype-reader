@@ -56,7 +56,7 @@ public class ReadOnlyGeneticVariantTest
 	{
 		byte[] expected =
 		{ 1, 1, 0, 2, 2 };
-		assertEquals(testInstance.getSampleCalledDosage(), expected);
+		assertEquals(testInstance.getSampleCalledDosages(), expected);
 	}
 
 	@Test

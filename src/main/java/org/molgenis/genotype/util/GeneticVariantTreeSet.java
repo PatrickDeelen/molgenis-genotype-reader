@@ -205,7 +205,7 @@ public class GeneticVariantTreeSet<E extends GeneticVariant> extends TreeSet<E>
 		}
 
 		@Override
-		public byte[] getSampleCalledDosage()
+		public byte[] getSampleCalledDosages()
 		{
 
 			return null;

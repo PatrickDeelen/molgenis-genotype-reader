@@ -103,8 +103,6 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterator<GeneticVariant> iterator()
 	{
-		System.out.println(filteredOutVariants.size());
-
 		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(
 				sourceGenotypeData.iterator(), this, filteredOutVariants).iterator();
 	}
@@ -312,8 +310,8 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterable<ModifiableGeneticVariant> getModifiableGeneticVariants()
 	{
-		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(this.iterator(), this,
-				filteredOutVariants);
+		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(sourceGenotypeData.iterator(),
+				this, filteredOutVariants);
 	}
 
 	@Override

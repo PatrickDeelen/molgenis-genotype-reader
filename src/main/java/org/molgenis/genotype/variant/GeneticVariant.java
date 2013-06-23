@@ -150,7 +150,7 @@ public interface GeneticVariant extends Comparable<GeneticVariant>
 	 * 
 	 * @return
 	 */
-	public byte[] getSampleCalledDosage();
+	public byte[] getSampleCalledDosages();
 
 	/**
 	 * Get the sample variant provider used by this variant

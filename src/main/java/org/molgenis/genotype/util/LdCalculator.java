@@ -37,8 +37,8 @@ public class LdCalculator
 			throw new UnsupportedOperationException("Ld calculator currently only supports biallelic variants");
 		}
 
-		final byte[] variant1Genotypes = variant1.getSampleCalledDosage();
-		final byte[] variant2Genotypes = variant2.getSampleCalledDosage();
+		final byte[] variant1Genotypes = variant1.getSampleCalledDosages();
+		final byte[] variant2Genotypes = variant2.getSampleCalledDosages();
 
 		if (variant1Genotypes.length != variant2Genotypes.length)
 		{

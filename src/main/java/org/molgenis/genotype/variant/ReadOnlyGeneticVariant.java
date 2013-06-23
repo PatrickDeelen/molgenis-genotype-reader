@@ -268,15 +268,7 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 	@Override
 	public float[] getSampleDosages()
 	{
-		byte[] calledDosage = getSampleCalledDosage();
-		float[] dosage = new float[calledDosage.length];
-
-		for (int i = 0; i < calledDosage.length; ++i)
-		{
-			dosage[i] = calledDosage[i];
-		}
-
-		return dosage;
+		return sampleVariantsProvider.getSampleDosage(this);
 	}
 
 	@Override
@@ -286,37 +278,10 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 	}
 
 	@Override
-	public byte[] getSampleCalledDosage()
+	public byte[] getSampleCalledDosages()
 	{
 
-		Allele dosageRef = refAllele == null ? alleles.getAlleles().get(0) : refAllele;
-
-		List<Alleles> sampleVariants = getSampleVariants();
-
-		byte[] dosages = new byte[getSampleVariants().size()];
-
-		for (int i = 0; i < dosages.length; ++i)
-		{
-			Alleles sampleVariant = sampleVariants.get(i);
-			boolean missing = false;
-			byte dosage = 0;
-
-			for (Allele allele : sampleVariant)
-			{
-				if (allele == null || allele == Allele.ZERO)
-				{
-					missing = true;
-				}
-				else if (allele == dosageRef)
-				{
-					++dosage;
-				}
-			}
-
-			dosages[i] = missing ? -1 : dosage;
-		}
-
-		return dosages;
+		return sampleVariantsProvider.getSampleCalledDosage(this);
 
 	}
 
