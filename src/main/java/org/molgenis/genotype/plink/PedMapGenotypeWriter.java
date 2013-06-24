@@ -68,8 +68,13 @@ public class PedMapGenotypeWriter
 						variant.getStartPos());
 				writer.write(mapEntry);
 				count++;
-				LOG.info("Written " + count + " snps");
+				if ((count % 100000) == 0)
+				{
+					LOG.info("Written " + count + " snps");
+				}
+
 			}
+			LOG.info("Total written " + count + " snps");
 
 		}
 		finally

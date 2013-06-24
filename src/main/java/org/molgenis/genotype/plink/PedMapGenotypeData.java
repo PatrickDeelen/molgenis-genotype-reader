@@ -110,9 +110,10 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 				index++;
 			}
 
-			if ((index % 100) == 0)
+			++count;
+			if ((count % 100) == 0)
 			{
-				LOG.info("Loaded [" + (++count) + "] samples");
+				LOG.info("Loaded [" + (count) + "] samples");
 			}
 		}
 
