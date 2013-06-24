@@ -97,9 +97,13 @@ public class PedMapGenotypeWriter
 						getMother(sample), getSex(sample), getPhenotype(sample), new BialleleIterator(genotypeData, i));
 
 				writer.write(pedEntry);
-
-				LOG.info("Written " + (i + 1) + "/" + count + " samples");
+				if ((i % 100) == 0)
+				{
+					LOG.info("Written " + (i + 1) + "/" + count + " samples");
+				}
 			}
+
+			LOG.info("All samples written");
 
 		}
 		finally
