@@ -10,7 +10,6 @@ import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
-import org.molgenis.io.vcf.VcfRecord;
 
 public class VcfVariantLineMapper implements VariantLineMapper
 {

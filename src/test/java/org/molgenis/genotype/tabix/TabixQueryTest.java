@@ -22,13 +22,12 @@ import org.molgenis.genotype.util.CalledDosageConvertor;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
 import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
+import org.molgenis.genotype.vcf.VcfReader;
 import org.molgenis.genotype.vcf.VcfVariantLineMapper;
-import org.molgenis.io.vcf.VcfReader;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
 public class TabixQueryTest extends ResourceTest implements SampleVariantsProvider
 {
 	private VariantQuery query;
@@ -158,6 +157,7 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 		return null;
 	}
 
+	@Override
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
