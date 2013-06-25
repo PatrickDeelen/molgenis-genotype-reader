@@ -9,12 +9,12 @@ import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
+import org.molgenis.genotype.util.MafCalculator;
 import org.molgenis.genotype.util.MafResult;
 import org.molgenis.genotype.variant.AbstractGeneticVariant;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.MafCalculator;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 public class ModifiableGeneticVariant extends AbstractGeneticVariant
 {
@@ -182,55 +182,84 @@ public class ModifiableGeneticVariant extends AbstractGeneticVariant
 	@Override
 	public float[] getSampleDosages()
 	{
-		// TODO duplicate from read only variant. Should be provided by sample
-		// genotype provider
+		float[] dosageByProvider = getSampleVariantsProvider().getSampleDosage(originalVariant);
 
-		byte[] calledDosage = getSampleCalledDosage();
-		float[] dosage = new float[calledDosage.length];
+		Allele refUsedForOriginalDosage = originalVariant.getRefAllele() == null ? originalVariant.getVariantAlleles()
+				.get(0) : originalVariant.getRefAllele();
 
-		for (int i = 0; i < calledDosage.length; ++i)
+		Allele refShouldBeUsed = getRefAllele() == null ? getVariantAlleles().get(0) : getRefAllele();
+
+		if (refUsedForOriginalDosage == refShouldBeUsed)
 		{
-			dosage[i] = calledDosage[i];
+			return dosageByProvider;
 		}
+		else if (refUsedForOriginalDosage == refShouldBeUsed.getComplement())
+		{
+			return dosageByProvider;
+		}
+		else
+		{
 
-		return dosage;
+			// Here we have to do the swap of the dosage to match the new ref.
+			// (org - 2 ) * 1
+			float[] newDosage = new float[dosageByProvider.length];
+			for (int i = 0; i < dosageByProvider.length; ++i)
+			{
+				// -1 -> 1 -> -1
+				// 0 -> 0 -> 2
+				// 0.5 -> -0.5 -> 1.5
+				// 1 -> -1 -> 1
+				// 1.5 -> -1.5 -> 0.5
+				// 2 -> -2 -> 0
+				newDosage[i] = (dosageByProvider[i] * -1) + 2;
+			}
+			return newDosage;
+		}
 
 	}
 
 	@Override
-	public byte[] getSampleCalledDosage()
+	public byte[] getSampleCalledDosages()
 	{
-		// TODO duplicate from read only variant. Should be provided by sample
-		// genotype provider
 
-		Allele dosageRef = getRefAllele() == null ? getVariantAlleles().get(0) : getRefAllele();
+		byte[] dosageByProvider = getSampleVariantsProvider().getSampleCalledDosage(originalVariant);
 
-		List<Alleles> sampleVariants = getSampleVariants();
+		Allele refUsedForOriginalDosage = originalVariant.getRefAllele() == null ? originalVariant.getVariantAlleles()
+				.get(0) : originalVariant.getRefAllele();
 
-		byte[] dosages = new byte[getSampleVariants().size()];
+		Allele refShouldBeUsed = getRefAllele() == null ? getVariantAlleles().get(0) : getRefAllele();
 
-		for (int i = 0; i < dosages.length; ++i)
+		// System.out.println("Ref used: " + refUsedForOriginalDosage +
+		// " should be: " + refShouldBeUsed);
+
+		if (refUsedForOriginalDosage == refShouldBeUsed)
 		{
-			Alleles sampleVariant = sampleVariants.get(i);
-			boolean missing = false;
-			byte dosage = 0;
+			return dosageByProvider;
+		}
+		else if (refUsedForOriginalDosage == refShouldBeUsed.getComplement())
+		{
+			// System.out.println("do nothing is complement");
+			return dosageByProvider;
+		}
+		else
+		{
 
-			for (Allele allele : sampleVariant)
+			// Here we have to do the swap of the dosage to match the new ref.
+			// (org - 2 ) * 1
+			byte[] newDosage = new byte[dosageByProvider.length];
+			for (int i = 0; i < dosageByProvider.length; ++i)
 			{
-				if (allele == null)
-				{
-					missing = true;
-				}
-				else if (allele == dosageRef)
-				{
-					++dosage;
-				}
+				// -1 -> 1 -> -1
+				// 0 -> 0 -> 2
+				// 0.5 -> -0.5 -> 1.5
+				// 1 -> -1 -> 1
+				// 1.5 -> -1.5 -> 0.5
+				// 2 -> -2 -> 0
+				newDosage[i] = (byte) ((dosageByProvider[i] * -1) + 2);
 			}
-
-			dosages[i] = missing ? -1 : dosage;
+			return newDosage;
 		}
 
-		return dosages;
 	}
 
 	@Override

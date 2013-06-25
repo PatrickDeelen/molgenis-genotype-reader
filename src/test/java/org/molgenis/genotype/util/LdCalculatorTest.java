@@ -11,7 +11,7 @@ import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.DummySampleVariantsProvider;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 import org.testng.annotations.Test;
 
 public class LdCalculatorTest

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.plink.PlinkFileParser;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.TpedEntry;
 import org.molgenis.util.TextFileUtils;
 
@@ -40,7 +40,7 @@ public class TpedFileDriver implements PlinkFileParser
 	{
 		this(tpedFile, String.valueOf(separator));
 	}
-	
+
 	public TpedFileDriver(File tpedFile, String separators)
 	{
 		if (tpedFile == null) throw new IllegalArgumentException("file is null");
@@ -98,12 +98,12 @@ public class TpedFileDriver implements PlinkFileParser
 			String snp = strTokenizer.nextToken();
 			double cM = Double.parseDouble(strTokenizer.nextToken());
 			long bpPos = Long.parseLong(strTokenizer.nextToken());
-			List<Biallele> bialleles = new ArrayList<Biallele>();
+			List<Alleles> bialleles = new ArrayList<Alleles>();
 			while (strTokenizer.hasMoreTokens())
 			{
 				char allele1 = strTokenizer.nextToken().charAt(0);
 				char allele2 = strTokenizer.nextToken().charAt(0);
-				bialleles.add(Biallele.create(allele1, allele2));
+				bialleles.add(Alleles.createBasedOnChars(allele1, allele2));
 			}
 			return new TpedEntry(chromosome, snp, cM, bpPos, bialleles);
 		}

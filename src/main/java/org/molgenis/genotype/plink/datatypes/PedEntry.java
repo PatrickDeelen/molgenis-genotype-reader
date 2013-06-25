@@ -4,33 +4,34 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.molgenis.genotype.Alleles;
 import org.molgenis.util.tuple.KeyValueTuple;
 import org.molgenis.util.tuple.Tuple;
 import org.molgenis.util.tuple.WritableTuple;
 
-public class PedEntry extends FamEntry implements Iterable<Biallele>
+public class PedEntry extends FamEntry implements Iterable<Alleles>
 {
 
 	// list iterates SNP's, so 1 list per individual
-	private final Iterator<Biallele> bialleles;
+	private final Iterator<Alleles> bialleles;
 
 	public PedEntry(String family, String individual, String father, String mother, byte sex, double phenotype,
-			Iterator<Biallele> bialleles)
+			Iterator<Alleles> bialleles)
 	{
 		super(family, individual, father, mother, sex, phenotype);
 		this.bialleles = bialleles;
 	}
 
 	@Override
-	public Iterator<Biallele> iterator()
+	public Iterator<Alleles> iterator()
 	{
 		return bialleles;
 	}
 
-	public List<Biallele> getBialleles()
+	public List<Alleles> getBialleles()
 	{
-		List<Biallele> bialleleList = new ArrayList<Biallele>();
-		Iterator<Biallele> it = iterator();
+		List<Alleles> bialleleList = new ArrayList<Alleles>();
+		Iterator<Alleles> it = iterator();
 		while (it.hasNext())
 		{
 			bialleleList.add(it.next());

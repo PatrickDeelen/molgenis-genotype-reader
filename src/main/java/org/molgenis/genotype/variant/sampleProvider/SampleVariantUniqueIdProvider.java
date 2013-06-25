@@ -1,4 +1,4 @@
-package org.molgenis.genotype.variant;
+package org.molgenis.genotype.variant.sampleProvider;
 
 public class SampleVariantUniqueIdProvider
 {

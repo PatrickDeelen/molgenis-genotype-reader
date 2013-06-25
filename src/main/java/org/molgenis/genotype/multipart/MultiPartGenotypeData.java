@@ -28,7 +28,8 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	private static final Pattern VCF_PATTERN = Pattern.compile("vcf.gz$", Pattern.CASE_INSENSITIVE);
 
 	/**
-	 * Can map multiple times to same genotype dataset if a genotype dataset contains multiple sequences
+	 * Can map multiple times to same genotype dataset if a genotype dataset
+	 * contains multiple sequences
 	 * 
 	 * seqName, GenotypeData
 	 */
@@ -75,8 +76,9 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	}
 
 	/**
-	 * Folder with VCF files. Matches all vcf.gz (case insensitive). Can only handle one file per chr. vcf.gz.tbi should
-	 * be present. All files must have the same samples in the same order.
+	 * Folder with VCF files. Matches all vcf.gz (case insensitive). Can only
+	 * handle one file per chr. vcf.gz.tbi should be present. All files must
+	 * have the same samples in the same order.
 	 * 
 	 * @param vcfFolder
 	 *            folder with vcf files
@@ -220,5 +222,18 @@ public class MultiPartGenotypeData implements RandomAccessGenotypeData
 	{
 		throw new UnsupportedOperationException(
 				"Not yet implemented for multipart genotype data. Feel free to contact the developers");
+	}
+
+	@Override
+	public Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd)
+	{
+		if (genotypeDatasets.containsKey(seqName))
+		{
+			return genotypeDatasets.get(seqName).getVariantsByRange(seqName, rangeStart, rangeEnd);
+		}
+		else
+		{
+			return null;
+		}
 	}
 }

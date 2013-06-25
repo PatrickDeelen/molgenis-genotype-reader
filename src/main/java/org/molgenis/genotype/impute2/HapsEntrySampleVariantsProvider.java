@@ -5,9 +5,10 @@ import java.util.List;
 
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.util.CalledDosageConvertor;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantUniqueIdProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 /**
  * SampleVariantsProvider that returns the sample alleles of a HapsEntry
@@ -47,7 +48,8 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 	}
 
 	/*
-	 * Sample can have an asterisk directly after the allele indicating that it is unphased
+	 * Sample can have an asterisk directly after the allele indicating that it
+	 * is unphased
 	 */
 	private Allele createAllele(String sample)
 	{
@@ -67,7 +69,8 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 	}
 
 	/*
-	 * Sample can have an asterisk directly after the allele indicating that it is unphased
+	 * Sample can have an asterisk directly after the allele indicating that it
+	 * is unphased
 	 */
 	@Override
 	public List<Boolean> getSamplePhasing(GeneticVariant variant)
@@ -97,6 +100,20 @@ public class HapsEntrySampleVariantsProvider implements SampleVariantsProvider
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
+	}
+
+	@Override
+	public byte[] getSampleCalledDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToCalledDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
+	}
+
+	@Override
+	public float[] getSampleDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
 	}
 
 }

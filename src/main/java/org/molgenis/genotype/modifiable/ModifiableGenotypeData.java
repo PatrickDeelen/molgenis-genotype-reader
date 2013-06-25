@@ -3,8 +3,8 @@ package org.molgenis.genotype.modifiable;
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.RandomAccessGenotypeData;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 /**
  * GenotypeData of which some variants properties can be updated and from which

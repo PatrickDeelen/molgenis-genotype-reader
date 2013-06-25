@@ -1,4 +1,4 @@
-package org.molgenis.genotype.variant;
+package org.molgenis.genotype.util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
-import org.molgenis.genotype.util.MafResult;
 
 public class MafCalculator
 {
@@ -38,7 +37,10 @@ public class MafCalculator
 			}
 		}
 
+		// This does not really do something since the first allele should
+		// always be the reference allele in our genetic variants.
 		Allele provisionalMinorAllele = reference != null ? reference : alleles.getAlleles().get(0);
+
 		int provisionalMinorAlleleCount = alleleCounts.get(provisionalMinorAllele).get();
 		int totalAlleleCount = 0;
 
@@ -46,11 +48,12 @@ public class MafCalculator
 		{
 
 			int alleleCount = alleleCounts.get(allele).get();
+
 			totalAlleleCount += alleleCount;
 
 			if (alleleCount < provisionalMinorAlleleCount)
 			{
-				provisionalMinorAlleleCount = alleleCounts.get(allele).get();
+				provisionalMinorAlleleCount = alleleCount;
 				provisionalMinorAllele = allele;
 			}
 		}

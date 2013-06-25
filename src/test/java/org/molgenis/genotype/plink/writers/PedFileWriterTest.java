@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.molgenis.genotype.plink.datatypes.Biallele;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -41,8 +41,8 @@ public class PedFileWriterTest
 			try
 			{
 				fileWriter = new PedFileWriter(file0);
-				fileWriter.write(new PedEntry("1", "1", "0", "0", (byte) 1, 1.0, Arrays.asList(new Biallele('A', 'A'),
-						new Biallele('G', 'T')).iterator()));
+				fileWriter.write(new PedEntry("1", "1", "0", "0", (byte) 1, 1.0, Arrays.asList(
+						Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'T')).iterator()));
 			}
 			finally
 			{
@@ -62,10 +62,10 @@ public class PedFileWriterTest
 	public void writeIterablePedEntry() throws IOException
 	{
 		List<PedEntry> entryList = new ArrayList<PedEntry>();
-		entryList.add(new PedEntry("1", "1", "0", "0", (byte) 1, 1.0, Arrays.asList(new Biallele('A', 'A'),
-				new Biallele('G', 'T')).iterator()));
-		entryList.add(new PedEntry("2", "1", "0", "0", (byte) 1, 1.0, Arrays.asList(new Biallele('A', 'C'),
-				new Biallele('T', 'G')).iterator()));
+		entryList.add(new PedEntry("1", "1", "0", "0", (byte) 1, 1.0, Arrays.asList(
+				Alleles.createBasedOnChars('A', 'A'), Alleles.createBasedOnChars('G', 'T')).iterator()));
+		entryList.add(new PedEntry("2", "1", "0", "0", (byte) 1, 1.0, Arrays.asList(
+				Alleles.createBasedOnChars('A', 'C'), Alleles.createBasedOnChars('T', 'G')).iterator()));
 
 		File file0 = File.createTempFile("PedFileWriterTest_file0", null);
 		try

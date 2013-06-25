@@ -152,6 +152,7 @@ public class Allele implements Comparable<Allele>
 		return true;
 	}
 
+	@Override
 	public String toString()
 	{
 		return this.getAlleleAsString();

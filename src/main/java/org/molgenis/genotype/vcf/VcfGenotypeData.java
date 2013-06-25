@@ -27,11 +27,12 @@ import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.SampleAnnotation;
 import org.molgenis.genotype.annotation.VcfAnnotation;
 import org.molgenis.genotype.tabix.TabixIndex;
-import org.molgenis.genotype.variant.CachedSampleVariantProvider;
+import org.molgenis.genotype.util.CalledDosageConvertor;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
+import org.molgenis.genotype.variant.sampleProvider.CachedSampleVariantProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantUniqueIdProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -318,6 +319,20 @@ public class VcfGenotypeData extends IndexedGenotypeData implements SampleVarian
 	protected Map<String, SampleAnnotation> getSampleAnnotationsMap()
 	{
 		return Collections.emptyMap();
+	}
+
+	@Override
+	public byte[] getSampleCalledDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToCalledDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
+	}
+
+	@Override
+	public float[] getSampleDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
 	}
 
 }

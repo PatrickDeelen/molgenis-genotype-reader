@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -111,24 +110,27 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 	{
 		Iterator<GeneticVariant> it = new Iterator<GeneticVariant>()
 		{
-	        private int currentIndex = 0;
-	
-	        @Override
-	        public boolean hasNext() {
-	            return currentIndex < reader.getBimEntries().size();
-	        }
-	
-	        @Override
-	        public GeneticVariant next() {
-	            return reader.loadVariantsForIndex(currentIndex++).get(0);
-	        }
-	
-	        @Override
-	        public void remove() {
-	        	throw new GenotypeDataException("Operation 'remove' not implemented for binary Plink iterator");
-	        }
-        };
-        return it;
+			private int currentIndex = 0;
+
+			@Override
+			public boolean hasNext()
+			{
+				return currentIndex < reader.getBimEntries().size();
+			}
+
+			@Override
+			public GeneticVariant next()
+			{
+				return reader.loadVariantsForIndex(currentIndex++).get(0);
+			}
+
+			@Override
+			public void remove()
+			{
+				throw new GenotypeDataException("Operation 'remove' not implemented for binary Plink iterator");
+			}
+		};
+		return it;
 	}
 
 	@Override
@@ -148,9 +150,10 @@ public class BedBimFamGenotypeData extends AbstractRandomAccessGenotypeData
 		return sampleAnnotations;
 	}
 
-	public Collection<Boolean> getSamplePhasing(GeneticVariant geneticVariant)
+	@Override
+	public Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd)
 	{
-		return this.reader.getSamplePhasing(geneticVariant);
+		throw new UnsupportedOperationException();
 	}
 
 }

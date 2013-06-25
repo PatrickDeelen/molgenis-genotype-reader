@@ -6,6 +6,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -108,10 +109,30 @@ public class PedMapGenotypeDataTest extends ResourceTest
 	@Test
 	public void testGetSnpVariantByPos()
 	{
-		int pos = 14434960;
-		GeneticVariant variant = genotypeData.getSnpVariantByPos("23", pos);
+		int pos = 14433624;
+		GeneticVariant variant = genotypeData.getSnpVariantByPos("22", pos);
 		assertNotNull(variant);
 		assertEquals(variant.getStartPos(), pos);
+
+		ArrayList<Alleles> expectedSampleAlleles = new ArrayList<Alleles>(9);
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('A', 'G'));
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('A', 'G'));
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('G', 'G'));
+		expectedSampleAlleles.add(Alleles.createBasedOnChars('A', 'G'));
+
+		assertEquals(variant.getSampleVariants(), expectedSampleAlleles);
+		assertEquals(variant.getVariantAlleles(), Alleles.createBasedOnChars('G', 'A'));
+
+		byte[] expectedCalledDosage = new byte[]
+		{ 2, 1, 2, 2, 2, 1, 2, 2, 1 };
+
+		assertEquals(variant.getSampleCalledDosages(), expectedCalledDosage);
+
 	}
 
 }

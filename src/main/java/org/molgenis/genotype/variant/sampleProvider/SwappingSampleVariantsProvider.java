@@ -1,8 +1,10 @@
-package org.molgenis.genotype.variant;
+package org.molgenis.genotype.variant.sampleProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.molgenis.genotype.Alleles;
+import org.molgenis.genotype.variant.GeneticVariant;
 
 public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 {
@@ -18,13 +20,14 @@ public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 	@Override
 	public List<Alleles> getSampleVariants(GeneticVariant variant)
 	{
-		List<Alleles> alleles = sampleVariantsProvider.getSampleVariants(variant);
-		for (int i = 0; i < alleles.size(); i++)
+		List<Alleles> sampleAlleles = sampleVariantsProvider.getSampleVariants(variant);
+		List<Alleles> swapped = new ArrayList<Alleles>(sampleAlleles.size());
+		for (Alleles alleles : sampleAlleles)
 		{
-			alleles.set(i, alleles.get(i).getComplement());
+			swapped.add(alleles.getComplement());
 		}
 
-		return alleles;
+		return swapped;
 	}
 
 	@Override
@@ -38,10 +41,22 @@ public class SwappingSampleVariantsProvider implements SampleVariantsProvider
 	{
 		return sampleVariantsProvider.getSamplePhasing(variant);
 	}
-	
+
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
+	}
+
+	@Override
+	public byte[] getSampleCalledDosage(GeneticVariant variant)
+	{
+		return sampleVariantsProvider.getSampleCalledDosage(variant);
+	}
+
+	@Override
+	public float[] getSampleDosage(GeneticVariant variant)
+	{
+		return sampleVariantsProvider.getSampleDosage(variant);
 	}
 
 }

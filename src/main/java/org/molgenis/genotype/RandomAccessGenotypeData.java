@@ -55,4 +55,16 @@ public interface RandomAccessGenotypeData extends GenotypeData
 	 */
 	Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName);
 
+	/**
+	 * Get all variants within the specified range
+	 * 
+	 * @param seqName
+	 * @param rangeStart
+	 *            start of range, inclusive
+	 * @param rangeEnd
+	 *            end of range exclusive
+	 * @return
+	 */
+	Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd);
+
 }

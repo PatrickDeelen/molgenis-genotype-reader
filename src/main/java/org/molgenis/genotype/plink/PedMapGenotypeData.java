@@ -16,22 +16,23 @@ import java.util.TreeMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.molgenis.genotype.AbstractRandomAccessGenotypeData;
+import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.SimpleSequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.SampleAnnotation;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.MapEntry;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.molgenis.genotype.plink.drivers.PedFileDriver;
 import org.molgenis.genotype.plink.readers.MapFileReader;
+import org.molgenis.genotype.util.CalledDosageConvertor;
 import org.molgenis.genotype.util.GeneticVariantTreeSet;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantUniqueIdProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData implements SampleVariantsProvider
 {
@@ -39,12 +40,11 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	public static final String MOTHER_SAMPLE_ANNOTATION_NAME = "mother";
 	public static final String SEX_SAMPLE_ANNOTATION_NAME = "sex";
 	public static final String PHENOTYPE_SAMPLE_ANNOTATION_NAME = "phenotype";
-	private static final char NULL_VALUE = '0';
 	private static final Logger LOG = Logger.getLogger(PedMapGenotypeData.class);
 	private final int sampleVariantProviderUniqueId;
 
 	private final File pedFile;
-	private Map<Integer, List<Biallele>> sampleAllelesBySnpIndex = new HashMap<Integer, List<Biallele>>();
+	private Map<Integer, List<Alleles>> sampleAllelesBySnpIndex = new HashMap<Integer, List<Alleles>>();
 
 	private GeneticVariantTreeSet<GeneticVariant> snps = new GeneticVariantTreeSet<GeneticVariant>();
 	private Map<String, Integer> snpIndexById = new HashMap<String, Integer>(1000000);
@@ -97,12 +97,12 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		for (PedEntry entry : pedFileDriver)
 		{
 			int index = 0;
-			for (Biallele biallele : entry)
+			for (Alleles biallele : entry)
 			{
-				List<Biallele> biallelesForSnp = sampleAllelesBySnpIndex.get(index);
+				List<Alleles> biallelesForSnp = sampleAllelesBySnpIndex.get(index);
 				if (biallelesForSnp == null)
 				{
-					biallelesForSnp = new ArrayList<Biallele>();
+					biallelesForSnp = new ArrayList<Alleles>();
 					sampleAllelesBySnpIndex.put(index, biallelesForSnp);
 				}
 
@@ -110,7 +110,11 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 				index++;
 			}
 
-			LOG.info("Loaded [" + (++count) + "] samples");
+			++count;
+			if ((count % 100) == 0)
+			{
+				LOG.info("Loaded [" + (count) + "] samples");
+			}
 		}
 
 		LOG.info("Total [" + count + "] samples");
@@ -125,17 +129,18 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			String sequenceName = entry.getChromosome();
 			int startPos = (int) entry.getBpPos();
 
-			List<Biallele> sampleAlleles = sampleAllelesBySnpIndex.get(index);
+			List<Alleles> sampleAlleles = sampleAllelesBySnpIndex.get(index);
 			List<String> alleles = new ArrayList<String>(2);
-			for (Biallele biallele : sampleAlleles)
+			for (Alleles biallele : sampleAlleles)
 			{
-				String allele1 = biallele.getAllele1() == NULL_VALUE ? null : biallele.getAllele1() + "";
+
+				String allele1 = biallele.get(0) == Allele.ZERO ? null : biallele.get(0).toString();
 				if ((allele1 != null) && !alleles.contains(allele1))
 				{
 					alleles.add(allele1);
 				}
 
-				String allele2 = biallele.getAllele2() == NULL_VALUE ? null : biallele.getAllele2() + "";
+				String allele2 = biallele.get(1) == Allele.ZERO ? null : biallele.get(1).toString();
 				if ((allele2 != null) && !alleles.contains(allele2))
 				{
 					alleles.add(allele2);
@@ -157,7 +162,7 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 
 			index++;
 
-			if ((index % 1000) == 0)
+			if ((index % 100000) == 0)
 			{
 				LOG.info("Loaded [" + index + "] snps");
 			}
@@ -224,14 +229,9 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 			throw new IllegalArgumentException("Unknown primaryVariantId [" + variant.getPrimaryVariantId() + "]");
 		}
 
-		List<Biallele> bialleles = sampleAllelesBySnpIndex.get(index);
-		List<Alleles> sampleVariants = new ArrayList<Alleles>(bialleles.size());
-		for (Biallele biallele : bialleles)
-		{
-			sampleVariants.add(Alleles.createBasedOnChars(biallele.getAllele1(), biallele.getAllele2()));
-		}
+		List<Alleles> bialleles = sampleAllelesBySnpIndex.get(index);
 
-		return sampleVariants;
+		return Collections.unmodifiableList(bialleles);
 	}
 
 	@Override
@@ -263,6 +263,8 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	@Override
 	public Iterable<GeneticVariant> getSequenceGeneticVariants(String seqName)
 	{
+		// TODO remove snpBySequence this makes no sense now that we have the
+		// treset
 		List<GeneticVariant> variants = snpBySequence.get(seqName);
 		if (variants == null)
 		{
@@ -307,4 +309,24 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		return sampleAnnotations;
 	}
 
+	@Override
+	public Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd)
+	{
+		return snps.getSequenceRangeVariants(seqName, rangeStart, rangeEnd);
+	}
+
+	@Override
+	public byte[] getSampleCalledDosage(GeneticVariant variant)
+	{
+
+		return CalledDosageConvertor.convertCalledAllelesToCalledDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
+	}
+
+	@Override
+	public float[] getSampleDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
+	}
 }

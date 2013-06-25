@@ -13,6 +13,7 @@ import org.molgenis.genotype.Allele;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.DummySampleVariantsProvider;
 import org.molgenis.genotype.GenotypeDataException;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -55,7 +56,7 @@ public class ReadOnlyGeneticVariantTest
 	{
 		byte[] expected =
 		{ 1, 1, 0, 2, 2 };
-		assertEquals(testInstance.getSampleCalledDosage(), expected);
+		assertEquals(testInstance.getSampleCalledDosages(), expected);
 	}
 
 	@Test

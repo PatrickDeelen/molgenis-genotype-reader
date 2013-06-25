@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.plink.PlinkFileParser;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.molgenis.util.TextFileUtils;
 
@@ -25,7 +25,8 @@ import org.molgenis.util.TextFileUtils;
  * this? or just PED? See:
  * http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#ped
  * 
- * Answer by Patrick: This (should) never really happens. Only if you copy paste from the website where they use spaces to make it look nice.
+ * Answer by Patrick: This (should) never really happens. Only if you copy paste
+ * from the website where they use spaces to make it look nice.
  */
 public class PedFileDriver implements PlinkFileParser, Iterable<PedEntry>
 {
@@ -49,8 +50,9 @@ public class PedFileDriver implements PlinkFileParser, Iterable<PedEntry>
 	{
 		this(pedFile, String.valueOf(separator));
 	}
-	
-	public PedFileDriver(File pedFile, String separators){
+
+	public PedFileDriver(File pedFile, String separators)
+	{
 		if (pedFile == null) throw new IllegalArgumentException("file is null");
 		this.file = pedFile;
 		this.separators = separators;
@@ -123,7 +125,7 @@ public class PedFileDriver implements PlinkFileParser, Iterable<PedEntry>
 			byte sex = Byte.parseByte(strTokenizer.nextToken());
 			double phenotype = Double.parseDouble(strTokenizer.nextToken());
 
-			return new PedEntry(family, individual, father, mother, sex, phenotype, new Iterator<Biallele>()
+			return new PedEntry(family, individual, father, mother, sex, phenotype, new Iterator<Alleles>()
 			{
 
 				@Override
@@ -133,11 +135,11 @@ public class PedFileDriver implements PlinkFileParser, Iterable<PedEntry>
 				}
 
 				@Override
-				public Biallele next()
+				public Alleles next()
 				{
 					char allele1 = strTokenizer.nextToken().charAt(0);
 					char allele2 = strTokenizer.nextToken().charAt(0);
-					return Biallele.create(allele1, allele2);
+					return Alleles.createBasedOnChars(allele1, allele2);
 				}
 
 				@Override

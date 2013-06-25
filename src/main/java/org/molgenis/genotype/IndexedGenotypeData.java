@@ -36,4 +36,19 @@ public abstract class IndexedGenotypeData extends AbstractRandomAccessGenotypeDa
 	}
 
 	protected abstract GenotypeDataIndex getIndex();
+
+	@Override
+	public Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd)
+	{
+		// query is start exclusive and end inclusive. So -1
+		VariantQueryResult result = getIndex().createQuery().executeQuery(seqName, rangeStart - 1, rangeEnd - 1);
+		try
+		{
+			return Utils.iteratorToList(result.iterator());
+		}
+		finally
+		{
+			IOUtils.closeQuietly(result);
+		}
+	}
 }

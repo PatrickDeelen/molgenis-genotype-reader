@@ -4,14 +4,17 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
 
+import org.molgenis.genotype.Allele;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Looks like the test for MAP file, but with 2 additional columns for the alleles (encoded in the BED file)
+ * Looks like the test for MAP file, but with 2 additional columns for the
+ * alleles (encoded in the BED file)
+ * 
  * @author jvelde
- *
+ * 
  */
 public class BimFileDriverTest extends AbstractResourceTest
 {
@@ -42,14 +45,14 @@ public class BimFileDriverTest extends AbstractResourceTest
 		assertEquals(14431347, bimfd.getAllEntries().get(0).getBpPos());
 		assertEquals(14432618, bimfd.getAllEntries().get(1).getBpPos());
 		assertEquals("rs738829", bimfd.getAllEntries().get(1).getSNP());
-		
-		//alleles
-		assertEquals('G', bimfd.getAllEntries().get(0).getBiallele().getAllele1());
-		assertEquals('C', bimfd.getAllEntries().get(0).getBiallele().getAllele2());
-		assertEquals('A', bimfd.getAllEntries().get(1).getBiallele().getAllele1());
-		assertEquals('G', bimfd.getAllEntries().get(1).getBiallele().getAllele2());
-		assertEquals('A', bimfd.getAllEntries().get(5).getBiallele().getAllele1());
-		assertEquals('C', bimfd.getAllEntries().get(5).getBiallele().getAllele2());
+
+		// alleles
+		assertEquals(Allele.G, bimfd.getAllEntries().get(0).getBiallele().get(0));
+		assertEquals(Allele.C, bimfd.getAllEntries().get(0).getBiallele().get(1));
+		assertEquals(Allele.A, bimfd.getAllEntries().get(1).getBiallele().get(0));
+		assertEquals(Allele.G, bimfd.getAllEntries().get(1).getBiallele().get(1));
+		assertEquals(Allele.A, bimfd.getAllEntries().get(5).getBiallele().get(0));
+		assertEquals(Allele.C, bimfd.getAllEntries().get(5).getBiallele().get(1));
 	}
 
 	@AfterClass

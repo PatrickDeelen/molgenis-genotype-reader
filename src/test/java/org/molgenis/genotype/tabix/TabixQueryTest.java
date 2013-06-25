@@ -18,11 +18,12 @@ import org.molgenis.genotype.ResourceTest;
 import org.molgenis.genotype.VariantQuery;
 import org.molgenis.genotype.VariantQueryResult;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.util.CalledDosageConvertor;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
-import org.molgenis.genotype.vcf.VcfReader;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 import org.molgenis.genotype.vcf.VcfVariantLineMapper;
+import org.molgenis.io.vcf.VcfReader;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -86,7 +87,6 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 		// 565286 is excluded, 6097450 is included
 		assertEquals(i, 5);
 	}
-
 
 	@Test
 	public void querySeq1() throws IOException
@@ -157,9 +157,23 @@ public class TabixQueryTest extends ResourceTest implements SampleVariantsProvid
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
+	}
+
+	@Override
+	public byte[] getSampleCalledDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToCalledDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
+	}
+
+	@Override
+	public float[] getSampleDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
 	}
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.molgenis.genotype.plink.datatypes.Biallele;
+import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.plink.datatypes.BimEntry;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -40,7 +40,7 @@ public class BimFileWriterTest
 			try
 			{
 				fileWriter = new BimFileWriter(file0);
-				fileWriter.write(new BimEntry("1", "snp1", 0.0, 1, new Biallele('A', 'C')));
+				fileWriter.write(new BimEntry("1", "snp1", 0.0, 1, Alleles.createBasedOnChars('A', 'C')));
 			}
 			finally
 			{
@@ -60,8 +60,8 @@ public class BimFileWriterTest
 	public void writeIterableBimEntry() throws IOException
 	{
 		List<BimEntry> entryList = new ArrayList<BimEntry>();
-		entryList.add(new BimEntry("1", "snp1", 0.0, 1, new Biallele('A', 'C')));
-		entryList.add(new BimEntry("2", "snp2", 1.2, 1, new Biallele('C', 'A')));
+		entryList.add(new BimEntry("1", "snp1", 0.0, 1, Alleles.createBasedOnChars('A', 'C')));
+		entryList.add(new BimEntry("2", "snp2", 1.2, 1, Alleles.createBasedOnChars('C', 'A')));
 
 		File file0 = File.createTempFile("BimFileWriterTest_file0", null);
 		try

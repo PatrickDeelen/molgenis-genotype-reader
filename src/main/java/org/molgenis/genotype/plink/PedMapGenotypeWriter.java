@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.GenotypeData;
 import org.molgenis.genotype.Sample;
-import org.molgenis.genotype.plink.datatypes.Biallele;
 import org.molgenis.genotype.plink.datatypes.MapEntry;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.molgenis.genotype.plink.writers.MapFileWriter;
@@ -69,8 +68,13 @@ public class PedMapGenotypeWriter
 						variant.getStartPos());
 				writer.write(mapEntry);
 				count++;
-				LOG.info("Written " + count + " snps");
+				if ((count % 100000) == 0)
+				{
+					LOG.info("Written " + count + " snps");
+				}
+
 			}
+			LOG.info("Total written " + count + " snps");
 
 		}
 		finally
@@ -98,9 +102,13 @@ public class PedMapGenotypeWriter
 						getMother(sample), getSex(sample), getPhenotype(sample), new BialleleIterator(genotypeData, i));
 
 				writer.write(pedEntry);
-
-				LOG.info("Written " + (i + 1) + "/" + count + " samples");
+				if ((i % 100) == 0)
+				{
+					LOG.info("Written " + (i + 1) + "/" + count + " samples");
+				}
 			}
+
+			LOG.info("All samples written");
 
 		}
 		finally
@@ -189,7 +197,7 @@ public class PedMapGenotypeWriter
 		return Double.valueOf(value.toString());
 	}
 
-	private class BialleleIterator implements Iterator<Biallele>
+	private class BialleleIterator implements Iterator<Alleles>
 	{
 		private Iterator<GeneticVariant> variantsIterator;
 		private int sampleIndex;
@@ -207,13 +215,11 @@ public class PedMapGenotypeWriter
 		}
 
 		@Override
-		public Biallele next()
+		public Alleles next()
 		{
 			GeneticVariant variant = variantsIterator.next();
 			Alleles variantAlleles = variant.getSampleVariants().get(sampleIndex);
-			char[] alleles = variantAlleles.getAllelesAsChars();
-
-			return Biallele.create(alleles[0], alleles[1]);
+			return variantAlleles;
 		}
 
 		@Override

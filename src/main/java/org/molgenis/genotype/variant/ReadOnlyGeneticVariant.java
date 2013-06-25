@@ -11,8 +11,10 @@ import org.molgenis.genotype.GenotypeDataException;
 import org.molgenis.genotype.util.Ld;
 import org.molgenis.genotype.util.LdCalculator;
 import org.molgenis.genotype.util.LdCalculatorException;
+import org.molgenis.genotype.util.MafCalculator;
 import org.molgenis.genotype.util.MafResult;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 
 public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 {
@@ -153,6 +155,13 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 				Allele.create(refAllele));
 	}
 
+	public static GeneticVariant createVariant(String variantId, int startPos, String sequenceName,
+			SampleVariantsProvider sampleVariantsProvider, Alleles alleles)
+	{
+		return new ReadOnlyGeneticVariant(GeneticVariantId.createVariantId(variantId), startPos, sequenceName, null,
+				sampleVariantsProvider, alleles, null);
+	}
+
 	@Override
 	public String getPrimaryVariantId()
 	{
@@ -266,15 +275,7 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 	@Override
 	public float[] getSampleDosages()
 	{
-		byte[] calledDosage = getSampleCalledDosage();
-		float[] dosage = new float[calledDosage.length];
-
-		for (int i = 0; i < calledDosage.length; ++i)
-		{
-			dosage[i] = calledDosage[i];
-		}
-
-		return dosage;
+		return sampleVariantsProvider.getSampleDosage(this);
 	}
 
 	@Override
@@ -284,37 +285,10 @@ public class ReadOnlyGeneticVariant extends AbstractGeneticVariant
 	}
 
 	@Override
-	public byte[] getSampleCalledDosage()
+	public byte[] getSampleCalledDosages()
 	{
 
-		Allele dosageRef = refAllele == null ? alleles.getAlleles().get(0) : refAllele;
-
-		List<Alleles> sampleVariants = getSampleVariants();
-
-		byte[] dosages = new byte[getSampleVariants().size()];
-
-		for (int i = 0; i < dosages.length; ++i)
-		{
-			Alleles sampleVariant = sampleVariants.get(i);
-			boolean missing = false;
-			byte dosage = 0;
-
-			for (Allele allele : sampleVariant)
-			{
-				if (allele == null)
-				{
-					missing = true;
-				}
-				else if (allele == dosageRef)
-				{
-					++dosage;
-				}
-			}
-
-			dosages[i] = missing ? -1 : dosage;
-		}
-
-		return dosages;
+		return sampleVariantsProvider.getSampleCalledDosage(this);
 
 	}
 

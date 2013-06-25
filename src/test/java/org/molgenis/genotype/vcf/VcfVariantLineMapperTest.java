@@ -11,10 +11,11 @@ import java.util.List;
 
 import org.molgenis.genotype.Alleles;
 import org.molgenis.genotype.annotation.Annotation;
+import org.molgenis.genotype.util.CalledDosageConvertor;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantUniqueIdProvider;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
 import org.molgenis.genotype.variant.VariantLineMapper;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantUniqueIdProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 import org.testng.annotations.Test;
 
 public class VcfVariantLineMapperTest implements SampleVariantsProvider
@@ -108,9 +109,23 @@ public class VcfVariantLineMapperTest implements SampleVariantsProvider
 	{
 		return null;
 	}
-	
+
 	public int getSampleVariantProviderUniqueId()
 	{
 		return sampleVariantProviderUniqueId;
+	}
+
+	@Override
+	public byte[] getSampleCalledDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToCalledDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
+	}
+
+	@Override
+	public float[] getSampleDosage(GeneticVariant variant)
+	{
+		return CalledDosageConvertor.convertCalledAllelesToDosage(getSampleVariants(variant),
+				variant.getVariantAlleles(), variant.getRefAllele());
 	}
 }

@@ -14,11 +14,11 @@ import org.molgenis.genotype.Sample;
 import org.molgenis.genotype.Sequence;
 import org.molgenis.genotype.annotation.Annotation;
 import org.molgenis.genotype.annotation.SampleAnnotation;
-import org.molgenis.genotype.variant.CachedSampleVariantProvider;
 import org.molgenis.genotype.variant.GeneticVariant;
-import org.molgenis.genotype.variant.SampleVariantsProvider;
-import org.molgenis.genotype.variant.SwappingSampleVariantsProvider;
 import org.molgenis.genotype.variant.id.GeneticVariantId;
+import org.molgenis.genotype.variant.sampleProvider.CachedSampleVariantProvider;
+import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
+import org.molgenis.genotype.variant.sampleProvider.SwappingSampleVariantsProvider;
 
 public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 {
@@ -103,8 +103,6 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterator<GeneticVariant> iterator()
 	{
-		System.out.println(filteredOutVariants.size());
-
 		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(
 				sourceGenotypeData.iterator(), this, filteredOutVariants).iterator();
 	}
@@ -312,8 +310,8 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	@Override
 	public Iterable<ModifiableGeneticVariant> getModifiableGeneticVariants()
 	{
-		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(this.iterator(), this,
-				filteredOutVariants);
+		return ModifiableGeneticVariantIterator.createModifiableGeneticVariantIterable(sourceGenotypeData.iterator(),
+				this, filteredOutVariants);
 	}
 
 	@Override
@@ -338,6 +336,13 @@ public class ModifiableGenotypeDataInMemory implements ModifiableGenotypeData
 	public Annotation getSampleAnnotation(String annotationId)
 	{
 		return sourceGenotypeData.getSampleAnnotation(annotationId);
+	}
+
+	@Override
+	public Iterable<GeneticVariant> getVariantsByRange(String seqName, int rangeStart, int rangeEnd)
+	{
+		return ModifiableGeneticVariantIterator.createGeneticVariantIterableBackByModifiable(sourceGenotypeData
+				.getVariantsByRange(seqName, rangeStart, rangeEnd).iterator(), this, filteredOutVariants);
 	}
 
 }
