@@ -27,6 +27,7 @@ import org.molgenis.genotype.plink.datatypes.MapEntry;
 import org.molgenis.genotype.plink.datatypes.PedEntry;
 import org.molgenis.genotype.plink.drivers.PedFileDriver;
 import org.molgenis.genotype.plink.readers.MapFileReader;
+import org.molgenis.genotype.util.Cache;
 import org.molgenis.genotype.util.CalledDosageConvertor;
 import org.molgenis.genotype.util.GeneticVariantTreeSet;
 import org.molgenis.genotype.variant.GeneticVariant;
@@ -51,6 +52,9 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	private Map<String, List<GeneticVariant>> snpBySequence = new TreeMap<String, List<GeneticVariant>>();
 	private Map<GeneticVariant, List<Boolean>> samplePhasing = new HashMap<GeneticVariant, List<Boolean>>();
 	private Map<String, SampleAnnotation> sampleAnnotations;
+
+	private final Cache<GeneticVariant, byte[]> calledDosageCache;
+	private final Cache<GeneticVariant, float[]> dosageCache;
 
 	public PedMapGenotypeData(String basePath) throws FileNotFoundException, IOException
 	{
@@ -89,6 +93,10 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 		sampleVariantProviderUniqueId = SampleVariantUniqueIdProvider.getNextUniqueId();
 
 		sampleAnnotations = PlinkSampleAnnotations.getSampleAnnotations();
+
+		this.calledDosageCache = new Cache<GeneticVariant, byte[]>(1000000);
+		this.dosageCache = new Cache<GeneticVariant, float[]>(10000000);
+
 	}
 
 	private void loadSampleBialleles(PedFileDriver pedFileDriver)
@@ -319,14 +327,31 @@ public class PedMapGenotypeData extends AbstractRandomAccessGenotypeData impleme
 	public byte[] getSampleCalledDosage(GeneticVariant variant)
 	{
 
-		return CalledDosageConvertor.convertCalledAllelesToCalledDosage(getSampleVariants(variant),
+		if (calledDosageCache.containsKey(variant))
+		{
+			return calledDosageCache.get(variant);
+		}
+
+		byte[] calledDosage = CalledDosageConvertor.convertCalledAllelesToCalledDosage(getSampleVariants(variant),
 				variant.getVariantAlleles(), variant.getRefAllele());
+		calledDosageCache.put(variant, calledDosage);
+		return calledDosage;
+
 	}
 
 	@Override
 	public float[] getSampleDosage(GeneticVariant variant)
 	{
-		return CalledDosageConvertor.convertCalledAllelesToDosage(getSampleVariants(variant),
+
+		if (dosageCache.containsKey(variant))
+		{
+			return dosageCache.get(variant);
+		}
+
+		float[] dosage = CalledDosageConvertor.convertCalledAllelesToDosage(getSampleVariants(variant),
 				variant.getVariantAlleles(), variant.getRefAllele());
+		dosageCache.put(variant, dosage);
+		return dosage;
+
 	}
 }
