@@ -17,10 +17,19 @@ public class Alleles implements Iterable<Allele>, Comparable<Alleles>
 	private final boolean isAtOrGcSnp;
 	private final List<String> allelesAsString;
 	private final char[] allelesAsChar;
+	private final int hashCode;
 
 	private Alleles(List<Allele> alleles)
 	{
 		this.alleles = Collections.unmodifiableList(alleles);
+
+		int result = 1;
+		int i = 0;
+		for (Allele a : alleles)
+		{
+			result = result + i * a.hashCode();
+		}
+		hashCode = result;
 
 		boolean isSnp = true;
 		ArrayList<String> allelesAsStringBuilder = new ArrayList<String>(alleles.size());
@@ -38,7 +47,7 @@ public class Alleles implements Iterable<Allele>, Comparable<Alleles>
 		if (snp)
 		{
 			allelesAsChar = new char[alleles.size()];
-			int i = 0;
+			i = 0;
 			for (Allele allele : alleles)
 			{
 				allelesAsChar[i] = allele.getAlleleAsSnp();
@@ -308,10 +317,7 @@ public class Alleles implements Iterable<Allele>, Comparable<Alleles>
 	@Override
 	public int hashCode()
 	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((alleles == null) ? 0 : alleles.hashCode());
-		return result;
+		return hashCode;
 	}
 
 	/*

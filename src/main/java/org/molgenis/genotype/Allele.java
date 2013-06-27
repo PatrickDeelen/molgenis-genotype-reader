@@ -20,6 +20,7 @@ public class Allele implements Comparable<Allele>
 	private final String allele;
 	private final char snpAllele;
 	private Allele complement;
+	private final int hashCode;
 
 	private Allele(String allele)
 	{
@@ -41,6 +42,7 @@ public class Allele implements Comparable<Allele>
 			this.snpAllele = (char) -1;
 		}
 		this.allele = allele;
+		this.hashCode = allele.hashCode();
 	}
 
 	private Allele(char allele)
@@ -131,10 +133,7 @@ public class Allele implements Comparable<Allele>
 	@Override
 	public int hashCode()
 	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((allele == null) ? 0 : allele.hashCode());
-		return result;
+		return hashCode;
 	}
 
 	@Override
