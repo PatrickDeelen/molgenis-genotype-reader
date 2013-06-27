@@ -7,8 +7,6 @@ import org.molgenis.genotype.variant.GeneticVariant;
 public class LdCalculator
 {
 
-	private static final LdCalculatorCache cache = new LdCalculatorCache();
-
 	/**
 	 * LD calculator. Based on implementation of Harm-Jan Westra and Lude
 	 * Franke.
@@ -23,12 +21,6 @@ public class LdCalculator
 	 */
 	public static Ld calculateLd(GeneticVariant variant1, GeneticVariant variant2) throws LdCalculatorException
 	{
-
-		Ld ld = cache.getFromCache(variant1, variant2);
-		if (ld != null)
-		{
-			return ld;
-		}
 
 		if (variant1 == null)
 		{
@@ -176,11 +168,7 @@ public class LdCalculator
 		haplotypesFreq.put(variant1Ref + variant2Alt, h21);
 		haplotypesFreq.put(variant1Ref + variant2Ref, h22);
 
-		ld = new Ld(variant1, variant2, rSquared, dPrime, haplotypesFreq);
-
-		cache.addToCache(variant1, variant2, ld);
-
-		return ld;
+		return new Ld(variant1, variant2, rSquared, dPrime, haplotypesFreq);
 
 	}
 }
