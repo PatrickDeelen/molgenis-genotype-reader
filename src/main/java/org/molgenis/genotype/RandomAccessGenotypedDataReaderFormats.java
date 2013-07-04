@@ -3,7 +3,6 @@ package org.molgenis.genotype;
 import java.io.File;
 import java.io.IOException;
 
-import org.molgenis.genotype.impute2.Impute2GenotypeData;
 import org.molgenis.genotype.multipart.IncompetibleMultiPartGenotypeDataException;
 import org.molgenis.genotype.multipart.MultiPartGenotypeData;
 import org.molgenis.genotype.plink.PedMapGenotypeData;
@@ -49,7 +48,8 @@ public enum RandomAccessGenotypedDataReaderFormats
 			case VCF_FOLDER:
 				return MultiPartGenotypeData.createFromVcfFolder(new File(path), cacheSize);
 			case SHAPEIT2:
-				return new Impute2GenotypeData(bzipHapsFile, tabixIndexFile, sampleFile)
+				// return new Impute2GenotypeData(bzipHapsFile, tabixIndexFile,
+				// sampleFile)
 			default:
 				throw new RuntimeException("This should not be reachable. Please contact the autors");
 		}
