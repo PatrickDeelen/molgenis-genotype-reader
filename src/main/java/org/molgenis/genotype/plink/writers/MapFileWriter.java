@@ -40,7 +40,14 @@ public class MapFileWriter implements PlinkFileParser
 		writer.write(separator);
 		writer.write(map.getSNP());
 		writer.write(separator);
-		writer.write(Double.toString(map.getcM()));
+		if (map.getcM() == 0d)
+		{
+			writer.write("0");
+		}
+		else
+		{
+			writer.write(Double.toString(map.getcM()));
+		}
 		writer.write(separator);
 		writer.write(Long.toString(map.getBpPos()));
 		writer.write(LINE_SEPARATOR);
