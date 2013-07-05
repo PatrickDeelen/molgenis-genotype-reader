@@ -39,14 +39,14 @@ public class MapFileWriterTest
 			try
 			{
 				fileWriter = new MapFileWriter(file0);
-				fileWriter.write(new MapEntry("1", "snp1", 0.0, 1l));
+				fileWriter.write(new MapEntry("1", "snp1", 0, 1l));
 			}
 			finally
 			{
 				IOUtils.closeQuietly(fileWriter);
 			}
 
-			String expected = "1 snp1 0.0 1\n";
+			String expected = "1 snp1 0 1\n";
 			Assert.assertEquals(FileUtils.readFileToString(file0, Charset.forName("UTF-8")), expected);
 		}
 		finally
@@ -59,8 +59,8 @@ public class MapFileWriterTest
 	public void writeIterableMapEntry() throws IOException
 	{
 		List<MapEntry> entryList = new ArrayList<MapEntry>();
-		entryList.add(new MapEntry("1", "snp1", 0.0, 1l));
-		entryList.add(new MapEntry("1", "snp2", 0.0, 2l));
+		entryList.add(new MapEntry("1", "snp1", 0, 1l));
+		entryList.add(new MapEntry("1", "snp2", 0, 2l));
 
 		File file0 = File.createTempFile("MapFileWriterTest_file0", null);
 		try
@@ -76,7 +76,7 @@ public class MapFileWriterTest
 				IOUtils.closeQuietly(fileWriter);
 			}
 
-			String expected = "1 snp1 0.0 1\n1 snp2 0.0 2\n";
+			String expected = "1 snp1 0 1\n1 snp2 0 2\n";
 			Assert.assertEquals(FileUtils.readFileToString(file0, Charset.forName("UTF-8")), expected);
 		}
 		finally
