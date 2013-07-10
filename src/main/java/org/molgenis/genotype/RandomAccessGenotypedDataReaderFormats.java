@@ -49,8 +49,8 @@ public enum RandomAccessGenotypedDataReaderFormats
 			case VCF_FOLDER:
 				return MultiPartGenotypeData.createFromVcfFolder(new File(path), cacheSize);
 			case SHAPEIT2:
-				return new Impute2GenotypeData(new File(path + ".haps"), new File(path + ".haps.tbi"), new File(path
-						+ ".sample"));
+				return new Impute2GenotypeData(new File(path + ".haps.gz"), new File(path + ".haps.gz.tbi"), new File(
+						path + ".sample"));
 			default:
 				throw new RuntimeException("This should not be reachable. Please contact the autors");
 		}
