@@ -101,14 +101,6 @@ public class LdCalculator
 		double h21 = alleleFreq[0][1] * alleleFreq[1][0];
 		double h22 = alleleFreq[0][1] * alleleFreq[1][1];
 
-		double[][] test = new double[2][2];
-		// Variant 1:
-		test[0][0] = h11 + h12;
-		test[0][1] = h21 + h22;
-		// Variant 2:
-		test[1][0] = h11 + h21;
-		test[1][1] = h12 + h22;
-
 		// Calculate the frequency of the two double heterozygotes:
 		double x12y12 = (h11 * h22 / (h11 * h22 + h12 * h21)) * genotypesFreq[1][1];
 		double x12y21 = (h12 * h21 / (h11 * h22 + h12 * h21)) * genotypesFreq[1][1];
@@ -118,8 +110,8 @@ public class LdCalculator
 		{
 
 			h11 = (x12y12 + genotypesTriangleFreq[0][0]) / 2;
-			h21 = (x12y21 + genotypesTriangleFreq[2][0]) / 2;
 			h12 = (x12y21 + genotypesTriangleFreq[0][2]) / 2;
+			h21 = (x12y21 + genotypesTriangleFreq[2][0]) / 2;
 			h22 = (x12y12 + genotypesTriangleFreq[2][2]) / 2;
 
 			x12y12 = (h11 * h22 / (h11 * h22 + h12 * h21)) * genotypesFreq[1][1];
