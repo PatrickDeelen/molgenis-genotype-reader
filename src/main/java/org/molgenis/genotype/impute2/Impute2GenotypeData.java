@@ -32,6 +32,7 @@ import org.molgenis.genotype.util.Utils;
 import org.molgenis.genotype.variant.GeneticVariant;
 import org.molgenis.genotype.variant.ReadOnlyGeneticVariant;
 import org.molgenis.genotype.variant.VariantLineMapper;
+import org.molgenis.genotype.variant.sampleProvider.CachedSampleVariantProvider;
 import org.molgenis.genotype.variant.sampleProvider.SampleVariantUniqueIdProvider;
 import org.molgenis.genotype.variant.sampleProvider.SampleVariantsProvider;
 import org.molgenis.io.csv.CsvReader;
@@ -55,10 +56,17 @@ public class Impute2GenotypeData extends IndexedGenotypeData implements SampleVa
 	private Map<String, SampleAnnotation> sampleAnnotations = new LinkedHashMap<String, SampleAnnotation>();
 	private final int sampleVariantProviderUniqueId;
 	private final VariantLineMapper lineMapper;
+	private final SampleVariantsProvider sampleVariantProvider;
 
 	private static final Logger LOG = Logger.getLogger(Impute2GenotypeData.class);
 
 	public Impute2GenotypeData(File bzipHapsFile, File tabixIndexFile, File sampleFile) throws IOException
+	{
+		this(bzipHapsFile, tabixIndexFile, sampleFile, 0);
+	}
+
+	public Impute2GenotypeData(File bzipHapsFile, File tabixIndexFile, File sampleFile, int cacheSize)
+			throws IOException
 	{
 		if (bzipHapsFile == null) throw new IllegalArgumentException("bzipHapsFile is null");
 		if (!bzipHapsFile.isFile()) throw new FileNotFoundException("bzipHapsFile file not found at "
@@ -77,7 +85,15 @@ public class Impute2GenotypeData extends IndexedGenotypeData implements SampleVa
 				+ sampleFile.getAbsolutePath());
 		if (!sampleFile.canRead()) throw new IOException("sampleFile file not found at " + sampleFile.getAbsolutePath());
 
-		lineMapper = new Impute2VariantLineMapper(this);
+		if (cacheSize > 0)
+		{
+			sampleVariantProvider = new CachedSampleVariantProvider(this, cacheSize);
+		}
+		else
+		{
+			sampleVariantProvider = this;
+		}
+		lineMapper = new Impute2VariantLineMapper(sampleVariantProvider);
 
 		index = new TabixIndex(tabixIndexFile, bzipHapsFile, lineMapper);
 		LOG.info("Read tabix index");
@@ -263,8 +279,8 @@ public class Impute2GenotypeData extends IndexedGenotypeData implements SampleVa
 
 				List<String> alleles = Arrays.asList(firstAllele, secondAllele);
 
-				GeneticVariant variantInFile = ReadOnlyGeneticVariant.createVariant(snpId, position, chrom, this,
-						alleles);
+				GeneticVariant variantInFile = ReadOnlyGeneticVariant.createVariant(snpId, position, chrom,
+						sampleVariantProvider, alleles);
 
 				if (variantInFile.equals(variant))
 				{
@@ -287,7 +303,7 @@ public class Impute2GenotypeData extends IndexedGenotypeData implements SampleVa
 			IOUtils.closeQuietly(queryResult);
 		}
 
-		return genotypes;
+		return Collections.unmodifiableList(genotypes);
 	}
 
 	@Override
@@ -311,8 +327,8 @@ public class Impute2GenotypeData extends IndexedGenotypeData implements SampleVa
 
 				List<String> alleles = Arrays.asList(firstAllele, secondAllele);
 
-				GeneticVariant variantInFile = ReadOnlyGeneticVariant.createVariant(snpId, position, chrom, this,
-						alleles);
+				GeneticVariant variantInFile = ReadOnlyGeneticVariant.createVariant(snpId, position, chrom,
+						sampleVariantProvider, alleles);
 
 				if (variantInFile.equals(variant))
 				{
@@ -337,7 +353,7 @@ public class Impute2GenotypeData extends IndexedGenotypeData implements SampleVa
 			IOUtils.closeQuietly(queryResult);
 		}
 
-		return phasing;
+		return Collections.unmodifiableList(phasing);
 
 	}
 
